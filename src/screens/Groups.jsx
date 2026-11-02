@@ -1,40 +1,141 @@
 import { useState } from 'react';
 import { QUESTIONS, TODAY, SAMPLE_SHARES, dateLabel } from '../questionData.js';
-import { Header, Icon, Empty, Avatar, Section } from '../components/UI.jsx';
+import { Header, Icon, Avatar, Empty } from '../components/UI.jsx';
 
 export function Groups({ state, go }) {
   const groups = state.groups.filter(g => state.joined.includes(g.id));
-  return <><Header title="함께하는 그룹" subtitle="가까운 사람들과, 조금 더 깊은 이야기." /><div className="group-banner"><span className="empty-icon"><Icon name="groups" size={28} /></span><h2>나의 갈래가<br />우리의 대화가 되는 곳</h2><p className="sub">같은 질문에 답하고 서로의 이유를 만나보세요.</p></div><div className="two-actions"><button className="btn-primary" onClick={() => go('groups/new')}><Icon name="plus" size={18} />그룹 만들기</button><button className="btn-outline" onClick={() => go('groups/join')}>초대 코드로 참여</button></div><Section title={`나의 그룹 ${groups.length}`}><div className="stack">{groups.map(group => <button className="group-card" key={group.id} onClick={() => go(`groups/${group.id}`)}><div className="row"><Avatar name={group.name} color={group.color} /><span className="tag">{group.owner ? '그룹장' : '멤버'}</span></div><h2>{group.name}</h2><p className="sub">{group.description}</p><div className="row"><span className="avatar-stack">{group.members.slice(0, 3).map(m => <Avatar key={m.id} {...m} />)}<small>나 포함 {group.members.length + 1}명</small></span><Icon name="arrow" size={18} /></div></button>)}</div>{!groups.length && <Empty title="함께할 첫 그룹을 만나보세요" body="그룹을 만들거나 받은 초대 코드로 참여해보세요." />}</Section><p className="footnote">그룹과 공유 내용은 이 브라우저에서만 저장됩니다.<br />다른 기기로의 실제 초대·공유는 서버 연결 후 제공됩니다.</p></>;
+  return <>
+    <h1 className="visually-hidden" tabIndex={-1}>그룹</h1>
+    <div className="groups-actions">
+      <button className="btn-text" onClick={() => go('groups/new')}>만들기</button>
+      <button className="btn-text" onClick={() => go('groups/join')}>참여</button>
+    </div>
+    {groups.length ? <div className="list">{groups.map(group => <button className="group-row" key={group.id} onClick={() => go(`groups/${group.id}`)}>
+      <div className="group-row-head"><Avatar name={group.name} color={group.color} /><strong>{group.name}</strong></div>
+      {group.description && <p className="record-note">{group.description}</p>}
+      <span className="avatar-stack">{group.members.slice(0, 3).map(m => <Avatar key={m.id} {...m} />)}<small>{group.members.length + 1}명</small></span>
+    </button>)}</div> : <Empty title="함께할 첫 그룹을 만나보세요" />}
+  </>;
 }
 
-export function GroupForm({ mode, state, onCreate, onJoin, go }) {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [color, setColor] = useState('sage');
-  const [code, setCode] = useState('');
+const COLORS = [['sage', '초록'], ['blue', '파랑'], ['peach', '살구'], ['lilac', '보라']];
+
+export function GroupForm({ mode, group, state, onCreate, onJoin, onSave, go }) {
+  const editing = mode === 'edit';
+  const [value, setValue] = useState(editing ? group.name : '');
+  const [description, setDescription] = useState(editing ? group.description || '' : '');
+  const [color, setColor] = useState(editing ? group.color : 'sage');
   const [error, setError] = useState('');
-  const creating = mode === 'new';
+  const creating = mode === 'new' || editing;
   function submit(e) {
     e.preventDefault();
-    if (creating) { if (!name.trim()) { setError('그룹 이름을 입력해주세요.'); return; } onCreate({ name: name.trim(), description: description.trim() || '같은 질문, 서로 다른 생각을 나눠요.', color }); }
-    else { const group = state.groups.find(g => g.code === code.trim().toUpperCase()); if (!group) { setError('초대 코드를 찾을 수 없어요. 코드를 다시 확인해주세요.'); return; } if (state.joined.includes(group.id)) { setError('이미 참여 중인 그룹이에요. 나의 그룹에서 확인해주세요.'); return; } onJoin(group.id); }
+    const fields = { name: value.trim(), description: description.trim(), color };
+    if (editing) { onSave(fields); return; }
+    if (creating) { onCreate(fields); return; }
+    const group = state.groups.find(g => g.code === value.trim().toUpperCase());
+    if (!group) setError('코드를 찾을 수 없어요');
+    else if (state.joined.includes(group.id)) setError('이미 참여한 그룹이에요');
+    else onJoin(group.id);
   }
-  return <><Header title={creating ? '우리의 그룹 만들기' : '초대받은 그룹에 참여하기'} subtitle={creating ? '함께 생각을 나눌 작은 공간을 열어보세요.' : '그룹에서 받은 6자리 초대 코드를 입력해주세요.'} back={() => go('groups')} /><form onSubmit={submit} className="group-form">{creating ? <><div className="group-avatar-preview"><Avatar name={name.trim() || '갈'} color={color} /></div><fieldset className="color-picker"><legend>그룹 색상</legend>{[['sage', '초록'], ['blue', '파랑'], ['peach', '살구'], ['lilac', '보라']].map(([value, label]) => <button type="button" key={value} className={value} aria-label={label} aria-pressed={color === value} onClick={() => setColor(value)}>{color === value && <Icon name="check" size={18} />}</button>)}</fieldset><label className="field-label" htmlFor="group-name">그룹 이름 <span>{name.length}/20</span></label><input id="group-name" className="note-input" maxLength={20} placeholder="예: 한 걸음 청년부" value={name} onChange={e => { setName(e.target.value); setError(''); }} required /><label className="field-label" htmlFor="group-description">그룹 소개 <span>선택 · {description.length}/100</span></label><textarea id="group-description" className="note-input" rows={3} maxLength={100} placeholder="우리는 어떤 이야기를 나누고 싶나요?" value={description} onChange={e => setDescription(e.target.value)} /></> : <><div className="group-banner"><Icon name="groups" size={32} /><h2>함께 걷는 갈래</h2><p className="sub">이름을 아는 사람들의 생각을 만나보세요.</p></div><label className="field-label" htmlFor="invite-code">초대 코드</label><input id="invite-code" className="note-input code-input" value={code} maxLength={6} autoCapitalize="characters" placeholder="GARA26" onChange={e => { setCode(e.target.value.toUpperCase()); setError(''); }} required aria-describedby="join-help" /><p id="join-help" className="sub">체험용 코드 <strong>GARA26</strong>으로 참여해볼 수 있어요.</p></>}{error && <p className="form-error" role="alert">{error}</p>}<div className="soft-note"><Icon name="lock" size={18} /><p>그룹에 참여해도 답변은 자동으로 공유되지 않아요.<br />원하는 답변만 직접 나눌 수 있어요.</p></div><button className="btn-primary" disabled={creating ? !name.trim() : code.trim().length !== 6}>{creating ? '그룹 만들기' : '그룹 참여하기'}<Icon name="arrow" size={18} /></button></form></>;
+  return <>
+    <Header back={() => go(editing ? `groups/${group.id}/members` : 'groups')} />
+    <form className="flow" onSubmit={submit}>
+      <h1 className="visually-hidden" tabIndex={-1}>{editing ? '그룹 설정' : creating ? '그룹 만들기' : '그룹 참여'}</h1>
+      {creating && <>
+        <div className="group-preview"><Avatar name={value.trim() || '갈'} color={color} /></div>
+        <div className="color-picker">{COLORS.map(([c, label]) => <button type="button" key={c} className={c} aria-label={label} aria-pressed={color === c} onClick={() => setColor(c)} />)}</div>
+      </>}
+      <div className="field">
+        <input className={`note-input ${creating ? '' : 'code-input'}`} aria-label={creating ? '그룹 이름' : '초대 코드'} placeholder={creating ? '이름' : '코드'} maxLength={creating ? 20 : 6} autoCapitalize={creating ? undefined : 'characters'} value={value} onChange={e => { setValue(creating ? e.target.value : e.target.value.toUpperCase()); setError(''); }} />
+        {creating && <span className="count">{value.length}/20</span>}
+      </div>
+      {!creating && <p className="hint center">체험용 코드 GARA26</p>}
+      {creating && <div className="field">
+        <textarea className="note-input" aria-label="그룹 소개" placeholder="소개" rows={3} maxLength={100} value={description} onChange={e => setDescription(e.target.value)} />
+        <span className="count">{description.length}/100</span>
+      </div>}
+      {error && <p className="form-error" role="alert">{error}</p>}
+      <button className="btn-primary" disabled={creating ? !value.trim() : value.trim().length !== 6}>{editing ? '저장' : creating ? '만들기' : '참여'}</button>
+    </form>
+  </>;
 }
 
-export function GroupDetail({ group, state, go, openQuestion, initialQuestionId }) {
+export function GroupDetail({ group, state, go, openQuestion, initialQuestionId, onShare, onSend }) {
+  const [text, setText] = useState('');
+  const [open, setOpen] = useState(false);
   const questionId = initialQuestionId || TODAY.id;
   const question = QUESTIONS.find(q => q.id === questionId);
   const answer = state.answers[questionId];
-  const sample = SAMPLE_SHARES.filter(s => s.groupId === group.id && s.questionId === questionId);
   const shared = answer?.sharedWith.includes(group.id);
-  const posts = [...sample, ...(shared ? [{ memberId: 'me', sel: answer.sel, note: answer.savedNote }] : [])];
-  return <><Header title={group.name} subtitle={group.description} back={() => go('groups')} /><div className="row group-detail-meta"><span className="avatar-stack">{group.members.slice(0, 3).map(m => <Avatar key={m.id} {...m} />)}<span className="sub">나 포함 {group.members.length + 1}명</span></span><button className="text-link" onClick={() => go(`groups/${group.id}/members`)}>멤버·초대<Icon name="arrow" size={14} /></button></div><label className="field-label" htmlFor="group-question">함께 나눌 질문</label><select id="group-question" className="question-select" value={questionId} onChange={e => go(`groups/${group.id}/${e.target.value}`)}>{QUESTIONS.map(q => <option key={q.id} value={q.id}>{dateLabel(q.date)} · {q.title}</option>)}</select><div className="group-question-card"><span className="tag">{question.category}</span><h2>{question.title}</h2><p className="sub">{question.body}</p><button className="btn-primary" onClick={() => answer?.submitted ? go(`question/${questionId}/share`) : openQuestion(questionId)}>{answer?.submitted ? shared ? '공유 내용 관리하기' : '내 답변 나누기' : '먼저 나의 선택 남기기'}<Icon name="arrow" size={16} /></button></div><Section title="우리의 생각" label={`${posts.length}개의 나눔`}>{!answer?.submitted ? <div className="locked-card"><Icon name="lock" size={26} /><h3>내 생각을 먼저 만나주세요</h3><p className="sub">이 질문에 답하면 그룹원들의 생각이 열려요.<br />내 답변을 공유하지 않아도 읽을 수 있어요.</p></div> : posts.length ? <><div className="group-distribution">{question.choices.map(c => <div className="row" key={c.id}><span>{c.short}</span><strong>{posts.filter(p => p.sel === c.id).length}명</strong></div>)}</div>{posts.map(post => { const member = post.memberId === 'me' ? { name: '나', color: 'blue' } : group.members.find(m => m.id === post.memberId) || { name: '멤버', color: 'sage' }; return <article className="share-card" key={post.memberId}><div className="row"><span className="member-name"><Avatar {...member} /><strong>{member.name}</strong></span><span className="hint">{post.memberId === 'me' ? '내가 공유한 답변' : '예시 나눔'}</span></div><span className="answer-chip">{question.choices.find(c => c.id === post.sel)?.short}</span><p className="body preserve-lines">{post.note || '선택을 나눴어요.'}</p></article>; })}</> : <Empty title="첫 번째 생각을 나눠주세요" body="아직 이 질문에 공유된 답변이 없어요." label="내 답변 나누기" onClick={() => go(`question/${questionId}/share`)} />}</Section></>;
+  const me = { name: state.profile.name || '나', color: state.profile.color };
+  const posts = [...SAMPLE_SHARES.filter(s => s.groupId === group.id && s.questionId === questionId), ...(shared ? [{ memberId: 'me', sel: answer.sel, note: answer.reason }] : [])];
+  const messages = state.messages.filter(m => m.groupId === group.id && m.questionId === questionId);
+  function send(e) { e.preventDefault(); if (!text.trim()) return; onSend(questionId, text); setText(''); }
+  return <>
+    <Header back={() => go('groups')} title={group.name} action={<button className="icon-button" aria-label="멤버" onClick={() => go(`groups/${group.id}/members/${questionId}`)}><Icon name="more" size={22} /></button>} />
+    <div className="flow chat-flow">
+      <div className="row group-meta">
+        <span className="avatar-stack">{group.members.slice(0, 3).map(m => <Avatar key={m.id} {...m} />)}<small>{group.members.length + 1}명</small></span>
+      </div>
+      {group.description && <p className="group-description">{group.description}</p>}
+      <div className="question-picker">
+        <button className="question-select" aria-label="질문" aria-expanded={open} onClick={() => setOpen(!open)}>{dateLabel(question.date)} · {question.title}</button>
+        {open && <>
+          <div className="question-backdrop" onClick={() => setOpen(false)} />
+          <ul className="question-menu">{QUESTIONS.map(q => <li key={q.id}><button aria-pressed={q.id === questionId} onClick={() => { setOpen(false); go(`groups/${group.id}/${q.id}`); }}>{dateLabel(q.date)} · {q.title}</button></li>)}</ul>
+        </>}
+      </div>
+      <div className="group-question">
+        <span className="hint">{question.category}</span>
+        <strong>{question.title}</strong>
+        <p>{question.body}</p>
+      </div>
+      {!answer?.submitted ? <div className="locked">
+        <button className="btn-primary" onClick={() => openQuestion(questionId)}>답변하기</button>
+      </div> : <>
+        <div className="distribution">{question.choices.map(c => <span key={c.id}>{c.short} <strong>{posts.filter(p => p.sel === c.id).length}</strong></span>)}</div>
+        {!shared && <button className="btn-text group-share" onClick={() => onShare(questionId)}>내 답변 나누기</button>}
+        <div className="chat">
+          {posts.map(post => {
+            const mine = post.memberId === 'me';
+            const member = mine ? me : group.members.find(m => m.id === post.memberId) || { name: '멤버', color: 'sage' };
+            return <div className={`bubble-row ${mine ? 'mine' : ''}`} key={post.memberId}>
+              {!mine && <Avatar {...member} />}
+              <div className="bubble-wrap">
+                {!mine && <span className="bubble-name">{member.name} <small>예시</small></span>}
+                <div className="bubble"><span className="chip">{question.choices.find(c => c.id === post.sel)?.short}</span>{post.note && <p className="preserve-lines">{post.note}</p>}</div>
+              </div>
+            </div>;
+          })}
+          {messages.map(m => <div className="bubble-row mine" key={m.id}><div className="bubble-wrap"><div className="bubble"><p className="preserve-lines">{m.text}</p></div></div></div>)}
+          {!posts.length && !messages.length && <Empty title="첫 번째 생각을 나눠주세요" />}
+        </div>
+        <form className="chat-input" onSubmit={send}>
+          <input aria-label="메시지" placeholder="메시지" maxLength={300} value={text} onChange={e => setText(e.target.value)} />
+          <button className="icon-button" aria-label="보내기" disabled={!text.trim()}><Icon name="send" size={20} /></button>
+        </form>
+      </>}
+    </div>
+  </>;
 }
 
-export function GroupMembers({ group, go, onLeave }) {
+export function GroupMembers({ group, profile, questionId, answer, go, onLeave }) {
   const [copied, setCopied] = useState('');
   const [confirmLeave, setConfirmLeave] = useState(false);
-  async function copy() { try { await navigator.clipboard.writeText(group.code); setCopied('초대 코드를 복사했어요.'); } catch { setCopied('복사할 수 없어요. 위 코드를 직접 선택해 복사해주세요.'); } }
-  return <><Header title="멤버와 초대" subtitle={group.name} back={() => go(`groups/${group.id}`)} /><div className="invite-card"><span className="eyebrow">우리 그룹 초대 코드</span><strong>{group.code}</strong><button className="btn-outline" onClick={copy}>코드 복사하기</button><p className="sub" role="status">{copied || '이 브라우저에서 참여 흐름을 체험할 수 있어요.'}</p></div><p className="footnote">다른 기기로의 초대는 서버 연결 후 사용할 수 있어요.</p><Section title={`함께하는 멤버 ${group.members.length + 1}`}><div className="member-row"><Avatar name="나" color="blue" /><strong>나</strong><span className="tag">{group.owner ? '그룹장' : '멤버'}</span></div>{group.members.map((m, i) => <div className="member-row" key={m.id}><Avatar {...m} /><strong>{m.name}</strong><span className="tag">{!group.owner && i === 0 ? '그룹장 · 예시' : '멤버 · 예시'}</span></div>)}</Section><div className="leave-section">{confirmLeave ? <><h3>이 그룹에서 나가시겠어요?</h3><p className="sub">이 그룹에 공유한 내 답변은 내려갑니다. 개인 기록은 남아 있어요.</p><div className="two-actions"><button className="btn-outline" onClick={() => setConfirmLeave(false)}>계속 함께하기</button><button className="btn-outline danger" onClick={() => onLeave(group.id)}>그룹 나가기</button></div></> : <button className="btn-text danger" onClick={() => setConfirmLeave(true)}>그룹 나가기</button>}</div></>;
+  async function copy() { try { await navigator.clipboard.writeText(group.code); setCopied('복사됨'); } catch { setCopied('복사할 수 없어요'); } }
+  return <>
+    <Header back={() => go(`groups/${group.id}${questionId ? `/${questionId}` : ''}`)} title={group.name} />
+    <div className="flow">
+      <div className="invite"><strong>{group.code}</strong><button className="btn-text" onClick={copy}>{copied || '복사'}</button></div>
+      <div className="list">
+        <div className="list-row"><Avatar name={profile.name || '나'} color={profile.color} /><span>{profile.name || '나'}</span><small className="hint">{group.owner ? '그룹장' : '멤버'}</small></div>
+        {group.members.map((m, i) => <div className="list-row" key={m.id}><Avatar {...m} /><span>{m.name}</span><small className="hint">{!group.owner && i === 0 ? '그룹장' : '멤버'} · 예시</small></div>)}
+      </div>
+      {answer?.submitted && <button className="btn-text" onClick={() => go(`question/${questionId}/share`)}>{answer.sharedWith.includes(group.id) ? '공유 관리' : '내 답변 나누기'}</button>}
+      {group.owner && <button className="btn-text" onClick={() => go(`groups/${group.id}/settings`)}>그룹 설정</button>}
+      <div className="actions">{confirmLeave
+        ? <><button className="btn-text danger" onClick={() => onLeave(group.id)}>나가기</button><button className="btn-text" onClick={() => setConfirmLeave(false)}>취소</button></>
+        : <button className="btn-text muted" onClick={() => setConfirmLeave(true)}>그룹 나가기</button>}</div>
+    </div>
+  </>;
 }

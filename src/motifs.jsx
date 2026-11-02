@@ -56,6 +56,18 @@ export function OnboardMotif({ step }) {
   );
 }
 
+// 한 줄기가 점에서 선택지 수만큼 갈라집니다.
+export function BranchMotif({ count }) {
+  const ends = Array.from({ length: count }, (_, i) => count === 1 ? 96 : 24 + (132 * i) / (count - 1));
+  return (
+    <svg className="motif" viewBox="0 0 390 170" width="100%" aria-hidden="true">
+      <path d="M0 100 C 80 99, 140 97, 195 96" fill="none" stroke="#A9C8E4" strokeWidth={2} />
+      {ends.map((y, i) => <Drawn key={i} d={`M195 96 C 255 96, 300 ${y}, 390 ${y}`} color="#C3D9EC" w={1.3} dur={420} delay={120 + i * 80} />)}
+      <circle cx={195} cy={96} r={5} fill="#FDFDFC" stroke="#6B6A64" strokeWidth={1.4} />
+    </svg>
+  );
+}
+
 export function DoneMotif() {
   return (
     <svg className="motif" viewBox="0 0 390 60" width="100%" height={60} preserveAspectRatio="none">

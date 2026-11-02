@@ -1,7 +1,18 @@
-import { SHIFTS } from '../data.js';
 import { dateLabel } from '../questionData.js';
-import { Header, Icon } from '../components/UI.jsx';
 
 export default function RecordDetail({ question, answer, groups, go }) {
-  return <><Header title="그날의 나의 생각" subtitle={`${dateLabel(question.date)} · NO. ${question.no}`} back={() => go('records')} /><span className="tag">{question.category}</span><h2 className="question-title">{question.body}</h2><div className="saved-card"><span className="eyebrow">나의 선택</span><h3>{question.choices.find(c => c.id === answer.sel)?.text}</h3></div><div className="saved-card"><span className="eyebrow">다른 생각을 만나기 전 · 선택한 이유</span><p className="body preserve-lines">{answer.reason || '남긴 선택 이유가 없어요.'}</p></div><div className="saved-card"><span className="eyebrow">다른 생각을 만난 뒤</span><h3>{answer.shift === null ? '아직 돌아보는 중이에요' : SHIFTS[answer.shift]}</h3><p className="body preserve-lines">{answer.note || '남긴 성찰 문장이 없어요.'}</p></div><div className="soft-note"><Icon name="lock" size={19} /><p>{answer.sharedWith.length ? `공유 중: ${groups.filter(g => answer.sharedWith.includes(g.id)).map(g => g.name).join(', ')}` : '아직 그룹에 공유하지 않은 나만의 기록이에요.'}</p></div><div className="stack"><button className="btn-primary" onClick={() => go(`question/${question.id}/share`)}>공유할 그룹 선택하기<Icon name="groups" size={18} /></button><button className="btn-outline full" onClick={() => go(`question/${question.id}/reflect`)}>성찰 이어 쓰기</button><button className="btn-outline full" onClick={() => go(`question/${question.id}/result`)}>결과와 해설 다시 보기</button></div></>;
+  const shared = groups.filter(g => answer.sharedWith.includes(g.id));
+  return <div className="flow">
+    <div className="meta"><time dateTime={question.date}>{dateLabel(question.date)}</time><span>{question.category}</span><span>NO. {question.no}</span></div>
+    <h1 className="question-body" tabIndex={-1}>{question.body}</h1>
+    <div className="record">
+      <strong>{question.choices.find(c => c.id === answer.sel)?.text}</strong>
+      {answer.reason && <p className="preserve-lines">{answer.reason}</p>}
+    </div>
+    <p className="shared">{shared.length ? shared.map(g => g.name).join(' · ') : '나만 보는 기록'}</p>
+    <div className="actions">
+      <button className="btn-primary" onClick={() => go(`question/${question.id}/share`)}>나누기</button>
+      <button className="btn-text" onClick={() => go(`question/${question.id}/result`)}>다시 보기</button>
+    </div>
+  </div>;
 }

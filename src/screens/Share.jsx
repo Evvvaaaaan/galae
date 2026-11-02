@@ -1,9 +1,37 @@
 import { useState } from 'react';
-import { Icon, Avatar, Empty } from '../components/UI.jsx';
+import { Avatar, Empty } from '../components/UI.jsx';
 
 export default function Share({ question, answer, groups, onDraft, onSave, go }) {
   const selected = answer.shareDraft ?? answer.sharedWith;
   const [saved, setSaved] = useState(false);
+  const [copied, setCopied] = useState(false);
+  async function shareOut() {
+    const text = [question.title, question.choices.find(c => c.id === answer.sel)?.text, answer.reason].filter(Boolean).join('\n');
+    const url = `${location.origin}${location.pathname}#/question/${question.id}`;
+    if (navigator.share) {
+      try { await navigator.share({ text, url }); } catch { /* 공유창을 닫은 경우 */ }
+      return;
+    }
+    try { await navigator.clipboard.writeText(`${text}\n${url}`); setCopied(true); } catch { /* 복사할 수 없는 환경 */ }
+  }
+  const external = <button className="btn-secondary" onClick={shareOut}>{copied ? '복사됨' : '외부 공유'}</button>;
   function toggle(id) { onDraft(selected.includes(id) ? selected.filter(g => g !== id) : [...selected, id]); setSaved(false); }
-  return <div className="flow-content"><span className="eyebrow">그룹에 나누기</span><h2 className="flow-title">이 생각을<br />누구와 나눌까요?</h2><p className="sub">선택과 성찰이 선택한 그룹에 함께 보여요.<br />선택을 해제하고 저장하면 공유가 취소돼요.</p><div className="saved-card"><span className="eyebrow">공유할 내용 미리보기 · {question.title}</span><h3>{question.choices.find(c => c.id === answer.sel)?.text}</h3><p className="body preserve-lines">{answer.savedNote || '성찰 없이 선택만 공유해요.'}</p></div>{answer.note !== answer.savedNote && <p className="hint">작성 중인 성찰은 공유되지 않아요. 수정한 문장을 나누려면 먼저 성찰을 저장해주세요.<button className="text-link" onClick={() => go(`question/${question.id}/reflect`)}>성찰 이어 쓰기</button></p>}{groups.length ? <><p className="hint">고른 그룹은 임시 저장돼요. 아래 버튼을 눌러야 공유에 반영됩니다.</p><div className="stack">{groups.map(group => <label className={`share-option ${selected.includes(group.id) ? 'on' : ''}`} key={group.id}><Avatar name={group.name} color={group.color} /><span><strong>{group.name}</strong><small>나 포함 {group.members.length + 1}명에게 보여요</small></span><input type="checkbox" checked={selected.includes(group.id)} onChange={() => toggle(group.id)} /></label>)}</div><button className="btn-primary" onClick={() => { onSave(selected); setSaved(true); }}>{selected.length ? `${selected.length}개 그룹에 공유하기` : '나만 보기로 저장'}<Icon name="check" size={18} /></button>{saved && <div className="success-note" role="status"><strong>{selected.length ? '선택한 그룹에 생각을 나눴어요.' : '나에게만 보이는 기록으로 저장했어요.'}</strong><button className="text-link" onClick={() => go(selected.length ? `groups/${selected[0]}/${question.id}` : 'records')}>{selected.length ? '그룹에서 확인하기' : '나의 기록 보기'}<Icon name="arrow" size={16} /></button></div>}<p className="footnote">‘성찰 저장하기’를 누르면 공유 중인 내용도 함께 바뀝니다.<br />실제 전송 없이 이 브라우저에만 저장됩니다.</p></> : <Empty title="아직 함께하는 그룹이 없어요" body="답변은 잘 저장되어 있어요. 그룹을 만들고 돌아와 나눠보세요." label="그룹 만나보기" onClick={() => go('groups')} />}</div>;
+  return <div className="flow">
+    <h1 className="flow-title" tabIndex={-1}>누구와 나눌까요</h1>
+    <div className="record">
+      <span className="hint">{question.title}</span>
+      <strong>{question.choices.find(c => c.id === answer.sel)?.text}</strong>
+      {answer.reason && <p className="preserve-lines">{answer.reason}</p>}
+    </div>
+    {groups.length ? <>
+      <div className="list">{groups.map(group => <label className={`list-row ${selected.includes(group.id) ? 'on' : ''}`} key={group.id}>
+        <Avatar name={group.name} color={group.color} /><span>{group.name}</span>
+        <small className="hint">{group.members.length + 1}명</small>
+        <input type="checkbox" checked={selected.includes(group.id)} onChange={() => toggle(group.id)} />
+      </label>)}</div>
+      <button className="btn-primary" onClick={() => { onSave(selected); setSaved(true); }}>{saved ? '저장됨' : selected.length ? `${selected.length}개 그룹에 공유하기` : '나만 보기로 저장'}</button>
+      {external}
+      {saved && <button className="btn-text" onClick={() => go(selected.length ? `groups/${selected[0]}/${question.id}` : 'records')}>{selected.length ? '그룹에서 보기' : '나의 기록'}</button>}
+    </> : <><Empty title="아직 함께하는 그룹이 없어요" label="그룹 만나보기" onClick={() => go('groups')} />{external}</>}
+  </div>;
 }

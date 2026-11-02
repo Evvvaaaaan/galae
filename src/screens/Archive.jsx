@@ -1,18 +1,31 @@
 import { useState } from 'react';
 import { QUESTIONS, dateLabel } from '../questionData.js';
-import { Header, Icon, Empty } from '../components/UI.jsx';
+import { Icon, Empty } from '../components/UI.jsx';
+
+const STATUS = ['전체', '미답변', '답변 완료'];
+const CATEGORIES = ['전체 주제', ...new Set(QUESTIONS.map(q => q.category))];
 
 export default function Archive({ answers, openQuestion }) {
   const [query, setQuery] = useState('');
-  const [status, setStatus] = useState('전체');
-  const [category, setCategory] = useState('전체 주제');
-  const filtered = QUESTIONS.filter(q => (category === '전체 주제' || category === q.category) && (status === '전체' || (status === '답변 완료' ? answers[q.id]?.submitted : !answers[q.id]?.submitted)) && `${q.title} ${q.body}`.includes(query.trim()));
+  const [status, setStatus] = useState(STATUS[0]);
+  const [category, setCategory] = useState(CATEGORIES[0]);
+  const filtered = QUESTIONS.filter(q => (category === CATEGORIES[0] || category === q.category) && (status === STATUS[0] || (status === STATUS[2] ? answers[q.id]?.submitted : !answers[q.id]?.submitted)) && `${q.title} ${q.body}`.includes(query.trim()));
   return <>
-    <Header title="질문 모아보기" subtitle="지나간 질문에도 오늘의 나로 답해보세요." />
-    <label className="search-field"><Icon name="search" size={19} /><input aria-label="질문 검색" placeholder="어떤 질문을 찾고 계신가요?" value={query} onChange={e => setQuery(e.target.value)} />{query && <button className="btn-text" aria-label="검색어 지우기" onClick={() => setQuery('')}>×</button>}</label>
-    <div className="filter-tabs" aria-label="답변 상태">{['전체', '미답변', '답변 완료'].map(s => <button key={s} aria-pressed={s === status} className={s === status ? 'selected' : ''} onClick={() => setStatus(s)}>{s}</button>)}</div>
-    <div className="row list-meta"><span className="sub">{filtered.length}개의 갈림길</span><select aria-label="질문 주제" value={category} onChange={e => setCategory(e.target.value)}>{['전체 주제', '정직', '관계', '책임', '나눔'].map(c => <option key={c}>{c}</option>)}</select></div>
-    <div className="archive-list">{filtered.map(q => <button className="archive-card" key={q.id} onClick={() => openQuestion(q.id)}><div className="row"><span className="eyebrow">{dateLabel(q.date)} · NO. {q.no}</span><span className={`status ${answers[q.id]?.submitted ? 'answered' : ''}`}>{answers[q.id]?.submitted ? '답변 완료' : '미답변'}</span></div><h2>{q.title}</h2><p className="sub">{q.body}</p><div className="row"><span className="tag">{q.category}</span><span className="text-link">{answers[q.id]?.submitted ? '내 답변 보기' : '생각 남기기'}<Icon name="arrow" size={16} /></span></div></button>)}</div>
-    {!filtered.length && <Empty title="조건에 맞는 질문이 없어요" body="다른 단어로 검색하거나 필터를 바꿔보세요." label="필터 초기화" onClick={() => { setQuery(''); setStatus('전체'); setCategory('전체 주제'); }} />}
+    <h1 className="visually-hidden" tabIndex={-1}>질문</h1>
+    <label className="search"><Icon name="search" size={18} /><input aria-label="검색" placeholder="검색" value={query} onChange={e => setQuery(e.target.value)} />{query && <button className="btn-text clear" aria-label="검색어 지우기" onClick={() => setQuery('')}>×</button>}</label>
+    <div className="filters">
+      <div className="tabs">{STATUS.map(s => <button key={s} aria-pressed={s === status} onClick={() => setStatus(s)}>{s}</button>)}</div>
+      <select aria-label="주제" value={category} onChange={e => setCategory(e.target.value)}>{CATEGORIES.map(c => <option key={c}>{c}</option>)}</select>
+    </div>
+    {filtered.length ? <div className="list">{filtered.map(q => {
+      const answer = answers[q.id];
+      return <button className="record-row" key={q.id} onClick={() => openQuestion(q.id)}>
+        <div className="meta"><time dateTime={q.date}>{dateLabel(q.date)}</time><span>{q.category}</span><span>NO. {q.no}</span><span className={answer?.submitted ? 'status done' : 'status'}>{answer?.submitted ? '답변 완료' : '미답변'}</span></div>
+        <strong>{q.title}</strong>
+        <p className="record-note">{q.body}</p>
+        {answer?.submitted && <span>{q.choices.find(c => c.id === answer.sel)?.short}</span>}
+      </button>;
+    })}</div>
+      : <Empty title="조건에 맞는 질문이 없어요" label="필터 초기화" onClick={() => { setQuery(''); setStatus(STATUS[0]); setCategory(CATEGORIES[0]); }} />}
   </>;
 }
