@@ -73,7 +73,7 @@ export function GroupDetail({ group, state, go, openQuestion, initialQuestionId,
   return <>
     <Header back={() => go('groups')} title={group.name} action={<button className="icon-button" aria-label="멤버" onClick={() => go(`groups/${group.id}/members/${questionId}`)}><Icon name="more" size={22} /></button>} />
     <div className="flow chat-flow">
-      <div className="row group-meta">
+      <div className="row">
         <span className="avatar-stack">{group.members.slice(0, 3).map(m => <Avatar key={m.id} {...m} />)}<small>{group.members.length + 1}명</small></span>
       </div>
       {group.description && <p className="group-description">{group.description}</p>}
@@ -101,7 +101,7 @@ export function GroupDetail({ group, state, go, openQuestion, initialQuestionId,
             return <div className={`bubble-row ${mine ? 'mine' : ''}`} key={post.memberId}>
               {!mine && <Avatar {...member} />}
               <div className="bubble-wrap">
-                {!mine && <span className="bubble-name">{member.name} <small>예시</small></span>}
+                {!mine && <span className="bubble-name">{member.name}</span>}
                 <div className="bubble"><span className="chip">{question.choices.find(c => c.id === post.sel)?.short}</span>{post.note && <p className="preserve-lines">{post.note}</p>}</div>
               </div>
             </div>;
@@ -128,7 +128,7 @@ export function GroupMembers({ group, profile, questionId, answer, go, onLeave }
       <div className="invite"><strong>{group.code}</strong><button className="btn-text" onClick={copy}>{copied || '복사'}</button></div>
       <div className="list">
         <div className="list-row"><Avatar name={profile.name || '나'} color={profile.color} /><span>{profile.name || '나'}</span><small className="hint">{group.owner ? '그룹장' : '멤버'}</small></div>
-        {group.members.map((m, i) => <div className="list-row" key={m.id}><Avatar {...m} /><span>{m.name}</span><small className="hint">{!group.owner && i === 0 ? '그룹장' : '멤버'} · 예시</small></div>)}
+        {group.members.map((m, i) => <div className="list-row" key={m.id}><Avatar {...m} /><span>{m.name}</span><small className="hint">{!group.owner && i === 0 ? '그룹장' : '멤버'}</small></div>)}
       </div>
       {answer?.submitted && <button className="btn-text" onClick={() => go(`question/${questionId}/share`)}>{answer.sharedWith.includes(group.id) ? '공유 관리' : '내 답변 나누기'}</button>}
       {group.owner && <button className="btn-text" onClick={() => go(`groups/${group.id}/settings`)}>그룹 설정</button>}

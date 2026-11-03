@@ -37,7 +37,7 @@ export default function Records({ answers, comments, profile, go, openQuestion }
       </button>;
     })}</div> : <Empty title="아직 남긴 댓글이 없어요" label="생각 보러 가기" onClick={() => go('feed')} />
     : visible.length ? <div className="list">{visible.map(q => <button className="record-row" key={q.id} onClick={() => go(`records/${q.id}`)}>
-      <div className="meta"><time dateTime={q.date}>{dateLabel(q.date)}</time><span>{q.category}</span><span>{answers[q.id].completed ? '완료' : '답변 완료'}</span></div>
+      <div className="meta"><time dateTime={q.date}>{dateLabel(q.date)}</time><span>NO. {q.no}</span></div>
       <strong>{q.title}</strong>
       <span>{q.choices.find(c => c.id === answers[q.id].sel)?.short}</span>
     </button>)}</div>

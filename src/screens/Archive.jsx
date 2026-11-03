@@ -20,7 +20,7 @@ export default function Archive({ answers, openQuestion }) {
     {filtered.length ? <div className="list">{filtered.map(q => {
       const answer = answers[q.id];
       return <button className="record-row" key={q.id} onClick={() => openQuestion(q.id)}>
-        <div className="meta"><time dateTime={q.date}>{dateLabel(q.date)}</time><span>{q.category}</span><span>NO. {q.no}</span><span className={answer?.submitted ? 'status done' : 'status'}>{answer?.submitted ? '답변 완료' : '미답변'}</span></div>
+        <div className="meta"><time dateTime={q.date}>{dateLabel(q.date)}</time><span>NO. {q.no}</span></div>
         <strong>{q.title}</strong>
         <p className="record-note">{q.body}</p>
         {answer?.submitted && <span>{q.choices.find(c => c.id === answer.sel)?.short}</span>}

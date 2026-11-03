@@ -16,7 +16,7 @@ export default function Comments({ question, choice, comments, answer, profile }
       {mine && <li><Avatar {...me} /><div><span className="bubble-name">{me.name}</span><p className="preserve-lines">{answer.reason}</p></div></li>}
       {comments.map((item, i) => {
         const member = MEMBERS[i % MEMBERS.length];
-        return <li key={item}><Avatar {...member} /><div><span className="bubble-name">{member.name} <small>예시</small></span><p>{item}</p></div></li>;
+        return <li key={item}><Avatar {...member} /><div><span className="bubble-name">{member.name}</span><p>{item}</p></div></li>;
       })}
     </ul>
   </div>;
