@@ -319,6 +319,10 @@ label.list-row { cursor: pointer; }
 .btn-primary:active:not(:disabled), .btn-secondary:active, .btn-login:active:not(:disabled) { opacity: .7; }
 .choice:active:not(:disabled) { background: var(--sel-bg); }
 .list-row:active:not(:disabled):not(div), .record-row:active:not(:disabled), .group-row:active, .report-link:active, .result button.row:active { opacity: .55; }
+.icon-button:active:not(:disabled), .btn-text:active, .tabs button:active, .bottom-nav a:active, .calendar button:active:not(:disabled) { opacity: .5; }
+
+/* 질문 흐름 하단 고정 버튼 */
+.cta-bar { position: sticky; bottom: -40px; margin: 0 -28px -40px; padding: 24px 28px 16px; background: linear-gradient(to bottom, transparent, var(--bg) 20px); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }

@@ -10,7 +10,7 @@ export default function Result({ question, sel, onOpen, next }) {
       <button className="row" onClick={() => onOpen(c.id)}><span>{c.short}</span><span className="pct"><strong>{c.pct}%</strong><Icon name="next" size={16} /></span></button>
       <div className="track"><div className="bar" style={{ width: grown ? `${c.pct}%` : 0, transitionDelay: `${i * 80}ms` }} /></div>
     </div>)}</div>
-    <p className="hint">예시 · {question.participants.toLocaleString()}명</p>
-    <button className="btn-primary" onClick={next}>다음</button>
+    <p className="hint">{question.participants.toLocaleString()}명</p>
+    <div className="cta-bar"><button className="btn-primary" onClick={next}>다음</button></div>
   </div>;
 }

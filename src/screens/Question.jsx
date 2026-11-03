@@ -9,6 +9,6 @@ export default function Question({ question, answer, onPick, onReason, onSubmit 
       <textarea className="note-input" aria-label="선택한 이유" rows={3} maxLength={500} placeholder="이유" value={answer.reason} readOnly={answer.submitted} onChange={e => onReason(e.target.value)} />
       {!answer.submitted && <span className="count">{answer.reason.length}/500</span>}
     </div>}
-    <button className="btn-primary" disabled={answer.sel === null} onClick={onSubmit}>{answer.submitted ? '다음' : '선택하기'}</button>
+    <div className="cta-bar"><button className="btn-primary" disabled={answer.sel === null} onClick={onSubmit}>{answer.submitted ? '다음' : '선택하기'}</button></div>
   </div>;
 }

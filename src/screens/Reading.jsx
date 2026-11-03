@@ -6,6 +6,6 @@ export default function Reading({ question, next }) {
       <p className="reading-body">{p.body}</p>
       {p.verse && <figure className="verse"><blockquote>{p.verse}</blockquote><figcaption>{p.ref}</figcaption></figure>}
     </section>)}
-    <button className="btn-primary" onClick={next}>다음</button>
+    <div className="cta-bar"><button className="btn-primary" onClick={next}>다음</button></div>
   </div>;
 }
