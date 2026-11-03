@@ -123,9 +123,9 @@ export default function App() {
     }
   } else if (section === 'settings' && !requestedStep) {
     active = null;
-    if (!id) content = <><Header back={() => go(lastTab)} /><Settings profile={state.profile} go={go} onLogout={() => { go('today'); setWelcome('login'); setState(s => ({ ...s, started: false })); }} onReset={() => setState(s => ({ ...s, answers: {} }))} /></>;
-    else if (id === 'profile') content = <><Header back={() => go('settings')} /><ProfileForm profile={state.profile} onSave={profile => { setState(s => ({ ...s, profile })); go('settings'); }} /></>;
-    else if (id === 'sources') content = <><Header back={() => go('settings')} /><Sources /></>;
+    if (!id) content = <><Header back={() => go(lastTab)} title="설정" /><Settings profile={state.profile} go={go} onLogout={() => { go('today'); setWelcome('login'); setState(s => ({ ...s, started: false })); }} onReset={() => setState(s => ({ ...s, answers: {} }))} /></>;
+    else if (id === 'profile') content = <><Header back={() => go('settings')} title="프로필" /><ProfileForm profile={state.profile} onSave={profile => { setState(s => ({ ...s, profile })); go('settings'); }} /></>;
+    else if (id === 'sources') content = <><Header back={() => go('settings')} title="출처" /><Sources /></>;
     else if (id === 'onboard') content = <Onboard go={() => go('settings')} />;
   } else if (section === 'report' && !id) { active = 'records'; content = <><Header back={() => go('records')} /><Report answers={state.answers} go={go} /></>; }
   const tabRoot = state.started && (!id || (section === 'feed' && content)) && ['today', 'archive', 'feed', 'groups', 'records'].includes(section);

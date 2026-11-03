@@ -8,7 +8,6 @@ const COLOR_LABELS = { sage: '초록', blue: '파랑', peach: '살구', lilac: '
 export function Settings({ profile, go, onLogout, onReset }) {
   const [confirmReset, setConfirmReset] = useState(false);
   return <div className="flow">
-    <h1 className="visually-hidden" tabIndex={-1}>설정</h1>
     <div className="list">
       <button className="list-row" onClick={() => go('settings/profile')}><Avatar name={profile.name || '나'} color={profile.color} /><span>{profile.name || '나'}</span></button>
       <button className="list-row" disabled>알림</button>
@@ -49,7 +48,6 @@ export function ProfileForm({ profile, onSave }) {
 export function Sources() {
   const sources = [...new Map(TOPICS.flatMap(t => t.sources).map(s => [s.label, s])).values()];
   return <div className="flow">
-    <h1 className="visually-hidden" tabIndex={-1}>출처</h1>
     <ul className="feed-sources source-list">
       <li>성경 · 개역한글</li>
       {sources.map(s => <li key={s.label}>{s.url ? <a href={s.url} target="_blank" rel="noreferrer">{s.label}</a> : s.label}</li>)}

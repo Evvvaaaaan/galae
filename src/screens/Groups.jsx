@@ -38,9 +38,8 @@ export function GroupForm({ mode, group, state, onCreate, onJoin, onSave, go }) 
     else onJoin(group.id);
   }
   return <>
-    <Header back={() => go(editing ? `groups/${group.id}/members` : 'groups')} />
+    <Header back={() => go(editing ? `groups/${group.id}/members` : 'groups')} title={editing ? '그룹 설정' : creating ? '그룹 만들기' : '그룹 참여'} />
     <form className="flow" onSubmit={submit}>
-      <h1 className="visually-hidden" tabIndex={-1}>{editing ? '그룹 설정' : creating ? '그룹 만들기' : '그룹 참여'}</h1>
       {creating && <>
         <div className="group-preview"><Avatar name={value.trim() || '갈'} color={color} /></div>
         <div className="color-picker">{COLORS.map(([c, label]) => <button type="button" key={c} className={c} aria-label={label} aria-pressed={color === c} onClick={() => setColor(c)} />)}</div>
