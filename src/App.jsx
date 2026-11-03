@@ -129,12 +129,12 @@ export default function App() {
     else if (id === 'onboard') content = <Onboard go={() => go('settings')} />;
   } else if (section === 'report' && !id) { active = 'records'; content = <><Header back={() => go('records')} /><Report answers={state.answers} go={go} /></>; }
   const tabRoot = state.started && (!id || (section === 'feed' && content)) && ['today', 'archive', 'feed', 'groups', 'records'].includes(section);
-  const myPage = <button className="icon-button my-page" aria-label="설정" onClick={() => go('settings')}><Icon name="me" size={22} /></button>;
+  const tabHeader = <header className="tab-header"><img src="/logo.png" alt="galaE" /><button className="icon-button" aria-label="설정" onClick={() => go('settings')}><Icon name="me" size={22} /></button></header>;
   if (!content) content = <div className="flow"><h1 className="flow-title" tabIndex={-1}>찾을 수 없어요</h1><button className="btn-primary" onClick={() => go('today')}>오늘로</button></div>;
 
   return <div className="frame">
     <main ref={mainRef} className={`screen ${state.started && route !== 'settings/onboard' ? 'app-screen' : ''} ${section === 'feed' && state.started ? 'flush' : ''}`} id="main-content" key={state.started ? route : welcome}>
-      {storageError && <p className="form-error" role="alert">브라우저에 저장하지 못했어요</p>}{tabRoot && myPage}{content}
+      {storageError && <p className="form-error" role="alert">브라우저에 저장하지 못했어요</p>}{tabRoot && tabHeader}{content}
     </main>{state.started && route !== 'settings/onboard' && <BottomNav active={active} go={go} />}
   </div>;
 }
