@@ -86,16 +86,6 @@ export function DoneMotif() {
   );
 }
 
-export function RecordIcon() {
-  return (
-    <svg viewBox="0 0 20 20" width={18} height={18} style={{ display: 'block' }}>
-      <rect x={3.25} y={4.25} width={13.5} height={12.5} rx={2.5} fill="none" stroke="#B4B2A9" strokeWidth={1} />
-      <path d="M3.25 8.25h13.5M7.5 3v2.6M12.5 3v2.6" fill="none" stroke="#B4B2A9" strokeWidth={1} strokeLinecap="round" />
-      <circle cx={10} cy={12.4} r={1.1} fill="#B4B2A9" />
-    </svg>
-  );
-}
-
 const BRAND_PATHS = {
   kakao: ['M8 2.6c-3.2 0-5.8 2-5.8 4.5 0 1.6 1.1 3 2.7 3.8l-.7 2.4 2.7-1.6c.4.06.7.08 1.1.08 3.2 0 5.8-2 5.8-4.6S11.2 2.6 8 2.6Z'],
   google: ['M13.2 8.1c0 3-2.2 5-5.2 5a5.1 5.1 0 1 1 3.5-8.8', 'M8.2 8.1h5'],
