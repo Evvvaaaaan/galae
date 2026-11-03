@@ -1,8 +1,7 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import PARADOXES from '../../content/paradoxes.json';
-import { DoneMotif } from '../motifs.jsx';
-import { Avatar, Icon } from '../components/UI.jsx';
+import { Avatar, Empty, Icon } from '../components/UI.jsx';
 import { MEMBERS, SAMPLE_COMMENTS, TODAY } from '../questionData.js';
 
 // 검증을 마친 주제만 보입니다. 개발 서버에서는 검증 전 주제도 확인할 수 있습니다.
@@ -45,7 +44,7 @@ export default function Feed({ initialTopic, comments, likes, profile, onComment
           </footer>
         </article>
       </section>)}
-      <div className="feed-page feed-end"><DoneMotif /></div>
+      <div className="feed-page feed-end"><Empty title="모든 생각을 다 보셨어요" /></div>
     </div>
     {open && <Comments key={open} frame={feedRef.current.closest('.frame')} topic={TOPICS.find(t => t.id === open)} comments={comments.filter(c => c.topicId === open)} likes={likes} profile={profile} onComment={onComment} onLike={onLike} onClose={() => setOpen(null)} />}
   </>;

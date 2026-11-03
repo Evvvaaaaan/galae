@@ -157,10 +157,10 @@ label.list-row { cursor: pointer; }
 .motif { display: block; }
 
 /* 생각 피드 */
-.feed { height: 100%; overflow-y: auto; scroll-snap-type: y mandatory; scrollbar-width: none; background: var(--bar-track); }
+.feed { height: 100%; overflow-y: auto; scroll-snap-type: y mandatory; scrollbar-width: none; background: #FFFFFF; }
 .feed::-webkit-scrollbar, .screen::-webkit-scrollbar { display: none; }
 .feed-page { min-height: 100%; display: flex; flex-direction: column; padding: calc(72px + env(safe-area-inset-top)) 12px 12px; scroll-snap-align: start; scroll-snap-stop: always; }
-.feed-card { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 24px 22px 14px; border-radius: 22px; background: var(--bg); box-shadow: 0 6px 28px #2b4a630d; }
+.feed-card { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 24px 22px 14px; border-radius: 22px; background: var(--bar-track) url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='p' x='0' y='0' width='100%' height='100%'><feTurbulence type='fractalNoise' baseFrequency='0.1' numOctaves='4' seed='3' stitchTiles='stitch' result='n'/><feDiffuseLighting in='n' surfaceScale='1.3' lighting-color='%23fff' result='l'><feDistantLight azimuth='225' elevation='58'/></feDiffuseLighting><feColorMatrix in='l' values='0 0 0 0 0.35 0 0 0 0 0.33 0 0 0 0 0.3 -1 0 0 0 0.9'/></filter><rect width='100%' height='100%' filter='url(%23p)' opacity='0.45'/></svg>"); box-shadow: 0 6px 28px #2b4a630d; }
 .feed-category { margin-top: auto; font-size: 12px; color: var(--key); letter-spacing: .02em; }
 .feed-card h2 { margin: -6px 0 4px; font-family: var(--serif); font-size: 23px; font-weight: 400; line-height: 1.4; letter-spacing: -.02em; }
 .feed-card p { font-family: var(--serif); font-size: 15px; line-height: 1.75; text-wrap: pretty; word-break: keep-all; }
@@ -169,7 +169,7 @@ label.list-row { cursor: pointer; }
 .feed-footer { display: flex; align-items: center; gap: 12px; margin-top: auto; padding-top: 12px; }
 .feed-sources { flex: 1; min-width: 0; padding: 0; list-style: none; font-size: 11px; line-height: 1.7; color: var(--ink-hint); }
 .feed-sources a { color: inherit; text-underline-offset: 3px; }
-.feed-end { align-items: stretch; padding: 0; background: var(--bg); }
+.feed-end { justify-content: center; }
 .feed-actions { display: flex; flex-shrink: 0; margin-right: -8px; }
 .feed-actions .icon-button { margin: 0; color: var(--ink-sub); }
 .sheet-backdrop { position: absolute; inset: 0; border: 0; background: #33322f26; z-index: 6; animation: fadeIn 200ms ease-out both; }
