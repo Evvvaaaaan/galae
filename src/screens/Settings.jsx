@@ -34,12 +34,14 @@ export function Settings({ profile, go, onLogout, onReset }) {
 
 export function ProfileForm({ profile, onSave }) {
   const [name, setName] = useState(profile.name);
+  const [handle, setHandle] = useState(profile.handle);
   const [color, setColor] = useState(profile.color);
-  return <form className="flow" onSubmit={e => { e.preventDefault(); onSave({ name: name.trim(), color }); }}>
-    <h1 className="visually-hidden" tabIndex={-1}>프로필</h1>
+  return <form className="flow" onSubmit={e => { e.preventDefault(); onSave({ name: name.trim(), handle, color }); }}>
     <div className="group-preview"><Avatar name={name.trim() || '나'} color={color} /></div>
     <div className="color-picker">{PROFILE_COLORS.map(c => <button type="button" key={c} className={c} aria-label={COLOR_LABELS[c]} aria-pressed={color === c} onClick={() => setColor(c)} />)}</div>
     <input className="note-input" aria-label="이름" placeholder="이름" maxLength={10} value={name} onChange={e => setName(e.target.value)} />
+    {/* 아이디는 영문 소문자, 숫자, 마침표, 밑줄만 씁니다. */}
+    <input className="note-input" aria-label="아이디" placeholder="아이디" maxLength={20} autoCapitalize="none" autoCorrect="off" spellCheck={false} value={handle} onChange={e => setHandle(e.target.value.toLowerCase().replace(/[^a-z0-9._]/g, ''))} />
     <button className="btn-primary">저장</button>
   </form>;
 }

@@ -42,7 +42,7 @@ export const QUESTIONS = [
 ];
 
 export const TODAY = QUESTIONS[0];
-export const MEMBERS = [{ id: 'm1', name: '서연', color: 'peach' }, { id: 'm2', name: '민준', color: 'blue' }, { id: 'm3', name: '하은', color: 'sage' }, { id: 'm4', name: '지우', color: 'lilac' }];
+export const MEMBERS = [{ id: 'm1', name: '서연', handle: 'seoyeon.k', color: 'peach' }, { id: 'm2', name: '민준', handle: 'minjun_02', color: 'blue' }, { id: 'm3', name: '하은', handle: 'haeun', color: 'sage' }, { id: 'm4', name: '지우', handle: 'jiwoo.day', color: 'lilac' }];
 export const DEMO_GROUPS = [
   { id: 'g1', name: '한 걸음 청년부', description: '서로의 생각을 듣고, 함께 한 걸음씩 자라가요.', code: 'GARA01', color: 'sage', owner: false, members: MEMBERS.slice(0, 3) },
   { id: 'g2', name: '목요일의 작은 모임', description: '목요일마다 나누는 우리의 질문과 이야기.', code: 'GARA26', color: 'peach', owner: false, members: MEMBERS.slice(2) },
@@ -54,15 +54,15 @@ export const SAMPLE_SHARES = [
   { groupId: 'g2', questionId: 'q037', memberId: 'm3', sel: 1, note: '먼저 친구의 이야기를 들어보고 싶어요.' },
 ];
 export const SAMPLE_COMMENTS = [
-  { topicId: 'p001', memberId: 'm1', text: '저도 몇 년 전과는 많이 달라졌는데, 그래도 같은 사람이라고 느껴요.' },
-  { topicId: 'p001', memberId: 'm2', text: '기억이 이어져 있다면 같은 배라고 볼 수 있지 않을까요?' },
-  { topicId: 'p002', memberId: 'm3', text: '숫자만으로 정하기에는 마음이 너무 무거워요.' },
-  { topicId: 'p002', memberId: 'm4', text: '레버를 당기는 것과 그냥 두는 것이 정말 다른지 계속 생각하게 돼요.' },
-  { topicId: 'p003', memberId: 'm2', text: '끝없이 나눌 수 있다는 것과 결국 따라잡는다는 것이 둘 다 맞는 것 같아 신기해요.' },
-  { topicId: 'p003', memberId: 'm1', text: '작은 걸음이 쌓이면 결국 닿는다는 이야기로도 읽혔어요.' },
-  { topicId: 'p004', memberId: 'm4', text: '언제부터 어른이 되었는지도 비슷한 질문 같아요.' },
-  { topicId: 'p004', memberId: 'm3', text: '경계가 흐릿해도 차이는 분명히 있다고 생각해요.' },
-  { topicId: 'p005', memberId: 'm1', text: '저도 고르지 못하고 미룬 적이 많아서 공감됐어요.' },
-  { topicId: 'p005', memberId: 'm2', text: '어느 쪽이든 고르는 것 자체가 이유가 될 수도 있겠어요.' },
+  { id: 's1', likes: 12, topicId: 'p001', memberId: 'm1', text: '저도 몇 년 전과는 많이 달라졌는데, 그래도 같은 사람이라고 느껴요.' },
+  { id: 's2', likes: 5, topicId: 'p001', memberId: 'm2', text: '기억이 이어져 있다면 같은 배라고 볼 수 있지 않을까요?' },
+  { id: 's3', likes: 8, topicId: 'p002', memberId: 'm3', text: '숫자만으로 정하기에는 마음이 너무 무거워요.' },
+  { id: 's4', likes: 3, topicId: 'p002', memberId: 'm4', text: '레버를 당기는 것과 그냥 두는 것이 정말 다른지 계속 생각하게 돼요.' },
+  { id: 's5', likes: 6, topicId: 'p003', memberId: 'm2', text: '끝없이 나눌 수 있다는 것과 결국 따라잡는다는 것이 둘 다 맞는 것 같아 신기해요.' },
+  { id: 's6', likes: 2, topicId: 'p003', memberId: 'm1', text: '작은 걸음이 쌓이면 결국 닿는다는 이야기로도 읽혔어요.' },
+  { id: 's7', likes: 4, topicId: 'p004', memberId: 'm4', text: '언제부터 어른이 되었는지도 비슷한 질문 같아요.' },
+  { id: 's8', likes: 7, topicId: 'p004', memberId: 'm3', text: '경계가 흐릿해도 차이는 분명히 있다고 생각해요.' },
+  { id: 's9', likes: 9, topicId: 'p005', memberId: 'm1', text: '저도 고르지 못하고 미룬 적이 많아서 공감됐어요.' },
+  { id: 's10', likes: 1, topicId: 'p005', memberId: 'm2', text: '어느 쪽이든 고르는 것 자체가 이유가 될 수도 있겠어요.' },
 ];
 export const dateLabel = date => `${Number(date.slice(5, 7))}월 ${Number(date.slice(8, 10))}일`;

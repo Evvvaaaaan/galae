@@ -5,7 +5,7 @@ export const STORAGE_KEY = 'garae.frontend.v1';
 export const STEPS = ['answer', 'result', 'reading', 'done', 'share'];
 export const emptyAnswer = () => ({ sel: null, reason: '', submitted: false, completed: false, sharedWith: [], shareDraft: null, lastStep: null });
 export const PROFILE_COLORS = ['sage', 'blue', 'peach', 'lilac'];
-export const initialState = () => ({ started: false, answers: {}, groups: DEMO_GROUPS, joined: ['g1'], profile: { name: '', color: 'blue' }, messages: [], comments: [] });
+export const initialState = () => ({ started: false, answers: {}, groups: DEMO_GROUPS, joined: ['g1'], profile: { name: '', handle: '', color: 'blue' }, messages: [], comments: [], likes: [] });
 
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const text = (value, fallback = '') => typeof value === 'string' ? value : fallback;
@@ -49,10 +49,12 @@ export function loadState() {
         joined: strings(saved.joined).filter(id => groups.some(g => g.id === id)),
         profile: {
           name: text(saved.profile?.name).slice(0, 10),
+          handle: /^[a-z0-9._]{1,20}$/.test(saved.profile?.handle) ? saved.profile.handle : '',
           color: PROFILE_COLORS.includes(saved.profile?.color) ? saved.profile.color : 'blue',
         },
         messages: (Array.isArray(saved.messages) ? saved.messages : []).filter(m => isObject(m) && typeof m.id === 'string' && typeof m.text === 'string' && m.text && groups.some(g => g.id === m.groupId) && QUESTIONS.some(q => q.id === m.questionId)),
         comments: (Array.isArray(saved.comments) ? saved.comments : []).filter(c => isObject(c) && typeof c.id === 'string' && typeof c.text === 'string' && c.text && PARADOXES.some(p => p.id === c.topicId)),
+        likes: (Array.isArray(saved.likes) ? saved.likes : []).filter(id => typeof id === 'string'),
       };
     }
   } catch { /* 저장 데이터가 없거나 손상되었으면 데모를 새로 시작합니다. */ }
@@ -108,8 +110,12 @@ export function addMessage(state, groupId, questionId, value) {
   return { ...state, messages: [...state.messages, { id: crypto.randomUUID(), groupId, questionId, text }] };
 }
 
-export function addComment(state, topicId, value) {
+export function addComment(state, topicId, value, parentId) {
   const text = value.trim();
   if (!text) return state;
-  return { ...state, comments: [...state.comments, { id: crypto.randomUUID(), topicId, text }] };
+  return { ...state, comments: [...state.comments, { id: crypto.randomUUID(), topicId, text, ...(parentId && { parentId }) }] };
+}
+
+export function toggleLike(state, id) {
+  return { ...state, likes: state.likes.includes(id) ? state.likes.filter(l => l !== id) : [...state.likes, id] };
 }

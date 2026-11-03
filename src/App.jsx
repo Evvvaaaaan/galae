@@ -17,7 +17,7 @@ import { Settings, ProfileForm, Sources } from './screens/Settings.jsx';
 import { Groups, GroupForm, GroupDetail, GroupMembers } from './screens/Groups.jsx';
 import { BottomNav, Header, Icon } from './components/UI.jsx';
 import { QUESTIONS, TODAY, dateLabel } from './questionData.js';
-import { STORAGE_KEY, STEPS, loadState, emptyAnswer, updateAnswer, completeAnswer, questionStep, questionRoute, rememberQuestionRoute, previousStep, leaveGroup, addMessage, addComment } from './store.js';
+import { STORAGE_KEY, STEPS, loadState, emptyAnswer, updateAnswer, completeAnswer, questionStep, questionRoute, rememberQuestionRoute, previousStep, leaveGroup, addMessage, addComment, toggleLike } from './store.js';
 
 const routeFromLocation = () => location.hash.replace(/^#\/?/, '') || 'today';
 // 진행 선 세 칸: 선택 / 결과·다른 생각 / 확장하기
@@ -81,7 +81,7 @@ export default function App() {
   if (!state.started) content = welcome === 'login' ? <Login go={welcomeGo} /> : <Onboard go={welcomeGo} />;
   else if (section === 'today' && !id) content = <Today state={state} go={go} openQuestion={openQuestion} />;
   else if (section === 'archive' && !id) content = <Archive answers={state.answers} openQuestion={openQuestion} />;
-  else if (section === 'feed' && (!id || TOPICS.some(t => t.id === id))) content = <Feed key={id} initialTopic={id} comments={state.comments} profile={state.profile} onComment={(topicId, text) => setState(s => addComment(s, topicId, text))} />;
+  else if (section === 'feed' && (!id || TOPICS.some(t => t.id === id))) content = <Feed key={id} initialTopic={id} comments={state.comments} likes={state.likes} profile={state.profile} onComment={(topicId, text, parentId) => setState(s => addComment(s, topicId, text, parentId))} onLike={id => setState(s => toggleLike(s, id))} />;
   else if (section === 'question' && (!extra || requestedStep === 'result') && (!requestedStep || STEPS.includes(requestedStep))) {
     const question = QUESTIONS.find(q => q.id === id);
     const from = origin?.split('/')[0];

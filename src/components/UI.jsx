@@ -10,6 +10,7 @@ export function Icon({ name, size = 22 }) {
     back: 'm14 5-7 7 7 7', next: 'm10 5 7 7-7 7', arrow: 'M4 12h16m-6-6 6 6-6 6',
     check: 'm5 12 4 4L19 6', send: 'M5 12h14m-6-6 6 6-6 6', settings: 'M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4', more: 'M5 12h.01M12 12h.01M19 12h.01',
     comment: 'M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z', share: 'M12 15V3M7 8l5-5 5 5M5 13v7h14v-7',
+    up: 'M12 19V5m-6 6 6-6 6 6', close: 'M6 6l12 12M18 6 6 18',
   };
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[name] || paths.arrow} /></svg>;
 }
