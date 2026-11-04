@@ -135,7 +135,7 @@ label.list-row { cursor: pointer; }
 .onboard-next { width: auto; padding: 13px 26px; }
 
 /* 오늘 */
-.today { display: flex; flex-direction: column; gap: 20px; padding-bottom: 24px; }
+.today { display: flex; flex-direction: column; gap: 16px; padding-bottom: 24px; }
 .today-card { position: relative; margin: 0; border: 1px solid var(--line); border-radius: 22px; background: var(--bg); overflow: hidden; }
 .branch { position: relative; height: 168px; background: var(--sel-bg); overflow: hidden; }
 .today-card-body { display: flex; flex-direction: column; gap: 14px; padding: 18px 22px 22px; }
@@ -150,10 +150,10 @@ label.list-row { cursor: pointer; }
 .today .list-row > .avatar { width: 38px; height: 38px; border-radius: 13px; font-size: 14px; }
 .today .list-row > span:nth-child(2) { display: flex; flex-direction: column; gap: 3px; }
 .today .list-row strong { font-size: 15px; font-weight: 500; }
-.today .past { border-top: 1px solid var(--line); }
-.today .past .record-row { padding: 18px 0; border-bottom: 1px solid var(--line); }
+.today-box { border: 1px solid var(--line); border-radius: 22px; padding: 6px 22px; }
+.today-box .list-row + .list-row { border-top: 1px solid var(--line); }
+.today .past .record-row { padding: 14px 0; border-bottom: 0; }
 .today .past strong { font-size: 16px; line-height: 1.6; }
-.today .past time { font-size: 12px; letter-spacing: .04em; color: var(--ink-faint); }
 .today .list-row { padding: 12px 0; border-bottom: 0; }
 .motif { display: block; }
 
