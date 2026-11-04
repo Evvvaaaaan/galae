@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { TODAY, MEMBERS, SAMPLE_SHARES, dateLabel } from '../questionData.js';
+import { joinedGroups } from '../store.js';
 import { Avatar, Icon } from '../components/UI.jsx';
 import { WorldTree } from '../motifs.jsx';
 import { addDays, answeredDays, currentStreak, earnedList } from '../achievements.js';
@@ -37,7 +38,7 @@ function Streak({ answers, today }) {
 
 export default function Today({ state, go, openQuestion }) {
   const answer = state.answers[TODAY.id];
-  const groups = state.groups.filter(g => state.joined.includes(g.id));
+  const groups = joinedGroups(state);
   const answeredCount = Object.values(state.answers).filter(a => a.submitted).length;
   // 답한 뒤 홈에 처음 돌아왔을 때만 새 선을 그립니다.
   const [grow] = useState(() => answeredCount > readSeen());

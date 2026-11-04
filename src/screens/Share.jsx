@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Avatar, Empty, shareOrCopy } from '../components/UI.jsx';
+import { choiceOf } from '../questionData.js';
 
 export default function Share({ question, answer, groups, onDraft, onSave, go }) {
   const selected = answer.shareDraft ?? answer.sharedWith;
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
   async function shareOut() {
-    const text = [question.title, question.choices.find(c => c.id === answer.sel)?.text, answer.reason].filter(Boolean).join('\n');
+    const text = [question.title, choiceOf(question, answer.sel)?.text, answer.reason].filter(Boolean).join('\n');
     const url = `${location.origin}${location.pathname}#/question/${question.id}`;
     if (await shareOrCopy({ text, url }, `${text}\n${url}`)) setCopied(true);
   }
@@ -16,7 +17,7 @@ export default function Share({ question, answer, groups, onDraft, onSave, go })
     <h1 className="flow-title" tabIndex={-1}>누구와 나눌까요</h1>
     <div className="record">
       <span className="hint">{question.title}</span>
-      <strong>{question.choices.find(c => c.id === answer.sel)?.text}</strong>
+      <strong>{choiceOf(question, answer.sel)?.text}</strong>
       {answer.reason && <p className="preserve-lines">{answer.reason}</p>}
     </div>
     {groups.length ? <>

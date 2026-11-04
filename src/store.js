@@ -9,6 +9,7 @@ export const COLOR_LABELS = { sage: '초록', blue: '파랑', peach: '살구', l
 export const PROFILE_COLORS = Object.keys(COLOR_LABELS);
 // 아이디는 영문 소문자, 숫자, 마침표, 밑줄만 씁니다.
 export const cleanHandle = value => value.toLowerCase().replace(/[^a-z0-9._]/g, '');
+export const joinedGroups = state => state.groups.filter(g => state.joined.includes(g.id));
 // 이름이 없으면 '나'로 보여 줍니다.
 export const myself = profile => ({ name: profile.name || '나', handle: profile.handle || profile.name || '나', color: profile.color, photo: profile.photo });
 export const initialState = () => ({ started: false, answers: {}, groups: DEMO_GROUPS, joined: ['g1', 'g2'], profile: { name: '', handle: '', bio: '', photo: '', color: 'blue' }, messages: [], comments: [], likes: [], achieved: {} });

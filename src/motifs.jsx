@@ -119,6 +119,12 @@ function drawThread(i) {
 const threads = [];
 const thread = i => threads[i] ??= drawThread(i);
 
+// i번 선 끝의 열매 고리입니다. 고리 가장자리가 가지 끝에 닿도록 반지름만큼 밀어 둡니다.
+function ringAt(i) {
+  const { tip, a } = thread(i);
+  return { cx: f(tip[0] + Math.cos(a) * 3.6), cy: f(tip[1] + Math.sin(a) * 3.6), r: 3.6, fill: 'none' };
+}
+
 // 선보다 열매가 많으면 남는 열매는 선이 더 생길 때까지 달지 않습니다.
 function fruitThreads(fruits, count) {
   const used = new Set();
@@ -146,8 +152,7 @@ function incoming(i) {
 }
 
 function SeedTree() {
-  const { tip, a } = thread(1);
-  const fruit = { cx: f(tip[0] + Math.cos(a) * 3.6), cy: f(tip[1] + Math.sin(a) * 3.6), r: 3.6, fill: 'none' };
+  const fruit = ringAt(1);
   const end = SEED_IN + SEED_GAP * (SEED_COUNT - 3) + 900;
   return (
     <svg className="seed-tree" viewBox="0 10 344 230" width="100%" aria-hidden="true">
@@ -183,9 +188,7 @@ export function WorldTree({ count, fruits = [], grow = false }) {
   // 이름이 떠 있는 동안(첫 이름이 떠오를 때부터 마지막 이름이 사라질 때까지) 나무를 잠깐 흐리게 해 새 열매에 시선을 모읍니다.
   const dim = fresh.length ? { animationDelay: `${at(fresh[0])}ms`, animationDuration: `${(fresh.length - 1) * FRUIT_GAP + 3600}ms` } : undefined;
   const placed = fruitThreads(fruits.length, count).map((ti, k) => {
-    const { tip, a } = thread(ti);
-    // 고리 가장자리가 가지 끝에 닿도록 반지름만큼 밀어 둡니다.
-    const c = { cx: f(tip[0] + Math.cos(a) * 3.6), cy: f(tip[1] + Math.sin(a) * 3.6), r: 3.6, fill: 'none' };
+    const c = ringAt(ti);
     return { fruit: fruits[k], c, ring: { ...c, stroke: T.fruit, strokeOpacity: 0.6, strokeWidth: 0.8 } };
   });
   return (

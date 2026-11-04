@@ -18,7 +18,7 @@ import { Groups, GroupForm, GroupDetail, GroupMembers, GroupsAddMenu } from './s
 import { BottomNav, Header, Icon } from './components/UI.jsx';
 import { QUESTIONS, TODAY, MEMBERS, dateLabel } from './questionData.js';
 import { recordAchievements } from './achievements.js';
-import { STORAGE_KEY, STEPS, loadState, emptyAnswer, updateAnswer, completeAnswer, questionStep, questionRoute, rememberQuestionRoute, previousStep, leaveGroup, kickMember, addMessage, addComment, toggleLike } from './store.js';
+import { STORAGE_KEY, STEPS, loadState, emptyAnswer, updateAnswer, completeAnswer, questionStep, questionRoute, rememberQuestionRoute, previousStep, joinedGroups, leaveGroup, kickMember, addMessage, addComment, toggleLike } from './store.js';
 
 const routeFromLocation = () => location.hash.replace(/^#\/?/, '') || 'today';
 // 진행 선 세 칸: 선택 / 결과·다른 생각 / 확장하기
@@ -106,7 +106,7 @@ export default function App() {
         case 'reading': flow = <Reading question={question} next={() => { if (answer.completed) return flowGo('summary'); setState(s => completeAnswer(s, id)); next(); }} />; break;
         case 'done': flow = <Done question={question} answer={answer} go={flowGo} onShare={() => fromGroup ? shareToGroup(id, fromGroup.id) : flowGo('share')} />; break;
         case 'summary': flow = <Summary question={question} answer={answer} groups={state.groups} onOpen={choiceId => go(`question/${id}/result/${choiceId}`)} onShare={() => fromGroup ? shareToGroup(id, fromGroup.id) : flowGo('share')} onReading={() => flowGo('reading')} onRetry={() => { patch(id, emptyAnswer()); flowGo('answer'); }} />; break;
-        case 'share': flow = <Share key={id} question={question} answer={answer} groups={state.groups.filter(g => state.joined.includes(g.id))} onDraft={shareDraft => patch(id, { shareDraft })} onSave={sharedWith => patch(id, { sharedWith, shareDraft: null })} go={go} />; break;
+        case 'share': flow = <Share key={id} question={question} answer={answer} groups={joinedGroups(state)} onDraft={shareDraft => patch(id, { shareDraft })} onSave={sharedWith => patch(id, { sharedWith, shareDraft: null })} go={go} />; break;
       }
       const back = () => answer.completed && ((choice && step === 'result') || step === 'reading') ? flowGo('summary') : choice && step === 'result' ? flowGo('result') : step === 'share' && [`question/${id}/done`, `question/${id}/summary`].includes(prevRoute.current) ? go(prevRoute.current) : previousStep(step) ? flowGo(previousStep(step)) : go(home);
       const position = PROGRESS[step];

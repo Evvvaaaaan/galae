@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { QUESTIONS, dateLabel } from '../questionData.js';
+import { QUESTIONS, choiceOf, dateLabel } from '../questionData.js';
 import { Icon, Empty } from '../components/UI.jsx';
 
 const STATUS = ['전체', '미답변', '답변 완료'];
@@ -24,6 +24,6 @@ export function QuestionRow({ question: q, answer, onClick }) {
     <div className="meta"><time dateTime={q.date}>{dateLabel(q.date)}</time></div>
     <strong>{q.title}</strong>
     <p className="record-note">{q.body}</p>
-    {answer?.submitted && <span>{q.choices.find(c => c.id === answer.sel)?.short}</span>}
+    {answer?.submitted && <span>{choiceOf(q, answer.sel)?.short}</span>}
   </button>;
 }

@@ -22,7 +22,7 @@ export async function shareOrCopy(data, copyText) {
     try { await navigator.share(data); } catch { /* 공유 창을 닫았습니다. */ }
     return false;
   }
-  try { await navigator.clipboard.writeText(copyText); return true; } catch { return false; /* 복사할 수 없는 환경입니다. */ }
+  try { await navigator.clipboard.writeText(copyText); return true; } catch { /* 복사할 수 없는 환경입니다. */ return false; }
 }
 
 export function Header({ back, title, action }) {

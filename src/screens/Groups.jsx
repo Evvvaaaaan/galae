@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { QUESTIONS, TODAY, SAMPLE_SHARES, dateLabel } from '../questionData.js';
+import { QUESTIONS, TODAY, SAMPLE_SHARES, choiceOf, dateLabel } from '../questionData.js';
 import { Header, Icon, Avatar, Empty, ProfileLink } from '../components/UI.jsx';
-import { COLOR_LABELS, PROFILE_COLORS, myself } from '../store.js';
+import { COLOR_LABELS, PROFILE_COLORS, joinedGroups, myself } from '../store.js';
 
 export function Groups({ state, go }) {
-  const groups = state.groups.filter(g => state.joined.includes(g.id));
+  const groups = joinedGroups(state);
   return <>
     <h1 className="visually-hidden" tabIndex={-1}>그룹</h1>
     {groups.length ? <div className="list">{groups.map(group => <button className="group-row" key={group.id} onClick={() => go(`groups/${group.id}`)}>
@@ -105,7 +105,7 @@ export function GroupDetail({ group, state, go, openQuestion, initialQuestionId,
               {!mine && <ProfileLink avatar onClick={link}><Avatar {...member} /></ProfileLink>}
               <div className="bubble-wrap">
                 {!mine && <ProfileLink onClick={link}><span className="bubble-name">{member.name}</span></ProfileLink>}
-                <div className={`bubble ${veiled ? 'veiled' : ''}`}><span className="chip" aria-hidden={veiled}>{question.choices.find(c => c.id === post.sel)?.short}</span>{post.note && <p className="preserve-lines" aria-hidden={veiled}>{post.note}</p>}{veiled && <span className="veil">갈래를 선택하면 볼 수 있어요</span>}</div>
+                <div className={`bubble ${veiled ? 'veiled' : ''}`}><span className="chip" aria-hidden={veiled}>{choiceOf(question, post.sel)?.short}</span>{post.note && <p className="preserve-lines" aria-hidden={veiled}>{post.note}</p>}{veiled && <span className="veil">갈래를 선택하면 볼 수 있어요</span>}</div>
               </div>
             </div>;
           })}
