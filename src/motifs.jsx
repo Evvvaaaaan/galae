@@ -28,6 +28,22 @@ export function SplashMotif() {
 const TRUNK = 'M0 54 C 100 50, 200 47, 390 45';
 
 export function OnboardMotif({ step }) {
+  if (step === 3) return <SeedTree />;
+  if (step === 2) {
+    return (
+      <div className="card-flip" aria-hidden="true">
+        {/* 2단계의 세 갈래가 왼쪽에서 들어와 카드 뒤를 지나갑니다. */}
+        <svg viewBox="0 0 390 150" width="100%" height={150} preserveAspectRatio="none">
+          <Drawn d="M0 41 C 120 41, 250 60, 390 62" color="#A9C8E4" w={1.4} dur={700} />
+          <Drawn d="M0 70 C 120 70, 250 75, 390 75" color="#A9C8E4" w={1.6} dur={700} delay={60} />
+          <Drawn d="M0 109 C 120 109, 250 90, 390 88" color="#A9C8E4" w={1.3} dur={700} delay={120} />
+        </svg>
+        <div className="card-flip-track">
+          {[0, 1, 2, 3].map(i => <span key={i} className="card-flip-card"><i /><i /></span>)}
+        </div>
+      </div>
+    );
+  }
   if (step === 0) {
     return (
       <svg className="motif" viewBox="0 0 390 100" width="100%" height={100} preserveAspectRatio="none">
@@ -109,6 +125,43 @@ function fruitThreads(fruits, count) {
     used.add(best);
     return best;
   });
+}
+
+// 온보딩 마지막 장: 선이 한 가닥씩 뿌리부터 자라 나무가 되고, 끝에 열매 하나가 맺힙니다.
+const SEED_COUNT = 14;
+const SEED_GAP = 160;
+const SEED_IN = 1100;
+
+// 앞 장의 세 갈래 선이 왼쪽에서 들어와 줄기 밑동으로 모인 뒤, 나무의 첫 세 가닥으로 자랍니다.
+function incoming(i) {
+  const t = thread(i);
+  const parts = t.d.split(' C ');
+  const [x1, y1] = parts[1].split(', ')[2].split(' ').map(Number);
+  const y0 = [176, 192, 206][i];
+  return { ...t, d: `M0 ${y0} C 70 ${y0}, ${f(x1 - 40)} ${f(y1 + 6)}, ${f(x1)} ${f(y1)} C ${parts.slice(2).join(' C ')}` };
+}
+
+function SeedTree() {
+  const { tip, a } = thread(1);
+  const fruit = { cx: f(tip[0] + Math.cos(a) * 3.6), cy: f(tip[1] + Math.sin(a) * 3.6), r: 3.6, fill: 'none' };
+  const end = SEED_IN + SEED_GAP * (SEED_COUNT - 3) + 900;
+  return (
+    <svg className="seed-tree" viewBox="0 10 344 230" width="100%" aria-hidden="true">
+      <path d={`M20 ${TREE.ground} C 110 ${TREE.ground - 3}, 234 ${TREE.ground - 3}, 324 ${TREE.ground}`} stroke="#E4EEF6" strokeWidth={1} fill="none" />
+      <g fill="none" stroke="#6FA3CF" strokeOpacity={0.42} strokeLinecap="round">
+        {Array.from({ length: SEED_COUNT }, (_, i) => {
+          const { d, twigs } = i < 3 ? incoming(i) : thread(i);
+          const delay = i < 3 ? i * 80 : SEED_IN + (i - 3) * SEED_GAP;
+          return <g key={i}>
+            <path d={d} pathLength={1} strokeWidth={1.1} style={{ animationDelay: `${delay}ms` }} />
+            {twigs.map((t, k) => <path key={k} d={t} pathLength={1} strokeWidth={0.9} className="twig" style={{ animationDelay: `${delay + (i < 3 ? 1500 : 700)}ms` }} />)}
+          </g>;
+        })}
+      </g>
+      <circle {...fruit} className="seed-ripple" stroke="#2F6E9E" strokeWidth={0.5} style={{ animationDelay: `${end + 150}ms` }} />
+      <circle {...fruit} className="seed-fruit" stroke="#8EC3EE" strokeOpacity={0.8} strokeWidth={0.9} style={{ animationDelay: `${end}ms` }} />
+    </svg>
+  );
 }
 
 export function DoneMotif() {

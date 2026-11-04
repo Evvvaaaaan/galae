@@ -125,8 +125,22 @@ label.list-row { cursor: pointer; }
 .onboard-skip { font-size: 13px; }
 .onboard-skip.is-hidden { visibility: hidden; }
 .onboard-motif { margin: 0 -28px; }
+.card-flip { position: relative; height: 150px; overflow: hidden; -webkit-mask-image: linear-gradient(transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(transparent, #000 12%, #000 88%, transparent); }
+.card-flip > svg { position: absolute; inset: 0; }
+.card-flip-track { position: relative; display: flex; flex-direction: column; align-items: center; gap: 16px; padding-top: 15px; animation: cardFlip 6000ms cubic-bezier(.4, 0, .2, 1) infinite; }
+.card-flip-card { display: flex; flex-direction: column; justify-content: flex-end; gap: 7px; flex: none; width: 84px; height: 120px; padding: 0 14px 16px; border: 1px solid var(--sel-line); border-radius: 14px; background: var(--sel-bg); }
+.card-flip-card i { display: block; height: 3px; border-radius: 2px; background: #A9C8E4; }
+.card-flip-card i + i { width: 60%; background: var(--bar-base); }
+@keyframes cardFlip { 0%, 22% { transform: none; } 33%, 55% { transform: translateY(-136px); } 66%, 88% { transform: translateY(-272px); } 100% { transform: translateY(-408px); } }
+.seed-tree { display: block; width: 100%; height: auto; }
+.seed-tree g path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: drawLine 900ms ease-out forwards; }
+.seed-tree g:nth-child(-n+3) > path:first-child { animation-duration: 1800ms; }
+.seed-tree g path.twig { animation-duration: 500ms; }
+.seed-tree .seed-fruit, .seed-tree .seed-ripple { transform-box: fill-box; transform-origin: center; }
+.seed-tree .seed-fruit { animation: fruitBloom 1100ms cubic-bezier(.3, 1.4, .5, 1) backwards; }
+.seed-tree .seed-ripple { opacity: 0; animation: fruitRipple 1600ms ease-out; }
 .onboard-body h1 { margin: 40px 0 0; font-family: var(--serif); font-size: 21px; font-weight: 400; line-height: 1.6; letter-spacing: -.01em; text-wrap: pretty; opacity: 0; animation: scrIn 250ms ease-out 520ms forwards; }
-.onboard-body .sub { margin-top: 14px; font-size: 14px; line-height: 1.8; text-wrap: pretty; opacity: 0; animation: scrIn 250ms ease-out 580ms forwards; }
+.onboard-body .sub { margin-top: 14px; white-space: pre-line; font-size: 14px; line-height: 1.8; text-wrap: pretty; opacity: 0; animation: scrIn 250ms ease-out 580ms forwards; }
 .onboard-dots { display: flex; gap: 6px; }
 .onboard-dots span { width: 5px; height: 5px; border-radius: 3px; background: var(--line); }
 .onboard-dots span.on { background: var(--key); }
