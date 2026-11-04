@@ -135,7 +135,8 @@ label.list-row { cursor: pointer; }
 /* 오늘 */
 .today { display: flex; flex-direction: column; gap: 16px; padding-bottom: 24px; }
 .today-card { position: relative; margin: 0; border: 1px solid var(--line); border-radius: 22px; background: var(--bg); overflow: hidden; }
-.branch { position: relative; height: 168px; background: var(--sel-bg); overflow: hidden; }
+.world-tree { position: relative; margin: -8px -28px 0; }
+.world-tree svg { display: block; width: 100%; height: auto; }
 .today-card-body { display: flex; flex-direction: column; gap: 14px; padding: 18px 22px 22px; }
 .today-card .row { font-size: 12px; color: var(--ink-hint); }
 .today-card .row span:last-child { color: var(--ink-faint); letter-spacing: .06em; }
@@ -150,8 +151,28 @@ label.list-row { cursor: pointer; }
 .today .list-row strong { font-size: 15px; font-weight: 500; }
 .today-box { border: 1px solid var(--line); border-radius: 22px; padding: 6px 22px; }
 .today-box .list-row + .list-row { border-top: 1px solid var(--line); }
-.today .past .record-row { padding: 14px 0; border-bottom: 0; }
-.today .past strong { font-size: 16px; line-height: 1.6; }
+.today-streak { display: flex; flex-direction: column; gap: 16px; padding: 18px 22px 20px; }
+.streak { display: flex; align-items: baseline; gap: 6px; font-size: 13px; color: var(--ink-sub); }
+.streak b { font-family: var(--serif); font-size: 30px; font-weight: 400; line-height: 1; color: var(--key); }
+.today-streak svg { display: block; overflow: visible; }
+.today-streak text { font-size: 11px; fill: var(--ink-hint); }
+/* 새 선과 열매는 남색으로 그려진 뒤, 다 그려지면 서서히 다른 선과 같은 파란색으로 돌아갑니다. */
+.world-tree .grow path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: drawLine 2800ms ease-out forwards, settle 1600ms ease-in-out 3400ms backwards; }
+.world-tree .grow path + path { animation: drawLine 1000ms ease-out 2200ms forwards, settle 1600ms ease-in-out 3400ms backwards; }
+.world-tree .new-fruit, .world-tree .fruit-ripple { transform-box: fill-box; transform-origin: center; }
+.world-tree .new-fruit { animation: fruitBloom 1100ms cubic-bezier(.3, 1.4, .5, 1) backwards, settle 1800ms ease-in-out backwards; }
+.world-tree .fruit-ripple { opacity: 0; animation: fruitRipple 1600ms ease-out; }
+@keyframes fruitBloom { from { transform: scale(.2); opacity: 0; } }
+@keyframes fruitRipple { from { transform: scale(1); opacity: .7; } to { transform: scale(3.4); opacity: 0; } }
+/* 열매 이름은 나무 몸통 가운데(줄기 꼭대기 146과 땅 214 사이, 높이 260 중 180)에 떠올랐다 사라집니다. */
+.fruit-caption { position: absolute; top: 69.2%; left: 0; right: 0; height: 44px; transform: translateY(-50%); pointer-events: none; }
+.fruit-caption p { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; font-size: 12.5px; letter-spacing: .02em; color: var(--ink-sub); opacity: 0; animation: fruitCaption 3000ms ease-in-out both; }
+.fruit-caption strong { font-family: var(--serif); font-size: 18px; font-weight: 400; letter-spacing: .12em; padding-left: .12em; color: var(--key); }
+.fruit-rule { width: 14px; height: 1px; background: var(--bar-key); }
+.world-tree .tree-dim { animation-name: treeDim; animation-timing-function: ease-in-out; }
+@keyframes treeDim { 0%, 100% { opacity: 1; } 12%, 85% { opacity: .3; } }
+@keyframes fruitCaption { 0% { opacity: 0; transform: translateY(6px); } 18% { opacity: 1; transform: none; } 78% { opacity: 1; } 100% { opacity: 0; transform: translateY(-2px); } }
+@keyframes settle { from { stroke: var(--newest); stroke-opacity: .95; } }
 .today .list-row { padding: 12px 0; border-bottom: 0; }
 .motif { display: block; }
 
@@ -284,11 +305,20 @@ label.list-row { cursor: pointer; }
 .profile > div { flex: 1; display: flex; flex-direction: column; gap: 10px; }
 .profile > div > strong { font-family: var(--serif); font-size: 18px; font-weight: 400; }
 .profile-stats { display: flex; justify-content: space-between; padding: 0; list-style: none; }
-.profile-stats li, .profile-stats button { display: flex; flex-direction: column; gap: 2px; font-size: 12px; color: var(--ink-sub); }
-.profile-stats button { padding: 0; border: 0; background: none; text-align: left; }
+.profile-stats li, .profile-stats button { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 12px; color: var(--ink-sub); }
+.profile-stats button { padding: 0; border: 0; background: none; text-align: center; }
 .profile-stats button:active { opacity: .55; }
 .profile-stats strong { font-family: var(--serif); font-size: 18px; font-weight: 400; color: var(--ink); }
 .profile-edit { min-height: 44px; margin-top: 20px; border: 0; background: var(--bar-track); color: var(--ink); }
+.fruits { margin-top: 21px; }
+.fruits + .calendar-month { margin-top: 21px; }
+.fruit-row { display: flex; gap: 4px; margin: 0 -28px; padding: 0 16px; overflow-x: auto; scrollbar-width: none; }
+.fruit-row::-webkit-scrollbar { display: none; }
+.fruit-row button { flex-shrink: 0; display: grid; place-items: center; width: 44px; height: 34px; padding: 0; border: 0; background: none; }
+.fruit-row circle { stroke: var(--bar-key); stroke-width: .86; }
+.fruit-row button[aria-pressed="true"] circle { stroke: var(--key); stroke-width: 1; }
+.fruit-note { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; font-size: 13px; color: var(--ink-sub); }
+.fruit-note strong { font-family: var(--serif); font-size: 16px; font-weight: 400; color: var(--ink); }
 .avatar-stack small { align-self: center; margin-left: 8px; font-size: 11px; color: var(--ink-sub); }
 .add-menu-wrap { position: relative; }
 .add-menu { left: auto; right: 0; min-width: 120px; }
@@ -333,4 +363,7 @@ label.list-row { cursor: pointer; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+  /* 움직임을 줄인 기기에서는 마지막으로 맺힌 열매 이름을 그대로 보여 줍니다. */
+  .fruit-caption p { animation: none !important; }
+  .fruit-caption p:last-child { opacity: 1; }
 }

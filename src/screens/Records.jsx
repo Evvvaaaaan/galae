@@ -3,11 +3,13 @@ import { QUESTIONS, TODAY } from '../questionData.js';
 import PARADOXES from '../../content/paradoxes.json';
 import { Avatar, Empty, Icon } from '../components/UI.jsx';
 import { TOPICS } from './Feed.jsx';
+import { currentStreak } from './Today.jsx';
 import { QuestionRow } from './Archive.jsx';
+import { ACHIEVEMENTS } from '../achievements.js';
 
 const [TODAY_YEAR, TODAY_MONTH, TODAY_DAY] = TODAY.date.split('-').map(Number);
 
-export default function Records({ answers, comments, groupCount, profile, joinedOn, go }) {
+export default function Records({ answers, achieved, comments, profile, joinedOn, go }) {
   const answered = QUESTIONS.filter(q => answers[q.id]?.submitted);
   // 오늘이 있는 달에서 몇 달 떨어진 달을 보고 있는지입니다.
   const [offset, setOffset] = useState(0);
@@ -18,6 +20,8 @@ export default function Records({ answers, comments, groupCount, profile, joined
   const month = first.getMonth() + 1;
   const days = new Date(year, month, 0).getDate();
   const isTodayMonth = year === TODAY_YEAR && month === TODAY_MONTH;
+  // const earned = Object.entries(achieved).map(([id, a]) => ({ ...ACHIEVEMENTS.find(x => x.id === id), on: a.on }));
+  const earned = ACHIEVEMENTS.map(a => ({ ...a, on: '2026-11-05' }));
   return <>
     <h1 className="visually-hidden" tabIndex={-1}>나</h1>
     <div className="profile">
@@ -26,12 +30,13 @@ export default function Records({ answers, comments, groupCount, profile, joined
         <strong>{profile.name || '나'}</strong>
         <ul className="profile-stats">
           <li><strong>{answered.length}</strong>선택</li>
-          <li><strong>{groupCount}</strong>그룹</li>
+          <li><strong>{currentStreak(answers, TODAY.date)}</strong>연속</li>
           <li><button onClick={() => go('records/comments')}><strong>{comments.length}</strong>댓글</button></li>
         </ul>
       </div>
     </div>
     <button className="btn-secondary profile-edit" onClick={() => go('settings/profile')}>프로필 편집</button>
+    <Fruits earned={earned} />
     <div className="calendar-month">
       <p aria-live="polite">{year}년 {month}월</p>
       <div>
@@ -53,6 +58,19 @@ export default function Records({ answers, comments, groupCount, profile, joined
     </div>
     <div className="day-records"><DayRecords date={selected} answers={answers} go={go} /></div>
   </>;
+}
+
+// 맺은 열매만 맺은 순서대로 고리로 늘어놓습니다. 고리를 누르면 이름, 날짜, 설명 한 줄을 보여 줍니다.
+function Fruits({ earned }) {
+  const [open, setOpen] = useState(null);
+  if (!earned.length) return null;
+  const shown = earned.find(a => a.id === open);
+  return <div className="fruits">
+    <div className="fruit-row">{earned.map(a => <button key={a.id} aria-label={a.name} aria-pressed={a.id === open} onClick={() => setOpen(o => o === a.id ? null : a.id)}>
+      <svg viewBox="0 0 20 20" width={28} height={28} aria-hidden="true"><circle cx={10} cy={10} r={7} fill="none" /></svg>
+    </button>)}</div>
+    {shown && <p className="fruit-note" aria-live="polite"><strong>{shown.name}</strong>{Number(shown.on.slice(5, 7))}월 {Number(shown.on.slice(8, 10))}일 · {shown.desc}</p>}
+  </div>;
 }
 
 function DayRecords({ date, answers, go }) {

@@ -56,24 +56,59 @@ export function OnboardMotif({ step }) {
   );
 }
 
-// 한 줄기가 선택지 수만큼 갈라져 카드 끝까지 이어집니다. 스플래시의 파란 선 색으로 옅어집니다.
-export function BranchMotif({ count }) {
-  const ends = Array.from({ length: count }, (_, i) => count === 1 ? 86 : 30 + (112 * i) / (count - 1));
-  return (
-    <div className="branch">
-      <svg className="motif" viewBox="0 0 344 168" width="100%" height={168} preserveAspectRatio="none" aria-hidden="true">
-        <defs>
-          <linearGradient id="homeBranch" gradientUnits="userSpaceOnUse" x1={0} y1={0} x2={344} y2={0}>
-            <stop offset={0} stopColor="#A9C8E4" />
-            <stop offset={0.37} stopColor="#A9C8E4" />
-            <stop offset={1} stopColor="#DCE7F0" />
-          </linearGradient>
-        </defs>
-        <path d="M0 88 C 50 87, 96 86, 128 86" fill="none" stroke="url(#homeBranch)" strokeWidth={2.2} />
-        {ends.map((y, i) => <Drawn key={i} d={`M128 86 C 196 86, 236 ${y}, 344 ${y}`} color="url(#homeBranch)" w={1.4} dur={420} delay={120 + i * 80} />)}
-      </svg>
-    </div>
-  );
+// 답변 하나가 뿌리에서 가지 끝까지 이어지는 선 한 가닥이 되어 부채꼴 나무를 이룹니다.
+// 첫 선은 가운데, 그다음은 왼쪽·오른쪽을 번갈아 빈 곳을 메웁니다. 업적 하나마다 고리 열매가 맺힙니다.
+// 열매도 맺힌 순서대로 왼쪽·오른쪽을 번갈아, 그 방향에 가장 가까운 가지 끝에 답니다.
+const TREE = { cx: 172, ground: 214, fanY: 146 };
+
+function rng(seed) {
+  let a = seed >>> 0;
+  return () => { a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+}
+const vdc = k => { let v = 0, b = 0.5; while (k) { if (k & 1) v += b; k >>= 1; b /= 2; } return v; };
+const rad = d => d * Math.PI / 180;
+const f = n => n.toFixed(1);
+
+const spread = i => i === 0 ? 0 : (i % 2 ? -1 : 1) * (1 - vdc(Math.ceil(i / 2)));
+
+function thread(i) {
+  const { cx, ground, fanY } = TREE;
+  const r = rng(i * 9973 + 17);
+  const norm = Math.max(-1, Math.min(1, spread(i) + (r() - 0.5) * 0.04));
+  const a = rad(-90 + norm * 82);
+  const R = 118 + r() * 26 - Math.abs(norm) * 8;
+  const bend = rad((r() - 0.5) * 14);
+  const ra = rad(18 + r() * 144);
+  const rr = 22 + r() * 22;
+  const p0 = [cx + Math.cos(ra) * rr * 2.6, ground + Math.sin(ra) * rr];
+  const p1 = [cx + norm * 7, ground - 4];
+  const p2 = [cx + norm * 5, fanY + (r() - 0.5) * 6];
+  const p3 = [cx + Math.cos(a - bend) * R * 0.55, fanY + Math.sin(a - bend) * R * 0.55];
+  const tip = [cx + Math.cos(a) * R, fanY + Math.sin(a) * R];
+  let d = `M${f(p0[0])} ${f(p0[1])} C ${f(p0[0] * 0.4 + p1[0] * 0.6)} ${f(p0[1] - 4)}, ${f(p1[0])} ${f(p1[1] + 12)}, ${f(p1[0])} ${f(p1[1])}`;
+  d += ` C ${f(p1[0])} ${f(p1[1] - 26)}, ${f(p2[0])} ${f(p2[1] + 22)}, ${f(p2[0])} ${f(p2[1])}`;
+  d += ` C ${f(p2[0])} ${f(p2[1] - 22)}, ${f(p3[0] - Math.cos(a) * 22)} ${f(p3[1] - Math.sin(a) * 22)}, ${f(p3[0])} ${f(p3[1])}`;
+  d += ` Q ${f(cx + Math.cos(a) * R * 0.8)} ${f(fanY + Math.sin(a) * R * 0.8)}, ${f(tip[0])} ${f(tip[1])}`;
+  const twigs = Array.from({ length: 1 + Math.floor(r() * 2) }, () => {
+    const t0 = 0.62 + r() * 0.3;
+    const bx = cx + Math.cos(a) * R * t0, by = fanY + Math.sin(a) * R * t0;
+    const a3 = a + rad((r() < 0.5 ? -1 : 1) * (14 + r() * 16));
+    const d3 = 14 + r() * 18;
+    return `M${f(bx)} ${f(by)} Q ${f(bx + Math.cos(a3) * d3 * 0.5)} ${f(by + Math.sin(a3) * d3 * 0.5)}, ${f(bx + Math.cos(a3) * d3)} ${f(by + Math.sin(a3) * d3)}`;
+  });
+  return { d, twigs, tip, a, norm };
+}
+
+// 선보다 열매가 많으면 남는 열매는 선이 더 생길 때까지 달지 않습니다.
+function fruitThreads(fruits, count) {
+  const used = new Set();
+  return Array.from({ length: Math.min(fruits, count) }, (_, k) => {
+    const want = spread(k + 1);
+    let best = -1;
+    for (let i = 0; i < count; i++) if (!used.has(i) && (best < 0 || Math.abs(spread(i) - want) < Math.abs(spread(best) - want))) best = i;
+    used.add(best);
+    return best;
+  });
 }
 
 export function DoneMotif() {
@@ -83,5 +118,72 @@ export function DoneMotif() {
       <Path d="M0 34 C 94 34, 140 36, 182 42 C 234 49, 310 53, 390 54" color="#DCE7F0" w={0.9} />
       <circle cx={175} cy={22} r={2.6} fill="#A9C8E4" />
     </svg>
+  );
+}
+
+const TREE_COLORS = {
+  light: { line: '#6FA3CF', op: 0.42, newest: '#2F6E9E', blur: 1.2, ground: '#E4EEF6', fruit: '#8EC3EE' },
+};
+
+// 새로 맺힌 열매가 여럿이면 이 간격으로 하나씩 맺히고, 이름도 하나씩 차례로 떠올랐다 사라집니다.
+const FRUIT_GAP = 3200;
+
+// fruits: 맺힌 순서대로 [{ id, name, desc, fresh }]. fresh는 아직 홈에서 맺히는 모습을 보지 못한 열매입니다.
+// 새 선이 그려지면 선이 다 그려진 뒤에, 아니면 홈에 오자마자 맺힙니다.
+export function WorldTree({ count, fruits = [], grow = false }) {
+  const T = TREE_COLORS.light;
+  const w = Math.max(0.55, 1.1 - count / 400);
+  const fresh = fruits.filter(x => x.fresh);
+  const at = x => (grow ? 3000 : 600) + fresh.indexOf(x) * FRUIT_GAP;
+  // 이름이 떠 있는 동안(첫 이름이 떠오를 때부터 마지막 이름이 사라질 때까지) 나무를 잠깐 흐리게 해 새 열매에 시선을 모읍니다.
+  const dim = fresh.length ? { animationDelay: `${at(fresh[0])}ms`, animationDuration: `${(fresh.length - 1) * FRUIT_GAP + 3600}ms` } : undefined;
+  const placed = fruitThreads(fruits.length, count).map((ti, k) => {
+    const { tip, a } = thread(ti);
+    // 고리 가장자리가 가지 끝에 닿도록 반지름만큼 밀어 둡니다.
+    const c = { cx: f(tip[0] + Math.cos(a) * 3.6), cy: f(tip[1] + Math.sin(a) * 3.6), r: 3.6, fill: 'none' };
+    return { fruit: fruits[k], c, ring: { ...c, stroke: T.fruit, strokeOpacity: 0.6, strokeWidth: 0.8 } };
+  });
+  return (
+    <div className="world-tree" style={{ '--newest': T.newest }}>
+    <svg viewBox="0 0 344 260" width="100%" aria-hidden="true">
+      <defs>
+        <filter id="treeGlow" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation={T.blur} result="b" />
+          <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+        <radialGradient id="treeHalo" cx="50%" cy="45%" r="50%">
+          <stop offset={0} stopColor={T.line} stopOpacity={Math.min(0.22, count / 600)} />
+          <stop offset={0.55} stopColor={T.line} stopOpacity={Math.min(0.22, count / 600) * 0.4} />
+          <stop offset={1} stopColor={T.line} stopOpacity={0} />
+        </radialGradient>
+      </defs>
+      <g className={dim && 'tree-dim'} style={dim}>
+      {/* 카드 안쪽에서 완전히 사라지도록, 잘리는 가장자리(위·양옆)보다 작게 둡니다. */}
+      <ellipse cx={TREE.cx} cy={TREE.fanY - 26} rx={136} ry={108} fill="url(#treeHalo)" />
+      <path d={`M20 ${TREE.ground} C 110 ${TREE.ground - 3}, 234 ${TREE.ground - 3}, 324 ${TREE.ground}`} stroke={T.ground} strokeWidth={1} fill="none" />
+      <g filter="url(#treeGlow)" fill="none" strokeLinecap="round">
+        {Array.from({ length: count }, (_, i) => {
+          const { d, twigs } = thread(i);
+          const last = i === count - 1;
+          return <g key={i} stroke={T.line} className={last && grow ? 'grow' : undefined}>
+            <path d={d} pathLength={1} strokeOpacity={T.op} strokeWidth={w} />
+            {twigs.map((t, k) => <path key={k} d={t} pathLength={1} strokeOpacity={T.op * 0.8} strokeWidth={w * 0.8} />)}
+          </g>;
+        })}
+      </g>
+      {placed.filter(p => !p.fruit.fresh).map(p => <circle key={p.fruit.id} {...p.ring} />)}
+      </g>
+      {placed.filter(p => p.fruit.fresh).map(({ fruit, c, ring }) => {
+        // 새 열매는 남색으로 피어나며 물결이 한 번 번지고, 이름이 사라질 즈음 파란색으로 돌아갑니다.
+        const t = at(fruit);
+        return <g key={fruit.id}>
+          <circle {...c} className="fruit-ripple" stroke={T.newest} strokeWidth={0.5} style={{ animationDelay: `${t + 150}ms` }} />
+          <circle {...ring} className="new-fruit" style={{ animationDelay: `${t}ms, ${t + 2400}ms` }} />
+        </g>;
+      })}
+    </svg>
+    {fresh.length > 0 && <div className="fruit-caption" aria-live="polite">{fresh.map(x =>
+      <p key={x.id} style={{ animationDelay: `${at(x) + 300}ms` }}><strong>{x.name}</strong><span className="fruit-rule" />{x.desc}</p>)}</div>}
+    </div>
   );
 }

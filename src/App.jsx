@@ -17,6 +17,7 @@ import { Settings, ProfileForm, Sources } from './screens/Settings.jsx';
 import { Groups, GroupForm, GroupDetail, GroupMembers, GroupsAddMenu } from './screens/Groups.jsx';
 import { BottomNav, Header, Icon } from './components/UI.jsx';
 import { QUESTIONS, TODAY, dateLabel } from './questionData.js';
+import { recordAchievements } from './achievements.js';
 import { STORAGE_KEY, STEPS, loadState, emptyAnswer, updateAnswer, completeAnswer, questionStep, questionRoute, rememberQuestionRoute, previousStep, leaveGroup, addMessage, addComment, toggleLike } from './store.js';
 
 const routeFromLocation = () => location.hash.replace(/^#\/?/, '') || 'today';
@@ -40,6 +41,8 @@ export default function App() {
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
+  // 상태가 바뀔 때마다 새로 달성한 업적을 남깁니다.
+  useEffect(() => { setState(s => recordAchievements(s, TODAY.date)); }, [state]);
   useEffect(() => {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); setStorageError(false); }
     catch { setStorageError(true); }
@@ -116,7 +119,7 @@ export default function App() {
       else if (group && (!requestedStep || requestedStep === 'members' || QUESTIONS.some(q => q.id === requestedStep))) content = requestedStep === 'members' ? <GroupMembers key={id} group={group} profile={state.profile} questionId={extra} go={go} onLeave={groupId => { setState(s => leaveGroup(s, groupId)); go('groups'); }} /> : <GroupDetail key={`${id}/${requestedStep || ''}`} initialQuestionId={requestedStep} group={group} state={state} go={go} openQuestion={openQuestion} onSend={(questionId, text) => setState(s => addMessage(s, id, questionId, text))} />;
     }
   } else if (section === 'records' && !requestedStep) {
-    if (!id) content = <Records answers={state.answers} comments={state.comments} groupCount={state.joined.length} profile={state.profile} joinedOn={state.joinedOn} go={go} />;
+    if (!id) content = <Records answers={state.answers} achieved={state.achieved} comments={state.comments} profile={state.profile} joinedOn={state.joinedOn} go={go} />;
     else if (id === 'comments') content = <><Header back={() => go('records')} title="댓글" /><MyComments comments={state.comments} go={go} /></>;
     else {
       const question = QUESTIONS.find(q => q.id === id);
@@ -124,7 +127,7 @@ export default function App() {
     }
   } else if (section === 'settings' && !requestedStep) {
     active = 'records';
-    if (!id) content = <><Header back={() => go('records')} title="설정" /><Settings profile={state.profile} go={go} onLogout={() => { go('today'); setWelcome('login'); setState(s => ({ ...s, started: false })); }} onReset={() => setState(s => ({ ...s, answers: {} }))} /></>;
+    if (!id) content = <><Header back={() => go('records')} title="설정" /><Settings profile={state.profile} go={go} onLogout={() => { go('today'); setWelcome('login'); setState(s => ({ ...s, started: false })); }} onReset={() => setState(s => ({ ...s, answers: {}, achieved: {} }))} /></>;
     else if (id === 'profile') {
       // 나 탭의 프로필 줄에서 들어왔으면 나 탭으로, 설정에서 들어왔으면 설정으로 돌아갑니다.
       const profileBack = prevRoute.current === 'records' ? 'records' : 'settings';

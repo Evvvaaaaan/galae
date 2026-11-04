@@ -1,11 +1,12 @@
 import { DEMO_GROUPS, QUESTIONS } from './questionData.js';
 import PARADOXES from '../content/paradoxes.json' with { type: 'json' };
+import { ACHIEVEMENTS } from './achievements.js';
 
 export const STORAGE_KEY = 'garae.frontend.v1';
 export const STEPS = ['answer', 'result', 'reading', 'done', 'share'];
 export const emptyAnswer = () => ({ sel: null, reason: '', submitted: false, completed: false, sharedWith: [], shareDraft: null, lastStep: null });
 export const PROFILE_COLORS = ['sage', 'blue', 'peach', 'lilac'];
-export const initialState = () => ({ started: false, answers: {}, groups: DEMO_GROUPS, joined: ['g1'], profile: { name: '', handle: '', color: 'blue' }, messages: [], comments: [], likes: [] });
+export const initialState = () => ({ started: false, answers: {}, groups: DEMO_GROUPS, joined: ['g1'], profile: { name: '', handle: '', color: 'blue' }, messages: [], comments: [], likes: [], achieved: {} });
 
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const text = (value, fallback = '') => typeof value === 'string' ? value : fallback;
@@ -59,6 +60,7 @@ export function loadState() {
         messages: (Array.isArray(saved.messages) ? saved.messages : []).filter(m => isObject(m) && typeof m.id === 'string' && typeof m.text === 'string' && m.text && groups.some(g => g.id === m.groupId) && QUESTIONS.some(q => q.id === m.questionId)),
         comments: (Array.isArray(saved.comments) ? saved.comments : []).filter(c => isObject(c) && typeof c.id === 'string' && typeof c.text === 'string' && c.text && PARADOXES.some(p => p.id === c.topicId)),
         likes: (Array.isArray(saved.likes) ? saved.likes : []).filter(id => typeof id === 'string'),
+        achieved: Object.fromEntries(Object.entries(isObject(saved.achieved) ? saved.achieved : {}).filter(([id, a]) => ACHIEVEMENTS.some(x => x.id === id) && isObject(a) && /^\d{4}-\d{2}-\d{2}$/.test(a.on))),
       };
     }
   } catch { /* 저장 데이터가 없거나 손상되었으면 데모를 새로 시작합니다. */ }
