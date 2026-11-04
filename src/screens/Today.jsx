@@ -16,6 +16,7 @@ const addDays = (iso, n) => new Date(Date.parse(iso) + n * 86400000).toISOString
 // 답한 날을 갈래 선으로 이어 이번 주를 보여 줍니다. 하루 빠지면 연속 일수는 다시 셉니다.
 const STREAK_COLORS = {
   light: { on: '#A9C8E4', off: '#DCE7F0', bg: '#FDFDFC', key: '#2B4A63' },
+  night: { on: '#5E8FB8', off: '#24384A', bg: '#15222E', key: '#CFE3F4' },
 };
 
 // 오늘(아직 안 했으면 어제)부터 거슬러 올라가며 이어서 답한 날을 셉니다.
@@ -26,8 +27,8 @@ export function currentStreak(answers, today) {
   return streak;
 }
 
-function Streak({ answers, today }) {
-  const c = STREAK_COLORS.light;
+function Streak({ answers, today, night }) {
+  const c = STREAK_COLORS[night ? 'night' : 'light'];
   const answered = new Set(Object.values(answers).filter(a => a.submitted && a.answeredOn).map(a => a.answeredOn));
   const streak = currentStreak(answers, today);
   const dow = (new Date(Date.parse(today)).getUTCDay() + 6) % 7;
@@ -46,7 +47,7 @@ function Streak({ answers, today }) {
   </section>;
 }
 
-export default function Today({ state, go, openQuestion }) {
+export default function Today({ state, go, openQuestion, night }) {
   const answer = state.answers[TODAY.id];
   const groups = state.groups.filter(g => state.joined.includes(g.id));
   const answeredCount = Object.values(state.answers).filter(a => a.submitted).length;
@@ -62,8 +63,8 @@ export default function Today({ state, go, openQuestion }) {
   const fruits = ACHIEVEMENTS.map((a, i) => ({ ...a, fresh: i >= 13 }));
   useEffect(() => { try { localStorage.setItem(SEEN_KEY, String(answeredCount)); } catch { /* 저장할 수 없는 환경입니다. */ } }, [answeredCount]);
   return <div className="today">
-    <WorldTree count={50} fruits={fruits} grow={grow} />{/* 임시: 답변 50개 미리보기 */}
-    <Streak answers={state.answers} today={TODAY.date} />
+    <WorldTree count={50} fruits={fruits} grow={grow} night={night} />{/* 임시: 답변 50개 미리보기 */}
+    <Streak answers={state.answers} today={TODAY.date} night={night} />
     <section className="today-card">
       <div className="today-card-body">
         <div className="row"><time dateTime={TODAY.date}>{dateLabel(TODAY.date)}</time></div>

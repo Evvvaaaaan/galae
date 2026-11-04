@@ -1,16 +1,18 @@
 import { useState } from 'react';
 import { Avatar } from '../components/UI.jsx';
-import { PROFILE_COLORS } from '../store.js';
+import { PROFILE_COLORS, THEMES } from '../store.js';
 import { TOPICS } from './Feed.jsx';
 
 const COLOR_LABELS = { sage: '초록', blue: '파랑', peach: '살구', lilac: '보라' };
+const THEME_LABELS = { light: '화이트', dark: '다크', auto: '자동' };
 
-export function Settings({ profile, go, onLogout, onReset }) {
+export function Settings({ profile, theme, onTheme, go, onLogout, onReset }) {
   const [confirmReset, setConfirmReset] = useState(false);
   return <div className="flow">
     <div className="list">
       <button className="list-row" onClick={() => go('settings/profile')}><Avatar name={profile.name || '나'} color={profile.color} /><span>{profile.name || '나'}</span></button>
       <button className="list-row" disabled>알림</button>
+      <div className="list-row theme-row"><span>화면 모드</span><div className="tabs">{THEMES.map(t => <button key={t} aria-pressed={theme === t} onClick={() => onTheme(t)}>{THEME_LABELS[t]}</button>)}</div></div>
     </div>
     <div className="list">
       <button className="list-row" disabled>계정 연결</button>

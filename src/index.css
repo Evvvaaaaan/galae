@@ -149,6 +149,14 @@ label.list-row { cursor: pointer; }
 /* 오늘 */
 .today { display: flex; flex-direction: column; gap: 16px; padding-bottom: 24px; }
 .today-card { position: relative; margin: 0; border: 1px solid var(--line); border-radius: 22px; background: var(--bg); overflow: hidden; }
+/* 밤 배경 (지금은 홈 화면만) */
+.frame.night {
+  --bg: #0E1822; --ink: #E6EEF5; --ink-sub: #8DA3B5; --ink-hint: #7F95A7; --ink-faint: #4E6272; --line: #1E2F3D;
+  --key: #CFE3F4; --key-bg: #1F3446; --sel-bg: #15222E; --sel-line: #2A4256; --bar-key: #5E8FB8; --bar-base: #24384A; --bar-track: #1A2A38;
+  border-color: var(--bg);
+}
+.night .today-card, .night .today-box { background: #15222E; }
+.night .tab-header img { filter: brightness(0) invert(.88); }
 .world-tree { position: relative; margin: -8px -28px 0; }
 .world-tree svg { display: block; width: 100%; height: auto; }
 .today-card-body { display: flex; flex-direction: column; gap: 14px; padding: 18px 22px 22px; }
@@ -239,6 +247,8 @@ label.list-row { cursor: pointer; }
 .tabs { display: flex; gap: 16px; }
 .tabs button { min-height: 44px; padding: 8px 0; border: 0; background: none; font-size: 13px; color: var(--ink-hint); }
 .tabs button[aria-pressed=true] { color: var(--key); }
+.theme-row { padding: 6px 0; }
+.theme-row > span { flex: 1; }
 
 /* 결과 */
 .results { display: flex; flex-direction: column; gap: 22px; }
