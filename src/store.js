@@ -85,6 +85,11 @@ export function completeAnswer(state, id) {
   return updateAnswer(state, id, { completed: true });
 }
 
+// 처음 답하면 답한 날을 남기고, 다시 답하면 선택과 이유만 바꿉니다. 날짜·공유 같은 나머지 기록은 그대로입니다.
+export function submitAnswer(state, id, sel, reason, date) {
+  return updateAnswer(state, id, state.answers[id]?.submitted ? { sel, reason } : { sel, reason, submitted: true, answeredOn: date });
+}
+
 export function questionStep(answer, requestedStep) {
   if (!answer?.submitted) return 'answer';
   if ((requestedStep === 'done' || requestedStep === 'summary') && !answer.completed) return 'reading';

@@ -18,7 +18,7 @@ import { Groups, GroupForm, GroupDetail, GroupMembers, GroupsAddMenu } from './s
 import { BottomNav, Header, Icon } from './components/UI.jsx';
 import { QUESTIONS, TODAY, MEMBERS, dateLabel } from './questionData.js';
 import { recordAchievements } from './achievements.js';
-import { STORAGE_KEY, STEPS, loadState, emptyAnswer, updateAnswer, completeAnswer, questionStep, questionRoute, rememberQuestionRoute, previousStep, joinedGroups, leaveGroup, kickMember, addMessage, addComment, toggleLike } from './store.js';
+import { STORAGE_KEY, STEPS, loadState, emptyAnswer, updateAnswer, completeAnswer, submitAnswer, questionStep, questionRoute, rememberQuestionRoute, previousStep, joinedGroups, leaveGroup, kickMember, addMessage, addComment, toggleLike } from './store.js';
 
 const routeFromLocation = () => location.hash.replace(/^#\/?/, '') || 'today';
 // 진행 선 세 칸: 선택 / 결과·다른 생각 / 확장하기
@@ -33,6 +33,8 @@ export default function App() {
   const [storageError, setStorageError] = useState(false);
   // 질문 흐름에 들어오기 직전 화면. 나의 선택에서 뒤로가면 이곳으로 돌아갑니다.
   const [origin, setOrigin] = useState(null);
+  // 다시 하기로 새로 답하는 중인 답입니다. 선택하기를 누르기 전까지 저장된 답은 그대로이고, 확장하기를 마치면 끝납니다.
+  const [redo, setRedo] = useState(null);
   const mainRef = useRef(null);
   // 바로 전 화면. 완료 → 나누기에서 뒤로가면 완료로 돌아가기 위해 씁니다.
   const prevRoute = useRef(null);
@@ -49,6 +51,11 @@ export default function App() {
     if (mainRef.current) { mainRef.current.scrollTop = 0; mainRef.current.querySelector('h1')?.focus({ preventScroll: true }); }
     setState(s => rememberQuestionRoute(s, route));
   }, [route, state.started]);
+  // 다시 답하던 질문을 벗어나면 다시 하기를 그만둡니다. 프로필을 보고 돌아오는 동안은 이어 갑니다.
+  useEffect(() => {
+    const [section, id] = route.split('/');
+    if (!(section === 'question' && id === redo?.id) && section !== 'users') setRedo(null);
+  }, [route]);
   function go(next) {
     if (next === route) return;
     // 다른 사람 프로필에서 질문으로 돌아갈 때는 처음 들어온 화면을 그대로 둡니다.
@@ -95,17 +102,20 @@ export default function App() {
     // 결과 화면에서 고른 선택지의 코멘트 목록입니다. 경로: question/:id/result/:choiceId
     const choice = extra === undefined ? null : question?.choices.find(c => String(c.id) === extra);
     if (question && (extra === undefined || choice)) {
-      const answer = state.answers[id] || emptyAnswer();
+      const saved = state.answers[id] || emptyAnswer();
+      const redoing = redo?.id === id;
+      const answer = redoing ? { ...saved, ...redo.answer } : saved;
+      const edit = fields => redoing ? setRedo(r => ({ ...r, answer: { ...r.answer, ...fields } })) : patch(id, fields);
       const step = questionStep(answer, requestedStep);
       const flowGo = next => STEPS.includes(next) ? go(`question/${id}/${next}`) : go(next);
       const next = () => flowGo(STEPS[STEPS.indexOf(step) + 1]);
       let flow;
       switch (step) {
-        case 'answer': flow = <Question question={question} answer={answer} onPick={sel => { if (!answer.submitted) patch(id, { sel }); }} onReason={reason => { if (!answer.submitted) patch(id, { reason }); }} onSubmit={() => { if (answer.sel === null) return; patch(id, { submitted: true, answeredOn: TODAY.date }); flowGo('result'); }} />; break;
+        case 'answer': flow = <Question question={question} answer={answer} onPick={sel => { if (!answer.submitted) edit({ sel }); }} onReason={reason => { if (!answer.submitted) edit({ reason }); }} onSubmit={() => { if (answer.sel === null) return; setState(s => submitAnswer(s, id, answer.sel, answer.reason, TODAY.date)); if (redoing) edit({ submitted: true }); flowGo('result'); }} />; break;
         case 'result': flow = choice ? <Comments question={question} choice={choice} comments={question.opinions[question.choices.indexOf(choice)].items} answer={answer} profile={state.profile} onProfile={openProfile} /> : <Result question={question} sel={answer.sel} onOpen={choiceId => go(`question/${id}/result/${choiceId}`)} next={next} />; break;
-        case 'reading': flow = <Reading question={question} next={() => { if (answer.completed) return flowGo('summary'); setState(s => completeAnswer(s, id)); next(); }} />; break;
+        case 'reading': flow = <Reading question={question} next={() => { if (answer.completed) return flowGo('summary'); setRedo(null); setState(s => completeAnswer(s, id)); next(); }} />; break;
         case 'done': flow = <Done question={question} answer={answer} go={flowGo} onShare={() => fromGroup ? shareToGroup(id, fromGroup.id) : flowGo('share')} />; break;
-        case 'summary': flow = <Summary question={question} answer={answer} groups={state.groups} onOpen={choiceId => go(`question/${id}/result/${choiceId}`)} onShare={() => fromGroup ? shareToGroup(id, fromGroup.id) : flowGo('share')} onReading={() => flowGo('reading')} onRetry={() => { patch(id, emptyAnswer()); flowGo('answer'); }} />; break;
+        case 'summary': flow = <Summary question={question} answer={answer} groups={state.groups} onOpen={choiceId => go(`question/${id}/result/${choiceId}`)} onShare={() => fromGroup ? shareToGroup(id, fromGroup.id) : flowGo('share')} onReading={() => flowGo('reading')} onRetry={() => { setRedo({ id, answer: { sel: null, reason: '', submitted: false, completed: false } }); flowGo('answer'); }} />; break;
         case 'share': flow = <Share key={id} question={question} answer={answer} groups={joinedGroups(state)} onDraft={shareDraft => patch(id, { shareDraft })} onSave={sharedWith => patch(id, { sharedWith, shareDraft: null })} go={go} />; break;
       }
       const back = () => answer.completed && ((choice && step === 'result') || step === 'reading') ? flowGo('summary') : choice && step === 'result' ? flowGo('result') : step === 'share' && [`question/${id}/done`, `question/${id}/summary`].includes(prevRoute.current) ? go(prevRoute.current) : previousStep(step) ? flowGo(previousStep(step)) : go(home);

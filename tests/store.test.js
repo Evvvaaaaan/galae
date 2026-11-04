@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { initialState, updateAnswer, completeAnswer, questionRoute, rememberQuestionRoute, leaveGroup, loadState, addMessage, addComment, previousStep, STORAGE_KEY } from '../src/store.js';
+import { initialState, updateAnswer, completeAnswer, submitAnswer, questionRoute, rememberQuestionRoute, leaveGroup, loadState, addMessage, addComment, previousStep, STORAGE_KEY } from '../src/store.js';
 
 function restore(saved) {
   globalThis.localStorage = { getItem: () => JSON.stringify(saved) };
@@ -215,4 +215,15 @@ test('생각 댓글은 주제별로 저장·복원되고 빈 댓글과 잘못된
   assert.equal(state.comments[0].text, '같은 배일까요?');
   assert.equal(state.comments[0].topicId, 'p001');
   assert.deepEqual(restore({ ...initialState(), comments: undefined }).comments, []);
+});
+
+test('처음 답하면 답한 날을 남기고, 다시 답하면 선택과 이유만 바뀐다', () => {
+  let state = updateAnswer(initialState(), 'q036', { sel: 0, reason: '처음 생각' });
+  state = submitAnswer(state, 'q036', 0, '처음 생각', '2026-09-24');
+  assert.equal(state.answers.q036.submitted, true);
+  assert.equal(state.answers.q036.answeredOn, '2026-09-24');
+  state = updateAnswer(completeAnswer(state, 'q036'), 'q036', { sharedWith: ['g1'] });
+  const before = state.answers.q036;
+  state = submitAnswer(state, 'q036', 2, '바뀐 생각', '2026-09-26');
+  assert.deepEqual(state.answers.q036, { ...before, sel: 2, reason: '바뀐 생각' });
 });
