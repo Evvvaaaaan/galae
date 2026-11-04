@@ -6,8 +6,7 @@ export const STORAGE_KEY = 'garae.frontend.v1';
 export const STEPS = ['answer', 'result', 'reading', 'done', 'share', 'summary'];
 export const emptyAnswer = () => ({ sel: null, reason: '', submitted: false, completed: false, sharedWith: [], shareDraft: null, lastStep: null });
 export const PROFILE_COLORS = ['sage', 'blue', 'peach', 'lilac'];
-export const THEMES = ['light', 'dark', 'auto'];
-export const initialState = () => ({ started: false, answers: {}, groups: DEMO_GROUPS, joined: ['g1', 'g2'], profile: { name: '', handle: '', bio: '', photo: '', color: 'blue' }, theme: 'auto', messages: [], comments: [], likes: [], achieved: {} });
+export const initialState = () => ({ started: false, answers: {}, groups: DEMO_GROUPS, joined: ['g1', 'g2'], profile: { name: '', handle: '', bio: '', photo: '', color: 'blue' }, messages: [], comments: [], likes: [], achieved: {} });
 
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const text = (value, fallback = '') => typeof value === 'string' ? value : fallback;
@@ -60,7 +59,6 @@ export function loadState() {
           photo: /^data:image\/jpeg;base64,/.test(saved.profile?.photo) ? saved.profile.photo : '',
           color: PROFILE_COLORS.includes(saved.profile?.color) ? saved.profile.color : 'blue',
         },
-        theme: THEMES.includes(saved.theme) ? saved.theme : 'auto',
         messages: (Array.isArray(saved.messages) ? saved.messages : []).filter(m => isObject(m) && typeof m.id === 'string' && typeof m.text === 'string' && m.text && groups.some(g => g.id === m.groupId) && QUESTIONS.some(q => q.id === m.questionId)),
         comments: (Array.isArray(saved.comments) ? saved.comments : []).filter(c => isObject(c) && typeof c.id === 'string' && typeof c.text === 'string' && c.text && PARADOXES.some(p => p.id === c.topicId)),
         likes: (Array.isArray(saved.likes) ? saved.likes : []).filter(id => typeof id === 'string'),

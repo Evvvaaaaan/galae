@@ -31,14 +31,6 @@ export default function App() {
   const [storageError, setStorageError] = useState(false);
   // 질문 흐름에 들어오기 직전 화면. 나의 선택에서 뒤로가면 이곳으로 돌아갑니다.
   const [origin, setOrigin] = useState(null);
-  // 기기가 다크 모드인지 따라갑니다. 화면 모드가 자동일 때 씁니다.
-  const [systemDark, setSystemDark] = useState(() => matchMedia('(prefers-color-scheme: dark)').matches);
-  useEffect(() => {
-    const media = matchMedia('(prefers-color-scheme: dark)');
-    const onChange = () => setSystemDark(media.matches);
-    media.addEventListener('change', onChange);
-    return () => media.removeEventListener('change', onChange);
-  }, []);
   const mainRef = useRef(null);
   // 바로 전 화면. 완료 → 나누기에서 뒤로가면 완료로 돌아가기 위해 씁니다.
   const prevRoute = useRef(null);
@@ -85,15 +77,13 @@ export default function App() {
   }
 
   const [section, id, requestedStep, extra] = route.split('/');
-  // 밤 배경은 우선 홈 화면에만 씁니다.
-  const night = state.started && section === 'today' && !id && (state.theme === 'dark' || (state.theme === 'auto' && systemDark));
   let active = section;
   let content;
   if (!state.started) content = welcome === 'login' ? <Login go={welcomeGo} />
     : welcome === 'signup' ? <Account mode="signup" back={() => setWelcome('login')} onDone={({ handle, name }) => { setState(s => ({ ...s, profile: { ...s.profile, handle, name } })); setWelcome('onboard'); }} />
     : welcome === 'signin' ? <Account mode="signin" back={() => setWelcome('login')} onDone={() => welcomeGo('today')} />
     : <Onboard go={welcomeGo} />;
-  else if (section === 'today' && !id) content = <Today state={state} go={go} openQuestion={openQuestion} night={night} />;
+  else if (section === 'today' && !id) content = <Today state={state} go={go} openQuestion={openQuestion} />;
   else if (section === 'archive' && !id) content = <Archive answers={state.answers} openQuestion={openQuestion} />;
   else if (section === 'feed' && (!id || TOPICS.some(t => t.id === id))) content = <Feed key={id} initialTopic={id} initialComments={requestedStep === 'comments'} comments={state.comments} likes={state.likes} profile={state.profile} onComment={(topicId, text, parentId) => setState(s => addComment(s, topicId, text, parentId))} onLike={id => setState(s => toggleLike(s, id))} onProfile={openProfile} />;
   else if (section === 'question' && (!extra || requestedStep === 'result') && (!requestedStep || STEPS.includes(requestedStep))) {
@@ -140,7 +130,7 @@ export default function App() {
     if (member) content = <><Header back={() => go(profileFrom.current || 'today')} title={member.handle} /><MemberProfile member={member} /></>;
   } else if (section === 'settings' && !requestedStep) {
     active = 'records';
-    if (!id) content = <><Header back={() => go('records')} title="설정" /><Settings profile={state.profile} theme={state.theme} onTheme={theme => setState(s => ({ ...s, theme }))} go={go} onLogout={() => { go('today'); setWelcome('login'); setState(s => ({ ...s, started: false })); }} onReset={() => setState(s => ({ ...s, answers: {}, achieved: {} }))} /></>;
+    if (!id) content = <><Header back={() => go('records')} title="설정" /><Settings profile={state.profile} go={go} onLogout={() => { go('today'); setWelcome('login'); setState(s => ({ ...s, started: false })); }} onReset={() => setState(s => ({ ...s, answers: {}, achieved: {} }))} /></>;
     else if (id === 'profile') {
       // 나 탭의 프로필 줄에서 들어왔으면 나 탭으로, 설정에서 들어왔으면 설정으로 돌아갑니다.
       const profileBack = prevRoute.current === 'records' ? 'records' : 'settings';
@@ -154,7 +144,7 @@ export default function App() {
   const tabHeader = <header className="tab-header">{section === 'today' ? <img src="/logo.png" alt="갈래" /> : <span className="tab-title" aria-hidden="true">{TAB_TITLES[section]}</span>}{section === 'records' && <button className="icon-button" aria-label="설정" onClick={() => go('settings')}><Icon name="gear" size={22} /></button>}{section === 'groups' && <GroupsAddMenu go={go} />}</header>;
   if (!content) content = <div className="flow"><h1 className="flow-title" tabIndex={-1}>찾을 수 없어요</h1><button className="btn-primary" onClick={() => go('today')}>오늘로</button></div>;
 
-  return <div className={`frame${night ? ' night' : ''}`}>
+  return <div className="frame">
     <main ref={mainRef} className={`screen ${state.started && route !== 'settings/onboard' ? 'app-screen' : ''} ${section === 'feed' && state.started ? 'flush' : ''}`} id="main-content" key={state.started ? route : welcome}>
       {storageError && <p className="form-error" role="alert">브라우저에 저장하지 못했어요</p>}{tabRoot && tabHeader}{content}
     </main>{state.started && route !== 'settings/onboard' && <BottomNav active={active} go={go} />}
