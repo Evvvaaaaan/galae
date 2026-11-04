@@ -9,7 +9,7 @@ export default function RecordDetail({ question, answer, groups, go }) {
       <strong>{question.choices.find(c => c.id === answer.sel)?.text}</strong>
       {answer.reason && <p className="preserve-lines">{answer.reason}</p>}
     </div>
-    <p className="shared">{shared.length ? shared.map(g => g.name).join(' · ') : '나만 보는 기록'}</p>
+    {shared.length > 0 && <p className="shared">{shared.map(g => g.name).join(' · ')}</p>}
     <div className="actions">
       <button className="btn-primary" onClick={() => go(`question/${question.id}/share`)}>나누기</button>
       <button className="btn-text" onClick={() => go(`question/${question.id}/result`)}>다시 보기</button>

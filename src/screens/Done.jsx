@@ -8,7 +8,7 @@ export default function Done({ question, answer, go, group, onShareGroup }) {
       <span className="hint">{question.title}</span>
       <strong>{question.choices.find(c => c.id === answer.sel)?.text}</strong>
     </div>
-    <p className="shared">{answer.sharedWith.length ? `${answer.sharedWith.length}개 그룹에 공유 중` : '나만 보는 기록'}</p>
+    {answer.sharedWith.length > 0 && <p className="shared">{answer.sharedWith.length}개 그룹에 공유 중</p>}
     <div className="actions">
       <button className="btn-primary" onClick={() => group ? onShareGroup() : go('share')}>나누기</button>
       <button className="btn-text" onClick={() => go('records')}>나의 기록</button>
