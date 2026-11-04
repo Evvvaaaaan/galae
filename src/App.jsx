@@ -25,7 +25,9 @@ const routeFromLocation = () => location.hash.replace(/^#\/?/, '') || 'today';
 const PROGRESS = { answer: 0, result: 1, reading: 2 };
 
 export default function App() {
-  const [state, setState] = useState(loadState);
+  const [state, setSavedState] = useState(() => recordAchievements(loadState(), TODAY.date));
+  // 상태가 바뀔 때마다 새로 달성한 업적을 남깁니다.
+  const setState = update => setSavedState(s => recordAchievements(update(s), TODAY.date));
   const [route, setRoute] = useState(routeFromLocation);
   const [welcome, setWelcome] = useState('login');
   const [storageError, setStorageError] = useState(false);
@@ -39,8 +41,6 @@ export default function App() {
     window.addEventListener('hashchange', onHashChange);
     return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
-  // 상태가 바뀔 때마다 새로 달성한 업적을 남깁니다.
-  useEffect(() => { setState(s => recordAchievements(s, TODAY.date)); }, [state]);
   useEffect(() => {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); setStorageError(false); }
     catch { setStorageError(true); }

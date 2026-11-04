@@ -87,7 +87,7 @@ const f = n => n.toFixed(1);
 
 const spread = i => i === 0 ? 0 : (i % 2 ? -1 : 1) * (1 - vdc(Math.ceil(i / 2)));
 
-function thread(i) {
+function drawThread(i) {
   const { cx, ground, fanY } = TREE;
   const r = rng(i * 9973 + 17);
   const norm = Math.max(-1, Math.min(1, spread(i) + (r() - 0.5) * 0.04));
@@ -114,6 +114,10 @@ function thread(i) {
   });
   return { d, twigs, tip, a, norm };
 }
+
+// 선 모양은 번호로만 정해지므로 한 번 그린 선은 다시 씁니다.
+const threads = [];
+const thread = i => threads[i] ??= drawThread(i);
 
 // 선보다 열매가 많으면 남는 열매는 선이 더 생길 때까지 달지 않습니다.
 function fruitThreads(fruits, count) {
