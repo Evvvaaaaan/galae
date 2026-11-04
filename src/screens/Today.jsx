@@ -17,7 +17,7 @@ export default function Today({ state, go, openQuestion }) {
           <span className="avatar-stack">{MEMBERS.slice(0, 3).map(m => <Avatar key={m.id} {...m} />)}</span>
           <span>{TODAY.participants.toLocaleString()}명 참여</span>
         </div>
-        <button className="btn-primary" onClick={() => openQuestion(TODAY.id)}>{answer?.completed ? '나의 기록 보기' : answer?.submitted ? '나의 답변 이어보기' : '오늘의 갈래 시작하기'}</button>
+        <button className="btn-primary" disabled={answer?.completed} onClick={() => openQuestion(TODAY.id)}>{answer?.completed ? '답변 완료' : answer?.submitted ? '나의 답변 이어보기' : '오늘의 갈래 시작하기'}</button>
       </div>
     </section>
     <div className="list today-box">{groups.length ? groups.slice(0, 2).map(group => {

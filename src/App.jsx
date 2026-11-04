@@ -116,7 +116,7 @@ export default function App() {
     else if (id === 'comments') content = <><Header back={() => go('records')} title="댓글" /><MyComments comments={state.comments} go={go} /></>;
     else {
       const question = QUESTIONS.find(q => q.id === id);
-      if (question && state.answers[id]?.submitted) content = <><Header back={() => go(recordFrom)} /><RecordDetail question={question} answer={state.answers[id]} groups={state.groups} go={go} /></>;
+      if (question && state.answers[id]?.submitted) content = <><Header back={() => go(recordFrom)} /><RecordDetail question={question} answer={state.answers[id]} groups={state.groups} go={go} onRetry={() => { patch(id, emptyAnswer()); go(`question/${id}/answer`); }} /></>;
     }
   } else if (section === 'settings' && !requestedStep) {
     active = 'records';

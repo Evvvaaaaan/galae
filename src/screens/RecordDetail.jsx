@@ -1,6 +1,6 @@
 import { dateLabel } from '../questionData.js';
 
-export default function RecordDetail({ question, answer, groups, go }) {
+export default function RecordDetail({ question, answer, groups, go, onRetry }) {
   const shared = groups.filter(g => answer.sharedWith.includes(g.id));
   return <div className="flow">
     <div className="meta"><time dateTime={question.date}>{dateLabel(question.date)}</time></div>
@@ -12,7 +12,7 @@ export default function RecordDetail({ question, answer, groups, go }) {
     {shared.length > 0 && <p className="shared">{shared.map(g => g.name).join(' · ')}</p>}
     <div className="actions">
       <button className="btn-primary" onClick={() => go(`question/${question.id}/share`)}>나누기</button>
-      <button className="btn-text" onClick={() => go(`question/${question.id}/result`)}>다시 보기</button>
+      <button className="btn-text" onClick={onRetry}>다시 하기</button>
     </div>
   </div>;
 }

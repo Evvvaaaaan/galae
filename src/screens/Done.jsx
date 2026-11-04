@@ -11,8 +11,7 @@ export default function Done({ question, answer, go, group, onShareGroup }) {
     {answer.sharedWith.length > 0 && <p className="shared">{answer.sharedWith.length}개 그룹에 공유 중</p>}
     <div className="actions">
       <button className="btn-primary" onClick={() => group ? onShareGroup() : go('share')}>나누기</button>
-      <button className="btn-text" onClick={() => go('records')}>나의 기록</button>
-      <button className="btn-text" onClick={() => go('archive')}>다른 질문</button>
+      <button className="btn-text" onClick={() => go('today')}>홈으로</button>
     </div>
   </div>;
 }
