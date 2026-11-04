@@ -112,7 +112,7 @@ label.list-row { cursor: pointer; }
 .start { display: flex; flex-direction: column; min-height: 100%; margin: 0 -28px; }
 .start .motif { margin-top: 18vh; }
 .start-title { padding: 40px 28px 0; flex: 1; }
-.start-title h1 { font-size: 24px; font-weight: 500; letter-spacing: -.01em; }
+.start-title h1 { font-family: var(--serif); font-size: 24px; font-weight: 400; letter-spacing: -.01em; color: var(--key); }
 .start-title p { margin-top: 10px; font-size: 14px; color: var(--ink-sub); }
 .start-actions { display: flex; flex-direction: column; gap: 10px; padding: 0 28px; }
 .btn-login { display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 52px; border: 1px solid var(--line); border-radius: 14px; background: none; color: var(--ink-sub); font-size: 14px; }
