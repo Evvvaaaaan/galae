@@ -13,7 +13,7 @@ import Share from './screens/Share.jsx';
 import Records, { MyComments } from './screens/Records.jsx';
 import RecordDetail from './screens/RecordDetail.jsx';
 import { Settings, ProfileForm, Sources } from './screens/Settings.jsx';
-import { Groups, GroupForm, GroupDetail, GroupMembers } from './screens/Groups.jsx';
+import { Groups, GroupForm, GroupDetail, GroupMembers, GroupsAddMenu } from './screens/Groups.jsx';
 import { BottomNav, Header, Icon } from './components/UI.jsx';
 import { QUESTIONS, TODAY, dateLabel } from './questionData.js';
 import { STORAGE_KEY, STEPS, loadState, emptyAnswer, updateAnswer, completeAnswer, questionStep, questionRoute, rememberQuestionRoute, previousStep, leaveGroup, addMessage, addComment, toggleLike } from './store.js';
@@ -109,7 +109,7 @@ export default function App() {
     else {
       const group = state.groups.find(g => g.id === id && state.joined.includes(id));
       if (group && requestedStep === 'settings' && group.owner && !extra) content = <GroupForm key={`${id}/settings`} mode="edit" group={group} go={go} onSave={fields => { setState(s => ({ ...s, groups: s.groups.map(g => g.id === id ? { ...g, ...fields } : g) })); go(`groups/${id}/members`); }} />;
-      else if (group && (!requestedStep || requestedStep === 'members' || QUESTIONS.some(q => q.id === requestedStep))) content = requestedStep === 'members' ? <GroupMembers key={id} group={group} profile={state.profile} questionId={extra} answer={state.answers[extra]} go={go} onLeave={groupId => { setState(s => leaveGroup(s, groupId)); go('groups'); }} /> : <GroupDetail key={`${id}/${requestedStep || ''}`} initialQuestionId={requestedStep} group={group} state={state} go={go} openQuestion={openQuestion} onShare={questionId => shareToGroup(questionId, id)} onSend={(questionId, text) => setState(s => addMessage(s, id, questionId, text))} />;
+      else if (group && (!requestedStep || requestedStep === 'members' || QUESTIONS.some(q => q.id === requestedStep))) content = requestedStep === 'members' ? <GroupMembers key={id} group={group} profile={state.profile} questionId={extra} go={go} onLeave={groupId => { setState(s => leaveGroup(s, groupId)); go('groups'); }} /> : <GroupDetail key={`${id}/${requestedStep || ''}`} initialQuestionId={requestedStep} group={group} state={state} go={go} openQuestion={openQuestion} onSend={(questionId, text) => setState(s => addMessage(s, id, questionId, text))} />;
     }
   } else if (section === 'records' && !requestedStep) {
     if (!id) content = <Records answers={state.answers} comments={state.comments} groupCount={state.joined.length} profile={state.profile} joinedOn={state.joinedOn} go={go} />;
@@ -131,7 +131,7 @@ export default function App() {
   }
   const tabRoot = state.started && (!id || (section === 'feed' && content)) && ['today', 'archive', 'feed', 'groups', 'records'].includes(section);
   const TAB_TITLES = { feed: '생각', archive: '질문', groups: '그룹', records: '내 정보' };
-  const tabHeader = <header className="tab-header">{section === 'today' ? <img src="/logo.png" alt="갈래" /> : <span className="tab-title" aria-hidden="true">{TAB_TITLES[section]}</span>}{section === 'records' && <button className="icon-button" aria-label="설정" onClick={() => go('settings')}><Icon name="gear" size={22} /></button>}</header>;
+  const tabHeader = <header className="tab-header">{section === 'today' ? <img src="/logo.png" alt="갈래" /> : <span className="tab-title" aria-hidden="true">{TAB_TITLES[section]}</span>}{section === 'records' && <button className="icon-button" aria-label="설정" onClick={() => go('settings')}><Icon name="gear" size={22} /></button>}{section === 'groups' && <GroupsAddMenu go={go} />}</header>;
   if (!content) content = <div className="flow"><h1 className="flow-title" tabIndex={-1}>찾을 수 없어요</h1><button className="btn-primary" onClick={() => go('today')}>오늘로</button></div>;
 
   return <div className="frame">

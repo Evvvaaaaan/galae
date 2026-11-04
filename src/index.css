@@ -194,6 +194,8 @@ label.list-row { cursor: pointer; }
 .sheet .comment-list { flex: 1; padding: 0 28px 20px; overflow-y: auto; }
 .sheet .chat-input { position: static; margin: 0; padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
 @keyframes fadeIn { from { opacity: 0; } }
+.dialog { position: absolute; top: 50%; left: 50%; width: min(280px, calc(100% - 56px)); transform: translate(-50%, -50%); padding: 24px 20px 8px; border-radius: 16px; background: var(--bg); text-align: center; font-size: 15px; z-index: 7; animation: fadeIn 200ms ease-out both; }
+.dialog-actions { display: flex; justify-content: center; gap: 24px; margin-top: 12px; }
 @keyframes sheetIn { from { transform: translateY(100%); } }
 
 /* 질문 모아보기 */
@@ -259,7 +261,6 @@ label.list-row { cursor: pointer; }
 .question-menu { position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 11; max-height: 280px; overflow-y: auto; margin: 0; padding: 6px; list-style: none; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); box-shadow: 0 8px 24px rgba(51, 50, 47, .08); }
 .question-menu button { display: block; width: 100%; padding: 11px 10px; border: 0; border-radius: 8px; background: none; text-align: left; font-size: 14px; color: var(--ink-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .question-menu button[aria-pressed=true] { background: var(--sel-bg); color: var(--key); }
-.group-description { font-size: 14px; line-height: 1.8; color: var(--ink-sub); }
 .group-preview { display: flex; justify-content: center; }
 .group-preview .avatar { width: 72px; height: 72px; border-radius: 24px; font-size: 26px; }
 .color-picker { display: flex; justify-content: center; gap: 14px; }
@@ -291,8 +292,8 @@ label.list-row { cursor: pointer; }
 .profile-stats strong { font-family: var(--serif); font-size: 18px; font-weight: 400; color: var(--ink); }
 .profile-edit { min-height: 44px; margin-top: 20px; border: 0; background: var(--bar-track); color: var(--ink); }
 .avatar-stack small { align-self: center; margin-left: 8px; font-size: 11px; color: var(--ink-sub); }
-.groups-actions { display: flex; align-items: center; gap: 20px; min-height: 40px; }
-.groups-actions .btn-text { padding: 10px 0; font-size: 14px; color: var(--key); }
+.add-menu-wrap { position: relative; }
+.add-menu { left: auto; right: 0; min-width: 120px; }
 .group-row-head { display: flex; align-items: center; gap: 12px; }
 .group-row { display: flex; flex-direction: column; gap: 8px; width: 100%; padding: 20px 0; border: 0; border-bottom: 1px solid var(--line); background: none; text-align: left; }
 .group-row strong { font-family: var(--serif); font-size: 17px; font-weight: 400; }
@@ -300,15 +301,14 @@ label.list-row { cursor: pointer; }
 .list-row small { flex-shrink: 0; }
 
 /* 그룹 대화 */
-.chat-flow { gap: 18px; }
-.group-question { display: flex; flex-direction: column; gap: 8px; padding: 18px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.screen:has(.chat-flow) { display: flex; flex-direction: column; overflow: hidden; padding-bottom: 0; }
+.chat-flow { gap: 18px; flex: 1; min-height: 0; }
+.group-question { display: flex; flex-direction: column; gap: 8px; padding: 16px 18px; border: 1px solid var(--line); border-radius: 16px; }
 .group-question strong { font-family: var(--serif); font-size: 17px; font-weight: 400; }
 .group-question p { font-size: 14px; line-height: 1.8; color: var(--ink-sub); }
 .locked { display: flex; flex-direction: column; gap: 14px; padding-top: 8px; text-align: center; font-size: 14px; color: var(--ink-sub); }
-.distribution { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--ink-sub); }
-.distribution strong { font-weight: 500; color: var(--key); }
-.group-share { align-self: flex-start; padding: 0; color: var(--key); }
-.chat { display: flex; flex-direction: column; gap: 14px; }
+.chat { display: flex; flex-direction: column; gap: 14px; flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: none; }
+.chat::-webkit-scrollbar { display: none; }
 .bubble-row { display: flex; align-items: flex-start; gap: 8px; }
 .bubble-row.mine { justify-content: flex-end; }
 .bubble-wrap { display: flex; flex-direction: column; gap: 4px; max-width: 78%; }
@@ -318,7 +318,7 @@ label.list-row { cursor: pointer; }
 .bubble { display: flex; flex-direction: column; gap: 6px; padding: 11px 14px; border-radius: 4px 16px 16px 16px; background: var(--bar-track); font-size: 14px; line-height: 1.7; }
 .bubble-row.mine .bubble { border-radius: 16px 4px 16px 16px; background: var(--key-bg); color: var(--key); }
 .chip { align-self: flex-start; font-size: 11px; color: var(--key); }
-.chat-input { position: sticky; bottom: -40px; display: flex; align-items: center; gap: 8px; margin: 0 -28px -40px; padding: 10px 28px 14px; border-top: 1px solid var(--line); background: var(--bg); }
+.chat-input { display: flex; align-items: center; gap: 8px; margin: 0 -28px; padding: 10px 28px 14px; border-top: 1px solid var(--line); background: var(--bg); }
 .chat-input input { flex: 1; min-width: 0; padding: 11px 16px; border: 1px solid var(--line); border-radius: 999px; background: none; outline: none; font-size: 16px; }
 .chat-input input:focus { border-color: var(--sel-line); }
 .chat-input .icon-button { margin: 0; color: var(--key); }
