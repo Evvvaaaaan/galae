@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Login from './screens/Login.jsx';
 import Onboard from './screens/Onboard.jsx';
+import Account from './screens/Account.jsx';
 import Today from './screens/Today.jsx';
 import Archive from './screens/Archive.jsx';
 import Feed, { TOPICS } from './screens/Feed.jsx';
@@ -54,7 +55,7 @@ export default function App() {
     prevRoute.current = route;
     location.hash = `/${next}`; setRoute(next);
   }
-  function welcomeGo(next) { if (next === 'onboard') setWelcome('onboard'); else setState(s => ({ ...s, started: true, joinedOn: s.joinedOn || TODAY.date })); }
+  function welcomeGo(next) { if (['signup', 'signin', 'onboard'].includes(next)) setWelcome(next); else setState(s => ({ ...s, started: true, joinedOn: s.joinedOn || TODAY.date })); }
   function openQuestion(id) { go(questionRoute(id, state.answers[id])); }
   function patch(id, value) { setState(s => updateAnswer(s, id, value)); }
   // 그룹에서 나누기를 누르면 그 그룹을 미리 체크한 채 공유 화면을 엽니다. 저장해야 공유됩니다.
@@ -74,7 +75,10 @@ export default function App() {
   const [section, id, requestedStep, extra] = route.split('/');
   let active = section;
   let content;
-  if (!state.started) content = welcome === 'login' ? <Login go={welcomeGo} /> : <Onboard go={welcomeGo} />;
+  if (!state.started) content = welcome === 'login' ? <Login go={welcomeGo} />
+    : welcome === 'signup' ? <Account mode="signup" back={() => setWelcome('login')} onDone={({ handle, name }) => { setState(s => ({ ...s, profile: { ...s.profile, handle, name } })); setWelcome('onboard'); }} />
+    : welcome === 'signin' ? <Account mode="signin" back={() => setWelcome('login')} onDone={() => welcomeGo('today')} />
+    : <Onboard go={welcomeGo} />;
   else if (section === 'today' && !id) content = <Today state={state} go={go} openQuestion={openQuestion} />;
   else if (section === 'archive' && !id) content = <Archive answers={state.answers} openQuestion={openQuestion} />;
   else if (section === 'feed' && (!id || TOPICS.some(t => t.id === id))) content = <Feed key={id} initialTopic={id} comments={state.comments} likes={state.likes} profile={state.profile} onComment={(topicId, text, parentId) => setState(s => addComment(s, topicId, text, parentId))} onLike={id => setState(s => toggleLike(s, id))} />;

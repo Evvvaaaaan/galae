@@ -1,5 +1,4 @@
-import { LOGINS } from '../data.js';
-import { BrandIcon, SplashMotif } from '../motifs.jsx';
+import { SplashMotif } from '../motifs.jsx';
 
 export default function Login({ go }) {
   return <div className="start">
@@ -9,8 +8,8 @@ export default function Login({ go }) {
       <p>하나의 질문, 여러 갈래의 생각</p>
     </div>
     <div className="start-actions">
-      <button className="btn-primary" onClick={() => go('onboard')}>시작하기</button>
-      {LOGINS.map(l => <button key={l.icon} className="btn-login" disabled><BrandIcon kind={l.icon} />{l.label}</button>)}
+      <button className="btn-primary" onClick={() => go('signup')}>시작하기</button>
+      <button className="btn-text" onClick={() => go('signin')}>로그인</button>
     </div>
   </div>;
 }

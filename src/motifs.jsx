@@ -85,22 +85,3 @@ export function DoneMotif() {
     </svg>
   );
 }
-
-const BRAND_PATHS = {
-  kakao: ['M8 2.6c-3.2 0-5.8 2-5.8 4.5 0 1.6 1.1 3 2.7 3.8l-.7 2.4 2.7-1.6c.4.06.7.08 1.1.08 3.2 0 5.8-2 5.8-4.6S11.2 2.6 8 2.6Z'],
-  google: ['M13.2 8.1c0 3-2.2 5-5.2 5a5.1 5.1 0 1 1 3.5-8.8', 'M8.2 8.1h5'],
-  apple: [
-    'M11.1 8.6c0-1.5 1.2-2.2 1.3-2.3-.7-1-1.8-1.2-2.2-1.2-1-.1-1.9.6-2.4.6-.5 0-1.2-.6-2-.5-1 0-2 .6-2.5 1.5-1.1 1.9-.3 4.7.8 6.2.5.7 1.1 1.5 1.9 1.5.8 0 1-.5 1.9-.5.9 0 1.1.5 1.9.5.8 0 1.3-.7 1.8-1.4.4-.6.6-1.2.6-1.2s-1.1-.4-1.1-1.7Z',
-    'M9.6 3.8c.4-.5.7-1.2.6-1.9-.6 0-1.4.4-1.8 1-.4.5-.7 1.2-.6 1.9.7 0 1.4-.4 1.8-1Z',
-  ],
-};
-
-export function BrandIcon({ kind }) {
-  return (
-    <svg viewBox="0 0 16 16" width={16} height={16} style={{ display: 'block' }}>
-      {BRAND_PATHS[kind].map(d => (
-        <path key={d} d={d} fill="none" stroke="#6B6A64" strokeWidth={1} strokeLinecap="round" strokeLinejoin="round" />
-      ))}
-    </svg>
-  );
-}

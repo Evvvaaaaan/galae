@@ -115,8 +115,6 @@ label.list-row { cursor: pointer; }
 .start-title h1 { font-family: var(--serif); font-size: 24px; font-weight: 400; letter-spacing: -.01em; color: var(--key); }
 .start-title p { margin-top: 10px; font-size: 14px; color: var(--ink-sub); }
 .start-actions { display: flex; flex-direction: column; gap: 10px; padding: 0 28px; }
-.btn-login { display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 52px; border: 1px solid var(--line); border-radius: 14px; background: none; color: var(--ink-sub); font-size: 14px; }
-.btn-login:disabled { opacity: .5; }
 
 /* 온보딩 */
 .hint { font-size: 12px; color: var(--ink-hint); }
@@ -325,7 +323,7 @@ label.list-row { cursor: pointer; }
 .chat-input .icon-button:disabled { color: var(--ink-faint); }
 
 /* 누를 때 반응 */
-.btn-primary:active:not(:disabled), .btn-secondary:active, .btn-login:active:not(:disabled) { opacity: .7; }
+.btn-primary:active:not(:disabled), .btn-secondary:active { opacity: .7; }
 .choice:active:not(:disabled) { background: var(--sel-bg); }
 .list-row:active:not(:disabled):not(div), .record-row:active:not(:disabled), .group-row:active, .result button.row:active { opacity: .55; }
 .icon-button:active:not(:disabled), .btn-text:active, .tabs button:active, .bottom-nav a:active, .calendar button:active:not(:disabled) { opacity: .5; }
