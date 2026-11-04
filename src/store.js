@@ -21,6 +21,8 @@ function restoreAnswer(value, id, groups) {
     sel, reason: text(answer.reason), submitted, completed, sharedWith,
     shareDraft: Array.isArray(answer.shareDraft) ? strings(answer.shareDraft).filter(id => groups.some(g => g.id === id)) : null,
     lastStep: STEPS.includes(answer.lastStep) ? answer.lastStep : null,
+    // 답변한 날입니다. 이 값이 생기기 전에 저장된 답변은 질문이 나온 날로 봅니다.
+    answeredOn: submitted ? (/^\d{4}-\d{2}-\d{2}$/.test(answer.answeredOn) ? answer.answeredOn : QUESTIONS.find(q => q.id === id).date) : null,
   };
 }
 
@@ -44,6 +46,8 @@ export function loadState() {
       const groups = restoreGroups(saved.groups);
       return {
         started: saved.started === true,
+        // 가입한 날입니다. 이 값이 생기기 전에 저장된 데이터는 가장 오래된 질문 날로 봅니다.
+        joinedOn: /^\d{4}-\d{2}-\d{2}$/.test(saved.joinedOn) ? saved.joinedOn : QUESTIONS.at(-1).date,
         answers: Object.fromEntries(Object.entries(isObject(saved.answers) ? saved.answers : {}).map(([id, answer]) => [id, restoreAnswer(answer, id, groups)])),
         groups,
         joined: strings(saved.joined).filter(id => groups.some(g => g.id === id)),

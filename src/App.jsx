@@ -10,9 +10,8 @@ import Comments from './screens/Comments.jsx';
 import Reading from './screens/Reading.jsx';
 import Done from './screens/Done.jsx';
 import Share from './screens/Share.jsx';
-import Records from './screens/Records.jsx';
+import Records, { MyComments } from './screens/Records.jsx';
 import RecordDetail from './screens/RecordDetail.jsx';
-import Report from './screens/Report.jsx';
 import { Settings, ProfileForm, Sources } from './screens/Settings.jsx';
 import { Groups, GroupForm, GroupDetail, GroupMembers } from './screens/Groups.jsx';
 import { BottomNav, Header, Icon } from './components/UI.jsx';
@@ -32,8 +31,6 @@ export default function App() {
   const [origin, setOrigin] = useState(null);
   // 기록 상세에 들어오기 직전 화면. 질문 흐름에서 돌아온 경우에는 바꾸지 않습니다.
   const [recordFrom, setRecordFrom] = useState('records');
-  // 마이페이지에서 뒤로가면 마지막으로 있던 탭으로 돌아갑니다.
-  const [lastTab, setLastTab] = useState('today');
   const mainRef = useRef(null);
   // 바로 전 화면. 완료 → 나누기에서 뒤로가면 완료로 돌아가기 위해 씁니다.
   const prevRoute = useRef(null);
@@ -49,7 +46,6 @@ export default function App() {
   useEffect(() => {
     if (mainRef.current) { mainRef.current.scrollTop = 0; mainRef.current.querySelector('h1')?.focus({ preventScroll: true }); }
     setState(s => rememberQuestionRoute(s, route));
-    if (['today', 'archive', 'feed', 'groups', 'records'].includes(route)) setLastTab(route);
   }, [route, state.started]);
   function go(next) {
     if (next === route) return;
@@ -58,7 +54,7 @@ export default function App() {
     prevRoute.current = route;
     location.hash = `/${next}`; setRoute(next);
   }
-  function welcomeGo(next) { if (next === 'onboard') setWelcome('onboard'); else setState(s => ({ ...s, started: true })); }
+  function welcomeGo(next) { if (next === 'onboard') setWelcome('onboard'); else setState(s => ({ ...s, started: true, joinedOn: s.joinedOn || TODAY.date })); }
   function openQuestion(id) { go(questionRoute(id, state.answers[id])); }
   function patch(id, value) { setState(s => updateAnswer(s, id, value)); }
   // 그룹에서 나누기를 누르면 그 그룹을 미리 체크한 채 공유 화면을 엽니다. 저장해야 공유됩니다.
@@ -97,7 +93,7 @@ export default function App() {
       const next = () => flowGo(STEPS[STEPS.indexOf(step) + 1]);
       let flow;
       switch (step) {
-        case 'answer': flow = <Question question={question} answer={answer} onPick={sel => { if (!answer.submitted) patch(id, { sel }); }} onReason={reason => { if (!answer.submitted) patch(id, { reason }); }} onSubmit={() => { if (answer.sel === null) return; patch(id, { submitted: true }); flowGo('result'); }} />; break;
+        case 'answer': flow = <Question question={question} answer={answer} onPick={sel => { if (!answer.submitted) patch(id, { sel }); }} onReason={reason => { if (!answer.submitted) patch(id, { reason }); }} onSubmit={() => { if (answer.sel === null) return; patch(id, { submitted: true, answeredOn: TODAY.date }); flowGo('result'); }} />; break;
         case 'result': flow = choice ? <Comments question={question} choice={choice} comments={question.opinions[question.choices.indexOf(choice)].items} answer={answer} profile={state.profile} /> : <Result question={question} sel={answer.sel} onOpen={choiceId => go(`question/${id}/result/${choiceId}`)} next={next} />; break;
         case 'reading': flow = <Reading question={question} next={() => { setState(s => completeAnswer(s, id)); next(); }} />; break;
         case 'done': flow = <Done question={question} answer={answer} go={flowGo} group={fromGroup} onShareGroup={() => shareToGroup(id, fromGroup.id)} />; break;
@@ -116,20 +112,26 @@ export default function App() {
       else if (group && (!requestedStep || requestedStep === 'members' || QUESTIONS.some(q => q.id === requestedStep))) content = requestedStep === 'members' ? <GroupMembers key={id} group={group} profile={state.profile} questionId={extra} answer={state.answers[extra]} go={go} onLeave={groupId => { setState(s => leaveGroup(s, groupId)); go('groups'); }} /> : <GroupDetail key={`${id}/${requestedStep || ''}`} initialQuestionId={requestedStep} group={group} state={state} go={go} openQuestion={openQuestion} onShare={questionId => shareToGroup(questionId, id)} onSend={(questionId, text) => setState(s => addMessage(s, id, questionId, text))} />;
     }
   } else if (section === 'records' && !requestedStep) {
-    if (!id) content = <Records answers={state.answers} comments={state.comments} profile={state.profile} go={go} openQuestion={openQuestion} />;
+    if (!id) content = <Records answers={state.answers} comments={state.comments} groupCount={state.joined.length} profile={state.profile} joinedOn={state.joinedOn} go={go} />;
+    else if (id === 'comments') content = <><Header back={() => go('records')} title="댓글" /><MyComments comments={state.comments} go={go} /></>;
     else {
       const question = QUESTIONS.find(q => q.id === id);
       if (question && state.answers[id]?.submitted) content = <><Header back={() => go(recordFrom)} /><RecordDetail question={question} answer={state.answers[id]} groups={state.groups} go={go} /></>;
     }
   } else if (section === 'settings' && !requestedStep) {
-    active = null;
-    if (!id) content = <><Header back={() => go(lastTab)} title="설정" /><Settings profile={state.profile} go={go} onLogout={() => { go('today'); setWelcome('login'); setState(s => ({ ...s, started: false })); }} onReset={() => setState(s => ({ ...s, answers: {} }))} /></>;
-    else if (id === 'profile') content = <><Header back={() => go('settings')} title="프로필" /><ProfileForm profile={state.profile} onSave={profile => { setState(s => ({ ...s, profile })); go('settings'); }} /></>;
+    active = 'records';
+    if (!id) content = <><Header back={() => go('records')} title="설정" /><Settings profile={state.profile} go={go} onLogout={() => { go('today'); setWelcome('login'); setState(s => ({ ...s, started: false })); }} onReset={() => setState(s => ({ ...s, answers: {} }))} /></>;
+    else if (id === 'profile') {
+      // 나 탭의 프로필 줄에서 들어왔으면 나 탭으로, 설정에서 들어왔으면 설정으로 돌아갑니다.
+      const profileBack = prevRoute.current === 'records' ? 'records' : 'settings';
+      content = <><Header back={() => go(profileBack)} title="프로필" /><ProfileForm profile={state.profile} onSave={profile => { setState(s => ({ ...s, profile })); go(profileBack); }} /></>;
+    }
     else if (id === 'sources') content = <><Header back={() => go('settings')} title="출처" /><Sources /></>;
     else if (id === 'onboard') content = <Onboard go={() => go('settings')} />;
-  } else if (section === 'report' && !id) { active = 'records'; content = <><Header back={() => go('records')} /><Report answers={state.answers} go={go} /></>; }
+  }
   const tabRoot = state.started && (!id || (section === 'feed' && content)) && ['today', 'archive', 'feed', 'groups', 'records'].includes(section);
-  const tabHeader = <header className="tab-header"><img src="/logo.png" alt="galaE" /><button className="icon-button" aria-label="설정" onClick={() => go('settings')}><Icon name="me" size={22} /></button></header>;
+  const TAB_TITLES = { feed: '생각', archive: '질문', groups: '그룹', records: '내 정보' };
+  const tabHeader = <header className="tab-header">{section === 'today' ? <img src="/logo.png" alt="갈래" /> : <span className="tab-title" aria-hidden="true">{TAB_TITLES[section]}</span>}{section === 'records' && <button className="icon-button" aria-label="설정" onClick={() => go('settings')}><Icon name="gear" size={22} /></button>}</header>;
   if (!content) content = <div className="flow"><h1 className="flow-title" tabIndex={-1}>찾을 수 없어요</h1><button className="btn-primary" onClick={() => go('today')}>오늘로</button></div>;
 
   return <div className="frame">

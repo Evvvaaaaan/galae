@@ -59,6 +59,7 @@ svg { flex-shrink: 0; }
 .page-header > :last-child { justify-self: end; }
 .tab-header { display: flex; align-items: center; justify-content: space-between; min-height: 40px; margin-bottom: 20px; }
 .tab-header img { display: block; height: 20px; }
+.tab-title { font-family: var(--serif); font-size: 20px; font-weight: 400; line-height: 1; color: var(--key); }
 .flush > .tab-header { position: absolute; top: calc(28px + env(safe-area-inset-top)); left: 28px; right: 28px; margin: 0; z-index: 5; }
 
 .progress { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 0 0 32px; padding: 0; list-style: none; }
@@ -237,13 +238,17 @@ label.list-row { cursor: pointer; }
 .record strong { font-size: 15px; font-weight: 500; color: var(--key); }
 .record p { font-size: 14px; line-height: 1.9; }
 .shared { font-size: 12px; color: var(--ink-hint); }
-.calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-.calendar .weekday { padding-bottom: 8px; text-align: center; font-size: 11px; color: var(--ink-hint); }
-.calendar button { min-height: 36px; border: 1px solid transparent; border-radius: 10px; background: none; font-size: 13px; }
+.calendar-month { display: flex; align-items: center; justify-content: space-between; margin: 28px 0 16px; padding-top: 28px; border-top: 1px solid var(--line); }
+.calendar-month p { font-family: var(--serif); font-size: 20px; color: var(--ink); }
+.calendar-month div { display: flex; gap: 20px; }
+.calendar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0 4px; }
+.calendar .weekday { padding-bottom: 8px; text-align: center; font-size: 12px; color: var(--ink-hint); }
+.calendar button { position: relative; min-height: 52px; border: 0; background: none; font-size: 16px; color: var(--key); }
 .calendar button:disabled { color: var(--ink-faint); opacity: .5; }
-.calendar button.done { background: var(--key-bg); color: var(--key); }
-.calendar button.today { border-color: var(--sel-line); }
-.report-link { display: block; width: 100%; margin-top: 20px; padding: 16px 0; border: 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: none; text-align: left; font-size: 14px; color: var(--key); }
+.calendar button.done::after { content: ''; position: absolute; left: 50%; bottom: 6px; width: 5px; height: 5px; margin-left: -2.5px; border-radius: 50%; background: var(--bar-key); }
+.calendar button[aria-current="date"] { font-weight: 600; }
+.calendar button[aria-pressed=true] { border-radius: 12px; background: var(--key-bg); }
+.day-records { margin-top: 20px; border-top: 1px solid var(--line); }
 
 /* 그룹 */
 .question-select { width: 100%; padding: 12px 38px 12px 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23B4B2A9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 14px center; font-size: 14px; color: var(--ink-sub); appearance: none; -webkit-appearance: none; text-overflow: ellipsis; cursor: pointer; }
@@ -275,10 +280,16 @@ label.list-row { cursor: pointer; }
 .search .clear { min-height: 0; padding: 0 2px; font-size: 18px; line-height: 1; color: var(--ink-hint); }
 .empty { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 48px 0; text-align: center; }
 .empty p { font-family: var(--serif); font-size: 16px; color: var(--ink-sub); }
-.profile-row { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-.profile-row strong { font-family: var(--serif); font-size: 18px; font-weight: 400; }
-.records-summary { margin-bottom: 20px; font-size: 14px; color: var(--ink-sub); }
-.records-summary strong { font-family: var(--serif); font-size: 20px; font-weight: 400; color: var(--key); }
+.profile { display: flex; align-items: center; gap: 20px; }
+.profile > .avatar { width: 76px; height: 76px; border-radius: 26px; font-size: 26px; }
+.profile > div { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+.profile > div > strong { font-family: var(--serif); font-size: 18px; font-weight: 400; }
+.profile-stats { display: flex; justify-content: space-between; padding: 0; list-style: none; }
+.profile-stats li, .profile-stats button { display: flex; flex-direction: column; gap: 2px; font-size: 12px; color: var(--ink-sub); }
+.profile-stats button { padding: 0; border: 0; background: none; text-align: left; }
+.profile-stats button:active { opacity: .55; }
+.profile-stats strong { font-family: var(--serif); font-size: 18px; font-weight: 400; color: var(--ink); }
+.profile-edit { min-height: 44px; margin-top: 20px; border: 0; background: var(--bar-track); color: var(--ink); }
 .avatar-stack small { align-self: center; margin-left: 8px; font-size: 11px; color: var(--ink-sub); }
 .groups-actions { display: flex; align-items: center; gap: 20px; min-height: 40px; }
 .groups-actions .btn-text { padding: 10px 0; font-size: 14px; color: var(--key); }
@@ -316,7 +327,7 @@ label.list-row { cursor: pointer; }
 /* 누를 때 반응 */
 .btn-primary:active:not(:disabled), .btn-secondary:active, .btn-login:active:not(:disabled) { opacity: .7; }
 .choice:active:not(:disabled) { background: var(--sel-bg); }
-.list-row:active:not(:disabled):not(div), .record-row:active:not(:disabled), .group-row:active, .report-link:active, .result button.row:active { opacity: .55; }
+.list-row:active:not(:disabled):not(div), .record-row:active:not(:disabled), .group-row:active, .result button.row:active { opacity: .55; }
 .icon-button:active:not(:disabled), .btn-text:active, .tabs button:active, .bottom-nav a:active, .calendar button:active:not(:disabled) { opacity: .5; }
 
 /* 질문 흐름 하단 고정 버튼 */
