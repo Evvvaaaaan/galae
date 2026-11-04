@@ -1,4 +1,4 @@
-import { DEMO_GROUPS, QUESTIONS } from './questionData.js';
+import { DEMO_GROUPS, MEMBERS, QUESTIONS } from './questionData.js';
 import PARADOXES from '../content/paradoxes.json' with { type: 'json' };
 import { ACHIEVEMENTS } from './achievements.js';
 
@@ -36,7 +36,7 @@ function restoreGroups(value) {
       id: group.id, name: text(group.name, fallback?.name || '이름 없는 그룹'),
       description: text(group.description, fallback?.description), code: text(group.code, fallback?.code),
       color: text(group.color, 'sage'), owner: group.owner === true,
-      members: Array.isArray(group.members) ? group.members.filter(m => isObject(m) && typeof m.id === 'string').map(m => ({ id: m.id, name: text(m.name, '멤버'), color: text(m.color, 'sage') })) : fallback?.members || [],
+      members: Array.isArray(group.members) ? group.members.filter(m => isObject(m) && typeof m.id === 'string').map(m => MEMBERS.find(x => x.id === m.id) || { id: m.id, name: text(m.name, '멤버'), color: text(m.color, 'sage') }) : fallback?.members || [],
     };
   });
 }
@@ -55,7 +55,7 @@ export function loadState() {
         joined: strings(saved.joined).filter(id => groups.some(g => g.id === id)),
         profile: {
           name: text(saved.profile?.name).slice(0, 10),
-          handle: /^[a-z0-9._]{1,20}$/.test(saved.profile?.handle) ? saved.profile.handle : '',
+          handle: typeof saved.profile?.handle === 'string' && /^[a-z0-9._]{1,20}$/.test(saved.profile.handle) ? saved.profile.handle : '',
           bio: text(saved.profile?.bio).slice(0, 80),
           photo: /^data:image\/jpeg;base64,/.test(saved.profile?.photo) ? saved.profile.photo : '',
           color: PROFILE_COLORS.includes(saved.profile?.color) ? saved.profile.color : 'blue',
