@@ -31,7 +31,10 @@ export default function Share({ question, answer, groups, onDraft, onSave, go })
       </label>)}</div>
       <button className="btn-primary" onClick={() => { onSave(selected); setSaved(true); }}>{saved ? '저장됨' : selected.length ? `${selected.length}개 그룹에 공유하기` : '나만 보기로 저장'}</button>
       {external}
-      {saved && <button className="btn-text" onClick={() => go(selected.length ? `groups/${selected[0]}/${question.id}` : 'records')}>{selected.length ? '그룹에서 보기' : '나의 기록'}</button>}
+      {saved && <div className="share-links">
+        <button className="btn-text" onClick={() => go(selected.length ? `groups/${selected[0]}/${question.id}` : 'records')}>{selected.length ? '그룹에서 보기' : '나의 기록'}</button>
+        <button className="btn-text" onClick={() => go('today')}>홈으로</button>
+      </div>}
     </> : <><Empty title="아직 함께하는 그룹이 없어요" label="그룹 만나보기" onClick={() => go('groups')} />{external}</>}
   </div>;
 }

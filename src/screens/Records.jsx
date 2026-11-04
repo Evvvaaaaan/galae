@@ -10,7 +10,7 @@ import { WorldTree } from '../motifs.jsx';
 
 const [TODAY_YEAR, TODAY_MONTH, TODAY_DAY] = TODAY.date.split('-').map(Number);
 
-export default function Records({ answers, achieved, comments, profile, joinedOn, go }) {
+export default function Records({ answers, achieved, comments, profile, joinedOn, go, openQuestion }) {
   const answered = QUESTIONS.filter(q => answers[q.id]?.submitted);
   // 오늘이 있는 달에서 몇 달 떨어진 달을 보고 있는지입니다.
   const [offset, setOffset] = useState(0);
@@ -58,7 +58,7 @@ export default function Records({ answers, achieved, comments, profile, joinedOn
         return <button key={day} disabled={!open} aria-label={`${month}월 ${day}일`} aria-current={isTodayMonth && day === TODAY_DAY ? 'date' : undefined} aria-pressed={open ? date === selected : undefined} className={done ? 'done' : undefined} onClick={() => setSelected(date)}>{day}</button>;
       })}
     </div>
-    <div className="day-records"><DayRecords date={selected} answers={answers} go={go} /></div>
+    <div className="day-records"><DayRecords date={selected} answers={answers} go={go} openQuestion={openQuestion} /></div>
   </>;
 }
 
@@ -96,10 +96,10 @@ export function MemberProfile({ member }) {
   </>;
 }
 
-function DayRecords({ date, answers, go }) {
+function DayRecords({ date, answers, go, openQuestion }) {
   const answered = QUESTIONS.filter(q => answers[q.id]?.answeredOn === date);
   if (!answered.length) return <Empty title="답변한 갈래가 없습니다." label="답변하러 가기" onClick={() => go('archive')} />;
-  return <div className="list">{answered.map(q => <QuestionRow key={q.id} question={q} answer={answers[q.id]} onClick={() => go(`records/${q.id}`)} />)}</div>;
+  return <div className="list">{answered.map(q => <QuestionRow key={q.id} question={q} answer={answers[q.id]} onClick={() => openQuestion(q.id)} />)}</div>;
 }
 
 export function MyComments({ comments, go }) {

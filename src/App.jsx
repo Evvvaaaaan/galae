@@ -10,9 +10,9 @@ import Result from './screens/Result.jsx';
 import Comments from './screens/Comments.jsx';
 import Reading from './screens/Reading.jsx';
 import Done from './screens/Done.jsx';
+import Summary from './screens/Summary.jsx';
 import Share from './screens/Share.jsx';
 import Records, { MyComments, MemberProfile } from './screens/Records.jsx';
-import RecordDetail from './screens/RecordDetail.jsx';
 import { Settings, ProfileForm, Sources } from './screens/Settings.jsx';
 import { Groups, GroupForm, GroupDetail, GroupMembers, GroupsAddMenu } from './screens/Groups.jsx';
 import { BottomNav, Header, Icon } from './components/UI.jsx';
@@ -31,8 +31,6 @@ export default function App() {
   const [storageError, setStorageError] = useState(false);
   // 질문 흐름에 들어오기 직전 화면. 나의 선택에서 뒤로가면 이곳으로 돌아갑니다.
   const [origin, setOrigin] = useState(null);
-  // 기록 상세에 들어오기 직전 화면. 질문 흐름에서 돌아온 경우에는 바꾸지 않습니다.
-  const [recordFrom, setRecordFrom] = useState('records');
   // 기기가 다크 모드인지 따라갑니다. 화면 모드가 자동일 때 씁니다.
   const [systemDark, setSystemDark] = useState(() => matchMedia('(prefers-color-scheme: dark)').matches);
   useEffect(() => {
@@ -63,7 +61,6 @@ export default function App() {
     if (next === route) return;
     // 다른 사람 프로필에서 질문으로 돌아갈 때는 처음 들어온 화면을 그대로 둡니다.
     if (next.startsWith('question/') && !route.startsWith('question/') && !route.startsWith('users/')) setOrigin(route);
-    if (/^records\/[^/]+$/.test(next) && !route.startsWith('question/')) setRecordFrom(route);
     prevRoute.current = route;
     location.hash = `/${next}`; setRoute(next);
   }
@@ -116,11 +113,12 @@ export default function App() {
       switch (step) {
         case 'answer': flow = <Question question={question} answer={answer} onPick={sel => { if (!answer.submitted) patch(id, { sel }); }} onReason={reason => { if (!answer.submitted) patch(id, { reason }); }} onSubmit={() => { if (answer.sel === null) return; patch(id, { submitted: true, answeredOn: TODAY.date }); flowGo('result'); }} />; break;
         case 'result': flow = choice ? <Comments question={question} choice={choice} comments={question.opinions[question.choices.indexOf(choice)].items} answer={answer} profile={state.profile} onProfile={openProfile} /> : <Result question={question} sel={answer.sel} onOpen={choiceId => go(`question/${id}/result/${choiceId}`)} next={next} />; break;
-        case 'reading': flow = <Reading question={question} next={() => { setState(s => completeAnswer(s, id)); next(); }} />; break;
-        case 'done': flow = <Done question={question} answer={answer} go={flowGo} group={fromGroup} onShareGroup={() => shareToGroup(id, fromGroup.id)} />; break;
+        case 'reading': flow = <Reading question={question} next={() => { if (answer.completed) return flowGo('summary'); setState(s => completeAnswer(s, id)); next(); }} />; break;
+        case 'done': flow = <Done question={question} answer={answer} go={flowGo} onShare={() => fromGroup ? shareToGroup(id, fromGroup.id) : flowGo('share')} />; break;
+        case 'summary': flow = <Summary question={question} answer={answer} groups={state.groups} onOpen={choiceId => go(`question/${id}/result/${choiceId}`)} onShare={() => fromGroup ? shareToGroup(id, fromGroup.id) : flowGo('share')} onReading={() => flowGo('reading')} onRetry={() => { patch(id, emptyAnswer()); flowGo('answer'); }} />; break;
         case 'share': flow = <Share key={id} question={question} answer={answer} groups={state.groups.filter(g => state.joined.includes(g.id))} onDraft={shareDraft => patch(id, { shareDraft })} onSave={sharedWith => patch(id, { sharedWith, shareDraft: null })} go={go} />; break;
       }
-      const back = () => choice && step === 'result' ? flowGo('result') : step === 'share' && prevRoute.current === `question/${id}/done` ? flowGo('done') : previousStep(step) ? flowGo(previousStep(step)) : go(home);
+      const back = () => answer.completed && ((choice && step === 'result') || step === 'reading') ? flowGo('summary') : choice && step === 'result' ? flowGo('result') : step === 'share' && [`question/${id}/done`, `question/${id}/summary`].includes(prevRoute.current) ? go(prevRoute.current) : previousStep(step) ? flowGo(previousStep(step)) : go(home);
       const position = PROGRESS[step];
       content = <><Header back={back} title={`${id === TODAY.id ? '오늘의 갈래' : '지난 갈래'} · ${dateLabel(question.date)}`} />{position !== undefined && <ol className="progress">{['나의 선택', '다른 생각', '확장하기'].map((label, i) => <li key={label} className={i <= position ? 'on' : ''} aria-current={i === position ? 'step' : undefined}><span />{label}</li>)}</ol>}{flow}</>;
     }
@@ -133,12 +131,8 @@ export default function App() {
       else if (group && (!requestedStep || requestedStep === 'members' || QUESTIONS.some(q => q.id === requestedStep))) content = requestedStep === 'members' ? <GroupMembers key={id} group={group} profile={state.profile} questionId={extra} go={go} onKick={memberId => setState(s => kickMember(s, id, memberId))} onLeave={groupId => { setState(s => leaveGroup(s, groupId)); go('groups'); }} onProfile={openProfile} /> : <GroupDetail key={`${id}/${requestedStep || ''}`} initialQuestionId={requestedStep} group={group} state={state} go={go} openQuestion={openQuestion} onSend={(questionId, text) => setState(s => addMessage(s, id, questionId, text))} onProfile={openProfile} />;
     }
   } else if (section === 'records' && !requestedStep) {
-    if (!id) content = <Records answers={state.answers} achieved={state.achieved} comments={state.comments} profile={state.profile} joinedOn={state.joinedOn} go={go} />;
+    if (!id) content = <Records answers={state.answers} achieved={state.achieved} comments={state.comments} profile={state.profile} joinedOn={state.joinedOn} go={go} openQuestion={openQuestion} />;
     else if (id === 'comments') content = <><Header back={() => go('records')} title="댓글" /><MyComments comments={state.comments} go={go} /></>;
-    else {
-      const question = QUESTIONS.find(q => q.id === id);
-      if (question && state.answers[id]?.submitted) content = <><Header back={() => go(recordFrom)} /><RecordDetail question={question} answer={state.answers[id]} groups={state.groups} go={go} onRetry={() => { patch(id, emptyAnswer()); go(`question/${id}/answer`); }} /></>;
-    }
   } else if (section === 'users' && !requestedStep) {
     const member = MEMBERS.find(m => m.id === id);
     const from = profileFrom.current?.split('/')[0];

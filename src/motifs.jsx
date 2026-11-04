@@ -164,16 +164,6 @@ function SeedTree() {
   );
 }
 
-export function DoneMotif() {
-  return (
-    <svg className="motif" viewBox="0 0 390 60" width="100%" height={60} preserveAspectRatio="none">
-      <Path d="M0 30 C 94 30, 138 28, 175 22 C 229 14, 306 10, 390 9" color="#A9C8E4" w={1.0} />
-      <Path d="M0 34 C 94 34, 140 36, 182 42 C 234 49, 310 53, 390 54" color="#DCE7F0" w={0.9} />
-      <circle cx={175} cy={22} r={2.6} fill="#A9C8E4" />
-    </svg>
-  );
-}
-
 // 밤 배경에서는 선을 더 밝게, 빛을 더 넓게 번지게 합니다.
 const TREE_COLORS = {
   light: { line: '#6FA3CF', op: 0.42, newest: '#2F6E9E', blur: 1.2, ground: '#E4EEF6', fruit: '#8EC3EE' },

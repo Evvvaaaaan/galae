@@ -3,7 +3,7 @@ import PARADOXES from '../content/paradoxes.json' with { type: 'json' };
 import { ACHIEVEMENTS } from './achievements.js';
 
 export const STORAGE_KEY = 'garae.frontend.v1';
-export const STEPS = ['answer', 'result', 'reading', 'done', 'share'];
+export const STEPS = ['answer', 'result', 'reading', 'done', 'share', 'summary'];
 export const emptyAnswer = () => ({ sel: null, reason: '', submitted: false, completed: false, sharedWith: [], shareDraft: null, lastStep: null });
 export const PROFILE_COLORS = ['sage', 'blue', 'peach', 'lilac'];
 export const THEMES = ['light', 'dark', 'auto'];
@@ -82,7 +82,7 @@ export function completeAnswer(state, id) {
 
 export function questionStep(answer, requestedStep) {
   if (!answer?.submitted) return 'answer';
-  if (requestedStep === 'done' && !answer.completed) return 'reading';
+  if ((requestedStep === 'done' || requestedStep === 'summary') && !answer.completed) return 'reading';
   return STEPS.includes(requestedStep) ? requestedStep : 'result';
 }
 
@@ -91,7 +91,7 @@ const PREVIOUS = { result: 'answer', reading: 'result' };
 export const previousStep = step => PREVIOUS[step] ?? null;
 
 export function questionRoute(id, answer) {
-  return answer?.completed ? `records/${id}` : `question/${id}/${questionStep(answer, answer?.lastStep)}`;
+  return answer?.completed ? `question/${id}/summary` : `question/${id}/${questionStep(answer, answer?.lastStep)}`;
 }
 
 export function rememberQuestionRoute(state, route) {
