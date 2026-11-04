@@ -164,9 +164,7 @@ function SeedTree() {
   );
 }
 
-const TREE_COLORS = {
-  light: { line: '#6FA3CF', op: 0.42, newest: '#2F6E9E', blur: 1.2, ground: '#E4EEF6', fruit: '#8EC3EE' },
-};
+const TREE_COLORS = { line: '#6FA3CF', op: 0.42, newest: '#2F6E9E', blur: 1.2, ground: '#E4EEF6', fruit: '#8EC3EE' };
 
 // 새로 맺힌 열매가 여럿이면 이 간격으로 하나씩 맺히고, 이름도 하나씩 차례로 떠올랐다 사라집니다.
 const FRUIT_GAP = 3200;
@@ -174,7 +172,7 @@ const FRUIT_GAP = 3200;
 // fruits: 맺힌 순서대로 [{ id, name, desc, fresh }]. fresh는 아직 홈에서 맺히는 모습을 보지 못한 열매입니다.
 // 새 선이 그려지면 선이 다 그려진 뒤에, 아니면 홈에 오자마자 맺힙니다.
 export function WorldTree({ count, fruits = [], grow = false }) {
-  const T = TREE_COLORS.light;
+  const T = TREE_COLORS;
   const w = Math.max(0.55, 1.1 - count / 400);
   const fresh = fruits.filter(x => x.fresh);
   const at = x => (grow ? 3000 : 600) + fresh.indexOf(x) * FRUIT_GAP;

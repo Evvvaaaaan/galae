@@ -20,6 +20,21 @@ export const ACHIEVEMENTS = [
 ];
 
 const DAY = 86400000;
+export const addDays = (iso, n) => new Date(Date.parse(iso) + n * DAY).toISOString().slice(0, 10);
+
+// 맺은 업적을 맺은 순서대로, 맺은 날(on)과 함께 돌려줍니다.
+export const earnedList = achieved => Object.entries(achieved).map(([id, a]) => ({ ...ACHIEVEMENTS.find(x => x.id === id), on: a.on }));
+
+// 답한 날짜 목록입니다.
+export const answeredDays = answers => new Set(Object.values(answers).filter(a => a.submitted && a.answeredOn).map(a => a.answeredOn));
+
+// 오늘(아직 안 했으면 어제)부터 거슬러 올라가며 이어서 답한 날을 셉니다.
+export function currentStreak(answers, today) {
+  const answered = answeredDays(answers);
+  let streak = 0;
+  for (let d = answered.has(today) ? today : addDays(today, -1); answered.has(d); d = addDays(d, -1)) streak++;
+  return streak;
+}
 
 // 지금까지 가장 길게 이어진 연속 답변 일수입니다.
 function longestStreak(dates) {

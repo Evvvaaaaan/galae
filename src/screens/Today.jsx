@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { TODAY, MEMBERS, SAMPLE_SHARES, dateLabel } from '../questionData.js';
 import { Avatar, Icon } from '../components/UI.jsx';
 import { WorldTree } from '../motifs.jsx';
-import { ACHIEVEMENTS } from '../achievements.js';
+import { addDays, answeredDays, currentStreak, earnedList } from '../achievements.js';
 
 const SEEN_KEY = 'galae.treeSeen';
 const readSeen = () => { try { return Number(localStorage.getItem(SEEN_KEY)) || 0; } catch { return 0; } };
@@ -11,24 +11,13 @@ const FRUIT_KEY = 'galae.fruitSeen';
 const readFruits = () => { try { const v = JSON.parse(localStorage.getItem(FRUIT_KEY)); return Array.isArray(v) ? v : null; } catch { return null; } };
 
 const DAYS = ['월', '화', '수', '목', '금', '토', '일'];
-const addDays = (iso, n) => new Date(Date.parse(iso) + n * 86400000).toISOString().slice(0, 10);
 
 // 답한 날을 갈래 선으로 이어 이번 주를 보여 줍니다. 하루 빠지면 연속 일수는 다시 셉니다.
-const STREAK_COLORS = {
-  light: { on: '#A9C8E4', off: '#DCE7F0', bg: '#FDFDFC', key: '#2B4A63' },
-};
-
-// 오늘(아직 안 했으면 어제)부터 거슬러 올라가며 이어서 답한 날을 셉니다.
-export function currentStreak(answers, today) {
-  const answered = new Set(Object.values(answers).filter(a => a.submitted && a.answeredOn).map(a => a.answeredOn));
-  let streak = 0;
-  for (let d = answered.has(today) ? today : addDays(today, -1); answered.has(d); d = addDays(d, -1)) streak++;
-  return streak;
-}
+const STREAK_COLORS = { on: '#A9C8E4', off: '#DCE7F0', bg: '#FDFDFC', key: '#2B4A63' };
 
 function Streak({ answers, today }) {
-  const c = STREAK_COLORS.light;
-  const answered = new Set(Object.values(answers).filter(a => a.submitted && a.answeredOn).map(a => a.answeredOn));
+  const c = STREAK_COLORS;
+  const answered = answeredDays(answers);
   const streak = currentStreak(answers, today);
   const dow = (new Date(Date.parse(today)).getUTCDay() + 6) % 7;
   const week = DAYS.map((_, i) => addDays(today, i - dow));
@@ -55,7 +44,7 @@ export default function Today({ state, go, openQuestion }) {
   const achievedIds = Object.keys(state.achieved);
   const [seenFruits] = useState(() => readFruits() ?? achievedIds);
   useEffect(() => { try { localStorage.setItem(FRUIT_KEY, JSON.stringify(achievedIds)); } catch { /* 저장할 수 없는 환경입니다. */ } }, [achievedIds.join()]);
-  const fruits = achievedIds.map(id => ({ ...ACHIEVEMENTS.find(a => a.id === id), fresh: !seenFruits.includes(id) }));
+  const fruits = earnedList(state.achieved).map(a => ({ ...a, fresh: !seenFruits.includes(a.id) }));
   useEffect(() => { try { localStorage.setItem(SEEN_KEY, String(answeredCount)); } catch { /* 저장할 수 없는 환경입니다. */ } }, [answeredCount]);
   return <div className="today">
     <WorldTree count={answeredCount} fruits={fruits} grow={grow} />

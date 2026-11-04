@@ -3,9 +3,9 @@ import { QUESTIONS, TODAY } from '../questionData.js';
 import PARADOXES from '../../content/paradoxes.json';
 import { Avatar, Empty, Icon } from '../components/UI.jsx';
 import { TOPICS } from './Feed.jsx';
-import { currentStreak } from './Today.jsx';
 import { QuestionRow } from './Archive.jsx';
-import { ACHIEVEMENTS } from '../achievements.js';
+import { currentStreak, earnedList } from '../achievements.js';
+import { myself } from '../store.js';
 import { WorldTree } from '../motifs.jsx';
 
 const [TODAY_YEAR, TODAY_MONTH, TODAY_DAY] = TODAY.date.split('-').map(Number);
@@ -21,13 +21,15 @@ export default function Records({ answers, achieved, comments, profile, joinedOn
   const month = first.getMonth() + 1;
   const days = new Date(year, month, 0).getDate();
   const isTodayMonth = year === TODAY_YEAR && month === TODAY_MONTH;
-  const earned = Object.entries(achieved).map(([id, a]) => ({ ...ACHIEVEMENTS.find(x => x.id === id), on: a.on }));
+  const earned = earnedList(achieved);
+  const done = new Set(Object.values(answers).map(a => a.answeredOn));
+  const me = myself(profile);
   return <>
     <h1 className="visually-hidden" tabIndex={-1}>나</h1>
     <div className="profile">
-      <Avatar name={profile.name || '나'} color={profile.color} photo={profile.photo} />
+      <Avatar {...me} />
       <div>
-        <strong>{profile.name || '나'}</strong>
+        <strong>{me.name}</strong>
         <ul className="profile-stats">
           <li><strong>{answered.length}</strong>선택</li>
           <li><strong>{currentStreak(answers, TODAY.date)}</strong>연속</li>
@@ -53,8 +55,7 @@ export default function Records({ answers, achieved, comments, profile, joinedOn
         const date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         // 가입한 날부터 오늘까지만 답할 수 있습니다.
         const open = date >= joinedOn && date <= TODAY.date;
-        const done = Object.values(answers).some(a => a.answeredOn === date);
-        return <button key={day} disabled={!open} aria-label={`${month}월 ${day}일`} aria-current={isTodayMonth && day === TODAY_DAY ? 'date' : undefined} aria-pressed={open ? date === selected : undefined} className={done ? 'done' : undefined} onClick={() => setSelected(date)}>{day}</button>;
+        return <button key={day} disabled={!open} aria-label={`${month}월 ${day}일`} aria-current={isTodayMonth && day === TODAY_DAY ? 'date' : undefined} aria-pressed={open ? date === selected : undefined} className={done.has(date) ? 'done' : undefined} onClick={() => setSelected(date)}>{day}</button>;
       })}
     </div>
     <div className="day-records"><DayRecords date={selected} answers={answers} go={go} openQuestion={openQuestion} /></div>
@@ -76,7 +77,7 @@ function Fruits({ earned }) {
 
 // 다른 사람의 프로필입니다. 이름·소개·열매 아래에 그 사람의 나무가 있습니다.
 export function MemberProfile({ member }) {
-  const earned = Object.entries(member.achieved).map(([id, a]) => ({ ...ACHIEVEMENTS.find(x => x.id === id), on: a.on }));
+  const earned = earnedList(member.achieved);
   return <>
     <div className="profile member">
       <Avatar {...member} />

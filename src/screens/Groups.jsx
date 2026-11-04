@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { QUESTIONS, TODAY, SAMPLE_SHARES, dateLabel } from '../questionData.js';
 import { Header, Icon, Avatar, Empty, ProfileLink } from '../components/UI.jsx';
+import { COLOR_LABELS, PROFILE_COLORS, myself } from '../store.js';
 
 export function Groups({ state, go }) {
   const groups = state.groups.filter(g => state.joined.includes(g.id));
@@ -29,8 +30,6 @@ export function GroupsAddMenu({ go }) {
   </div>;
 }
 
-const COLORS = [['sage', '초록'], ['blue', '파랑'], ['peach', '살구'], ['lilac', '보라']];
-
 export function GroupForm({ mode, group, state, onCreate, onJoin, onSave, go }) {
   const editing = mode === 'edit';
   const [value, setValue] = useState(editing ? group.name : '');
@@ -53,7 +52,7 @@ export function GroupForm({ mode, group, state, onCreate, onJoin, onSave, go }) 
     <form className="flow" onSubmit={submit}>
       {creating && <>
         <div className="group-preview"><Avatar name={value.trim() || '갈'} color={color} /></div>
-        <div className="color-picker">{COLORS.map(([c, label]) => <button type="button" key={c} className={c} aria-label={label} aria-pressed={color === c} onClick={() => setColor(c)} />)}</div>
+        <div className="color-picker">{PROFILE_COLORS.map(c => <button type="button" key={c} className={c} aria-label={COLOR_LABELS[c]} aria-pressed={color === c} onClick={() => setColor(c)} />)}</div>
       </>}
       <div className="field">
         <input className={`note-input ${creating ? '' : 'code-input'}`} aria-label={creating ? '그룹 이름' : '초대 코드'} placeholder={creating ? '이름' : '코드'} maxLength={creating ? 20 : 6} autoCapitalize={creating ? undefined : 'characters'} value={value} onChange={e => { setValue(creating ? e.target.value : e.target.value.toUpperCase()); setError(''); }} />
@@ -77,7 +76,7 @@ export function GroupDetail({ group, state, go, openQuestion, initialQuestionId,
   const question = QUESTIONS.find(q => q.id === questionId);
   const answer = state.answers[questionId];
   const shared = answer?.sharedWith.includes(group.id);
-  const me = { name: state.profile.name || '나', color: state.profile.color, photo: state.profile.photo };
+  const me = myself(state.profile);
   const posts = [...SAMPLE_SHARES.filter(s => s.groupId === group.id && s.questionId === questionId && group.members.some(m => m.id === s.memberId)), ...(shared ? [{ memberId: 'me', sel: answer.sel, note: answer.reason }] : [])];
   const messages = state.messages.filter(m => m.groupId === group.id && m.questionId === questionId);
   function send(e) { e.preventDefault(); if (!text.trim()) return; onSend(questionId, text); setText(''); }
@@ -125,30 +124,29 @@ export function GroupMembers({ group, profile, questionId, go, onKick, onLeave, 
   const [copied, setCopied] = useState('');
   const [confirmLeave, setConfirmLeave] = useState(false);
   const [kicking, setKicking] = useState(null);
+  const me = myself(profile);
   async function copy() { try { await navigator.clipboard.writeText(group.code); setCopied('복사됨'); } catch { setCopied('복사할 수 없어요'); } }
   return <>
     <Header back={() => go(`groups/${group.id}${questionId ? `/${questionId}` : ''}`)} title={group.name} />
     <div className="flow">
       <div className="invite"><strong>{group.code}</strong><button className="btn-text" onClick={copy}>{copied || '복사'}</button></div>
       <div className="list">
-        <div className="list-row"><Avatar name={profile.name || '나'} color={profile.color} photo={profile.photo} /><span>{profile.name || '나'}</span><small className="hint">{group.owner ? '그룹장' : '멤버'}</small></div>
+        <div className="list-row"><Avatar {...me} /><span>{me.name}</span><small className="hint">{group.owner ? '그룹장' : '멤버'}</small></div>
         {group.members.map((m, i) => <div className="list-row" key={m.id}><ProfileLink avatar onClick={() => onProfile(m.id)}><Avatar {...m} /></ProfileLink><span><ProfileLink onClick={() => onProfile(m.id)}>{m.name}</ProfileLink></span>{group.owner ? <button className="btn-text muted" onClick={() => setKicking(m)}>내보내기</button> : <small className="hint">{i === 0 ? '그룹장' : '멤버'}</small>}</div>)}
       </div>
       <div className="actions">{group.owner && <button className="btn-text" onClick={() => go(`groups/${group.id}/settings`)}>그룹 설정</button>}<button className="btn-text muted" onClick={() => setConfirmLeave(true)}>그룹 나가기</button></div>
-      {confirmLeave && createPortal(<>
-        <button className="sheet-backdrop" aria-label="닫기" onClick={() => setConfirmLeave(false)} />
-        <div className="dialog" role="alertdialog" aria-labelledby="leave-title">
-          <p id="leave-title">{group.owner ? <>그룹장이 나가면 그룹이 사라져요.<br />나갈까요?</> : '그룹을 나갈까요?'}</p>
-          <div className="dialog-actions"><button className="btn-text" onClick={() => setConfirmLeave(false)}>취소</button><button className="btn-text danger" onClick={() => onLeave(group.id)}>나가기</button></div>
-        </div>
-      </>, document.querySelector('.frame'))}
-      {kicking && createPortal(<>
-        <button className="sheet-backdrop" aria-label="닫기" onClick={() => setKicking(null)} />
-        <div className="dialog" role="alertdialog" aria-labelledby="kick-title">
-          <p id="kick-title">{kicking.name} 님을 내보낼까요?</p>
-          <div className="dialog-actions"><button className="btn-text" onClick={() => setKicking(null)}>취소</button><button className="btn-text danger" onClick={() => { onKick(kicking.id); setKicking(null); }}>내보내기</button></div>
-        </div>
-      </>, document.querySelector('.frame'))}
+      {confirmLeave && <Confirm id="leave-title" action="나가기" onCancel={() => setConfirmLeave(false)} onConfirm={() => onLeave(group.id)}>{group.owner ? <>그룹장이 나가면 그룹이 사라져요.<br />나갈까요?</> : '그룹을 나갈까요?'}</Confirm>}
+      {kicking && <Confirm id="kick-title" action="내보내기" onCancel={() => setKicking(null)} onConfirm={() => { onKick(kicking.id); setKicking(null); }}>{kicking.name} 님을 내보낼까요?</Confirm>}
     </div>
   </>;
+}
+
+function Confirm({ id, action, onCancel, onConfirm, children }) {
+  return createPortal(<>
+    <button className="sheet-backdrop" aria-label="닫기" onClick={onCancel} />
+    <div className="dialog" role="alertdialog" aria-labelledby={id}>
+      <p id={id}>{children}</p>
+      <div className="dialog-actions"><button className="btn-text" onClick={onCancel}>취소</button><button className="btn-text danger" onClick={onConfirm}>{action}</button></div>
+    </div>
+  </>, document.querySelector('.frame'));
 }

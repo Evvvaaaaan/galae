@@ -1,15 +1,14 @@
 import { useState } from 'react';
 import { Avatar } from '../components/UI.jsx';
-import { PROFILE_COLORS } from '../store.js';
+import { COLOR_LABELS, PROFILE_COLORS, cleanHandle, myself } from '../store.js';
 import { TOPICS } from './Feed.jsx';
-
-const COLOR_LABELS = { sage: '초록', blue: '파랑', peach: '살구', lilac: '보라' };
 
 export function Settings({ profile, go, onLogout, onReset }) {
   const [confirmReset, setConfirmReset] = useState(false);
+  const me = myself(profile);
   return <div className="flow">
     <div className="list">
-      <button className="list-row" onClick={() => go('settings/profile')}><Avatar name={profile.name || '나'} color={profile.color} photo={profile.photo} /><span>{profile.name || '나'}</span></button>
+      <button className="list-row" onClick={() => go('settings/profile')}><Avatar {...me} /><span>{me.name}</span></button>
       <button className="list-row" disabled>알림</button>
     </div>
     <div className="list">
@@ -58,8 +57,7 @@ export function ProfileForm({ profile, onSave }) {
     </div>
     <div className="color-picker">{PROFILE_COLORS.map(c => <button type="button" key={c} className={c} aria-label={COLOR_LABELS[c]} aria-pressed={color === c} onClick={() => setColor(c)} />)}</div>
     <input className="note-input" aria-label="이름" placeholder="이름" maxLength={10} value={name} onChange={e => setName(e.target.value)} />
-    {/* 아이디는 영문 소문자, 숫자, 마침표, 밑줄만 씁니다. */}
-    <input className="note-input" aria-label="아이디" placeholder="아이디" maxLength={20} autoCapitalize="none" autoCorrect="off" spellCheck={false} value={handle} onChange={e => setHandle(e.target.value.toLowerCase().replace(/[^a-z0-9._]/g, ''))} />
+    <input className="note-input" aria-label="아이디" placeholder="아이디" maxLength={20} autoCapitalize="none" autoCorrect="off" spellCheck={false} value={handle} onChange={e => setHandle(cleanHandle(e.target.value))} />
     <textarea className="note-input" aria-label="소개" placeholder="소개" rows={3} maxLength={80} value={bio} onChange={e => setBio(e.target.value)} />
     <button className="btn-primary">저장</button>
   </form>;

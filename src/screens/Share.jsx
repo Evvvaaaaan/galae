@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Avatar, Empty } from '../components/UI.jsx';
+import { Avatar, Empty, shareOrCopy } from '../components/UI.jsx';
 
 export default function Share({ question, answer, groups, onDraft, onSave, go }) {
   const selected = answer.shareDraft ?? answer.sharedWith;
@@ -8,11 +8,7 @@ export default function Share({ question, answer, groups, onDraft, onSave, go })
   async function shareOut() {
     const text = [question.title, question.choices.find(c => c.id === answer.sel)?.text, answer.reason].filter(Boolean).join('\n');
     const url = `${location.origin}${location.pathname}#/question/${question.id}`;
-    if (navigator.share) {
-      try { await navigator.share({ text, url }); } catch { /* 공유창을 닫은 경우 */ }
-      return;
-    }
-    try { await navigator.clipboard.writeText(`${text}\n${url}`); setCopied(true); } catch { /* 복사할 수 없는 환경 */ }
+    if (await shareOrCopy({ text, url }, `${text}\n${url}`)) setCopied(true);
   }
   const external = <button className="btn-secondary" onClick={shareOut}>{copied ? '복사됨' : '외부 공유'}</button>;
   function toggle(id) { onDraft(selected.includes(id) ? selected.filter(g => g !== id) : [...selected, id]); setSaved(false); }

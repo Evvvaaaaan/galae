@@ -1,9 +1,10 @@
 import { Avatar, ProfileLink } from '../components/UI.jsx';
 import { MEMBERS } from '../questionData.js';
+import { myself } from '../store.js';
 
 // 결과 화면에서 고른 선택지의 댓글입니다. 위에는 질문 카드, 아래에는 그 선택지를 고른 사람들의 이유가 달립니다.
 export default function Comments({ question, choice, comments, answer, profile, onProfile }) {
-  const me = { name: profile.name || '나', color: profile.color, photo: profile.photo };
+  const me = myself(profile);
   const mine = answer.sel === choice.id && answer.reason;
   return <div className="flow">
     <article className="thread-card">

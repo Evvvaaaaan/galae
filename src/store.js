@@ -5,11 +5,17 @@ import { ACHIEVEMENTS } from './achievements.js';
 export const STORAGE_KEY = 'garae.frontend.v1';
 export const STEPS = ['answer', 'result', 'reading', 'done', 'share', 'summary'];
 export const emptyAnswer = () => ({ sel: null, reason: '', submitted: false, completed: false, sharedWith: [], shareDraft: null, lastStep: null });
-export const PROFILE_COLORS = ['sage', 'blue', 'peach', 'lilac'];
+export const COLOR_LABELS = { sage: '초록', blue: '파랑', peach: '살구', lilac: '보라' };
+export const PROFILE_COLORS = Object.keys(COLOR_LABELS);
+// 아이디는 영문 소문자, 숫자, 마침표, 밑줄만 씁니다.
+export const cleanHandle = value => value.toLowerCase().replace(/[^a-z0-9._]/g, '');
+// 이름이 없으면 '나'로 보여 줍니다.
+export const myself = profile => ({ name: profile.name || '나', handle: profile.handle || profile.name || '나', color: profile.color, photo: profile.photo });
 export const initialState = () => ({ started: false, answers: {}, groups: DEMO_GROUPS, joined: ['g1', 'g2'], profile: { name: '', handle: '', bio: '', photo: '', color: 'blue' }, messages: [], comments: [], likes: [], achieved: {} });
 
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const text = (value, fallback = '') => typeof value === 'string' ? value : fallback;
+const isDate = value => /^\d{4}-\d{2}-\d{2}$/.test(value);
 const strings = value => Array.isArray(value) ? [...new Set(value.filter(item => typeof item === 'string'))] : [];
 
 function restoreAnswer(value, id, groups) {
@@ -23,7 +29,7 @@ function restoreAnswer(value, id, groups) {
     shareDraft: Array.isArray(answer.shareDraft) ? strings(answer.shareDraft).filter(id => groups.some(g => g.id === id)) : null,
     lastStep: STEPS.includes(answer.lastStep) ? answer.lastStep : null,
     // 답변한 날입니다. 이 값이 생기기 전에 저장된 답변은 질문이 나온 날로 봅니다.
-    answeredOn: submitted ? (/^\d{4}-\d{2}-\d{2}$/.test(answer.answeredOn) ? answer.answeredOn : QUESTIONS.find(q => q.id === id).date) : null,
+    answeredOn: submitted ? (isDate(answer.answeredOn) ? answer.answeredOn : QUESTIONS.find(q => q.id === id).date) : null,
   };
 }
 
@@ -48,7 +54,7 @@ export function loadState() {
       return {
         started: saved.started === true,
         // 가입한 날입니다. 이 값이 생기기 전에 저장된 데이터는 가장 오래된 질문 날로 봅니다.
-        joinedOn: /^\d{4}-\d{2}-\d{2}$/.test(saved.joinedOn) ? saved.joinedOn : QUESTIONS.at(-1).date,
+        joinedOn: isDate(saved.joinedOn) ? saved.joinedOn : QUESTIONS.at(-1).date,
         answers: Object.fromEntries(Object.entries(isObject(saved.answers) ? saved.answers : {}).map(([id, answer]) => [id, restoreAnswer(answer, id, groups)])),
         groups,
         joined: strings(saved.joined).filter(id => groups.some(g => g.id === id)),
@@ -62,7 +68,7 @@ export function loadState() {
         messages: (Array.isArray(saved.messages) ? saved.messages : []).filter(m => isObject(m) && typeof m.id === 'string' && typeof m.text === 'string' && m.text && groups.some(g => g.id === m.groupId) && QUESTIONS.some(q => q.id === m.questionId)),
         comments: (Array.isArray(saved.comments) ? saved.comments : []).filter(c => isObject(c) && typeof c.id === 'string' && typeof c.text === 'string' && c.text && PARADOXES.some(p => p.id === c.topicId)),
         likes: (Array.isArray(saved.likes) ? saved.likes : []).filter(id => typeof id === 'string'),
-        achieved: Object.fromEntries(Object.entries(isObject(saved.achieved) ? saved.achieved : {}).filter(([id, a]) => ACHIEVEMENTS.some(x => x.id === id) && isObject(a) && /^\d{4}-\d{2}-\d{2}$/.test(a.on))),
+        achieved: Object.fromEntries(Object.entries(isObject(saved.achieved) ? saved.achieved : {}).filter(([id, a]) => ACHIEVEMENTS.some(x => x.id === id) && isObject(a) && isDate(a.on))),
       };
     }
   } catch { /* 저장 데이터가 없거나 손상되었으면 데모를 새로 시작합니다. */ }

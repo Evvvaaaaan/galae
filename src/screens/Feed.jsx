@@ -1,7 +1,8 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import PARADOXES from '../../content/paradoxes.json';
-import { Avatar, Empty, Icon, ProfileLink } from '../components/UI.jsx';
+import { Avatar, Empty, Icon, ProfileLink, shareOrCopy } from '../components/UI.jsx';
+import { myself } from '../store.js';
 import { MEMBERS, SAMPLE_COMMENTS, TODAY } from '../questionData.js';
 
 // 검증을 마친 주제만 보입니다. 개발 서버에서는 검증 전 주제도 확인할 수 있습니다.
@@ -22,11 +23,8 @@ export default function Feed({ initialTopic, initialComments, comments, likes, p
 
   async function share(topic) {
     const url = `${location.origin}${location.pathname}#/feed/${topic.id}`;
-    if (navigator.share) {
-      try { await navigator.share({ title: topic.title, text: `${topic.title}\n${topic.cards[0].text}`, url }); } catch { /* 공유를 취소했습니다. */ }
-      return;
-    }
-    try { await navigator.clipboard.writeText(url); setCopied(topic.id); setTimeout(() => setCopied(c => c === topic.id ? null : c), 1500); } catch { /* 복사할 수 없는 환경입니다. */ }
+    if (!await shareOrCopy({ title: topic.title, text: `${topic.title}\n${topic.cards[0].text}`, url }, url)) return;
+    setCopied(topic.id); setTimeout(() => setCopied(c => c === topic.id ? null : c), 1500);
   }
 
   return <>
@@ -79,7 +77,7 @@ function Comments({ frame, topic, comments, likes, profile, onComment, onLike, o
     else if (delta > 80) full ? setFull(false) : onClose();
     setDrag(null);
   }
-  const me = { name: profile.name || '나', handle: profile.handle || profile.name || '나', color: profile.color, photo: profile.photo };
+  const me = myself(profile);
   function send(e) { e.preventDefault(); if (!text.trim()) return; onComment(topic.id, text, replyTo?.id); if (replyTo && !shown.includes(replyTo.id)) setShown([...shown, replyTo.id]); setText(''); setReplyTo(null); }
   const all = [
     ...SAMPLE_COMMENTS.filter(c => c.topicId === topic.id).map(c => ({ ...c, member: MEMBERS.find(m => m.id === c.memberId) })),
