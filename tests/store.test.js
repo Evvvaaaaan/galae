@@ -44,7 +44,7 @@ test('제출한 답변만 완료되고 이전 버전의 완료 상태는 보존�
   assert.equal(Object.hasOwn(restored.answers.q035, 'note'), false);
 });
 
-test('탭 이동과 새로고침 후 질문별 마지막 단계를 이어 보고 완료한 질문은 기록으로 간다', () => {
+test('탭 이동과 새로고침 후 질문별 마지막 단계를 이어 보고 완료한 질문은 요약으로 간다', () => {
   let state = { ...initialState(), started: true };
   assert.equal(questionRoute('q037', state.answers.q037), 'question/q037/answer');
   state = updateAnswer(state, 'q037', { sel: 0, submitted: true });
@@ -58,7 +58,7 @@ test('탭 이동과 새로고침 후 질문별 마지막 단계를 이어 보고
   state = rememberQuestionRoute(state, 'question/q037/result');
   assert.equal(questionRoute('q037', state.answers.q037), 'question/q037/result');
   state = completeAnswer(state, 'q037');
-  assert.equal(questionRoute('q037', state.answers.q037), 'records/q037');
+  assert.equal(questionRoute('q037', state.answers.q037), 'question/q037/summary');
   assert.equal(rememberQuestionRoute(state, 'question/q036/reflect'), state);
 });
 
@@ -174,7 +174,7 @@ test('어제 저장한 답변을 유지하면서 새 공유 초안 필드만 보
 });
 
 test('저장된 답변과 그룹을 복원하고 손상된 저장 데이터는 초기화한다', () => {
-  const saved = updateAnswer({ ...initialState(), started: true }, 'q036', { sel: 1, submitted: true, sharedWith: ['g1'] });
+  const saved = updateAnswer({ ...initialState(), started: true, joinedOn: '2026-09-20' }, 'q036', { sel: 1, submitted: true, answeredOn: '2026-09-24', sharedWith: ['g1'] });
   globalThis.localStorage = { getItem: key => key === STORAGE_KEY ? JSON.stringify(saved) : null };
   assert.deepEqual(loadState(), saved);
   globalThis.localStorage = { getItem: () => '{broken' };
@@ -185,7 +185,7 @@ test('저장된 답변과 그룹을 복원하고 손상된 저장 데이터는 �
 });
 
 test('프로필은 저장·복원되고 잘못된 값은 기본값으로 돌아간다', () => {
-  assert.deepEqual(restore({ ...initialState(), profile: { name: '도원', color: 'peach' } }).profile, { name: '도원', color: 'peach' });
+  assert.deepEqual(restore({ ...initialState(), profile: { name: '도원', color: 'peach' } }).profile, { name: '도원', handle: '', bio: '', photo: '', color: 'peach' });
   assert.deepEqual(restore({ ...initialState(), profile: { name: 3, color: 'red' } }).profile, initialState().profile);
   assert.deepEqual(restore({ ...initialState(), profile: undefined }).profile, initialState().profile);
 });
