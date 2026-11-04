@@ -52,18 +52,14 @@ export default function Today({ state, go, openQuestion, night }) {
   const groups = state.groups.filter(g => state.joined.includes(g.id));
   const answeredCount = Object.values(state.answers).filter(a => a.submitted).length;
   // 답한 뒤 홈에 처음 돌아왔을 때만 새 선을 그립니다.
-  // 임시: 홈에 올 때마다 그려지는 효과 재생. 원래 줄로 되돌리면 답한 직후에만 재생합니다.
-  // const [grow] = useState(() => answeredCount > readSeen());
-  const [grow] = useState(true);
+  const [grow] = useState(() => answeredCount > readSeen());
   const achievedIds = Object.keys(state.achieved);
   const [seenFruits] = useState(() => readFruits() ?? achievedIds);
   useEffect(() => { try { localStorage.setItem(FRUIT_KEY, JSON.stringify(achievedIds)); } catch { /* 저장할 수 없는 환경입니다. */ } }, [achievedIds.join()]);
-  // 임시: 열매 15개 모두 맺힌 미리보기(마지막 두 개가 새로 맺힘). 원래 줄로 되돌리면 실제 업적을 따릅니다.
-  // const fruits = achievedIds.map(id => ({ ...ACHIEVEMENTS.find(a => a.id === id), fresh: !seenFruits.includes(id) }));
-  const fruits = ACHIEVEMENTS.map((a, i) => ({ ...a, fresh: i >= 13 }));
+  const fruits = achievedIds.map(id => ({ ...ACHIEVEMENTS.find(a => a.id === id), fresh: !seenFruits.includes(id) }));
   useEffect(() => { try { localStorage.setItem(SEEN_KEY, String(answeredCount)); } catch { /* 저장할 수 없는 환경입니다. */ } }, [answeredCount]);
   return <div className="today">
-    <WorldTree count={50} fruits={fruits} grow={grow} night={night} />{/* 임시: 답변 50개 미리보기 */}
+    <WorldTree count={answeredCount} fruits={fruits} grow={grow} night={night} />
     <Streak answers={state.answers} today={TODAY.date} night={night} />
     <section className="today-card">
       <div className="today-card-body">

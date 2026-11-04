@@ -21,8 +21,7 @@ export default function Records({ answers, achieved, comments, profile, joinedOn
   const month = first.getMonth() + 1;
   const days = new Date(year, month, 0).getDate();
   const isTodayMonth = year === TODAY_YEAR && month === TODAY_MONTH;
-  // const earned = Object.entries(achieved).map(([id, a]) => ({ ...ACHIEVEMENTS.find(x => x.id === id), on: a.on }));
-  const earned = ACHIEVEMENTS.map(a => ({ ...a, on: '2026-11-05' }));
+  const earned = Object.entries(achieved).map(([id, a]) => ({ ...ACHIEVEMENTS.find(x => x.id === id), on: a.on }));
   return <>
     <h1 className="visually-hidden" tabIndex={-1}>나</h1>
     <div className="profile">
