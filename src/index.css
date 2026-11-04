@@ -161,8 +161,7 @@ label.list-row { cursor: pointer; }
 .feed::-webkit-scrollbar, .screen::-webkit-scrollbar { display: none; }
 .feed-page { min-height: 100%; display: flex; flex-direction: column; padding: calc(72px + env(safe-area-inset-top)) 12px 12px; scroll-snap-align: start; scroll-snap-stop: always; }
 .feed-card { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 24px 22px 14px; border-radius: 22px; background: var(--bar-track) url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='p' x='0' y='0' width='100%' height='100%'><feTurbulence type='fractalNoise' baseFrequency='0.1' numOctaves='4' seed='3' stitchTiles='stitch' result='n'/><feDiffuseLighting in='n' surfaceScale='1.3' lighting-color='%23fff' result='l'><feDistantLight azimuth='225' elevation='58'/></feDiffuseLighting><feColorMatrix in='l' values='0 0 0 0 0.35 0 0 0 0 0.33 0 0 0 0 0.3 -1 0 0 0 0.9'/></filter><rect width='100%' height='100%' filter='url(%23p)' opacity='0.45'/></svg>"); box-shadow: 0 6px 28px #2b4a630d; }
-.feed-category { margin-top: auto; font-size: 12px; color: var(--key); letter-spacing: .02em; }
-.feed-card h2 { margin: -6px 0 4px; font-family: var(--serif); font-size: 23px; font-weight: 400; line-height: 1.4; letter-spacing: -.02em; }
+.feed-card h2 { margin: auto 0 4px; font-family: var(--serif); font-size: 23px; font-weight: 400; line-height: 1.4; letter-spacing: -.02em; }
 .feed-card p { font-family: var(--serif); font-size: 15px; line-height: 1.75; text-wrap: pretty; word-break: keep-all; }
 .feed-card p + p::before { content: ''; display: block; width: 14px; height: 1px; margin-bottom: 12px; background: var(--bar-base); }
 .feed-card p:last-of-type { color: var(--key); }
@@ -204,7 +203,6 @@ label.list-row { cursor: pointer; }
 .tabs { display: flex; gap: 16px; }
 .tabs button { min-height: 44px; padding: 8px 0; border: 0; background: none; font-size: 13px; color: var(--ink-hint); }
 .tabs button[aria-pressed=true] { color: var(--key); }
-.filters select { padding: 6px 20px 6px 4px; border: 0; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23B4B2A9' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 2px center; font-size: 16px; color: var(--ink-sub); appearance: none; -webkit-appearance: none; cursor: pointer; }
 
 /* 결과 */
 .results { display: flex; flex-direction: column; gap: 22px; }

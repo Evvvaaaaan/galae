@@ -32,7 +32,6 @@ export default function Feed({ initialTopic, comments, likes, profile, onComment
       <h1 className="visually-hidden" tabIndex={-1}>생각</h1>
       {TOPICS.map(topic => <section className="feed-page" key={topic.id} data-topic={topic.id} aria-label={topic.title}>
         <article className="feed-card">
-          <span className="feed-category">{topic.category}</span>
           <h2>{topic.title}</h2>
           {topic.cards.map((card, i) => <p key={i}>{card.text}</p>)}
           <footer className="feed-footer">

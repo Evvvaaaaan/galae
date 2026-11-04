@@ -9,7 +9,7 @@ export default function Today({ state, go, openQuestion }) {
     <section className="today-card">
       <BranchMotif count={TODAY.choices.length} />
       <div className="today-card-body">
-        <div className="row"><time dateTime={TODAY.date}>{dateLabel(TODAY.date)}</time><span>NO. {TODAY.no}</span></div>
+        <div className="row"><time dateTime={TODAY.date}>{dateLabel(TODAY.date)}</time></div>
         <h1 tabIndex={-1}>{TODAY.body}</h1>
         <div className="today-people">
           <span className="avatar-stack">{MEMBERS.slice(0, 3).map(m => <Avatar key={m.id} {...m} />)}</span>

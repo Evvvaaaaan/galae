@@ -85,7 +85,6 @@ export function GroupDetail({ group, state, go, openQuestion, initialQuestionId,
         </>}
       </div>
       <div className="group-question">
-        <span className="hint">{question.category}</span>
         <strong>{question.title}</strong>
         <p>{question.body}</p>
       </div>

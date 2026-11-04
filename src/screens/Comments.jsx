@@ -7,7 +7,6 @@ export default function Comments({ question, choice, comments, answer, profile }
   const mine = answer.sel === choice.id && answer.reason;
   return <div className="flow">
     <article className="thread-card">
-      <span className="hint">{question.category}</span>
       <h1 tabIndex={-1}>{question.title}</h1>
       <p>{question.body}</p>
       <div className="thread-choice"><span>{choice.text}</span><strong>{choice.pct}%</strong></div>

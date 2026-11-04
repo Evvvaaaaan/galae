@@ -3,7 +3,7 @@ import { dateLabel } from '../questionData.js';
 export default function RecordDetail({ question, answer, groups, go }) {
   const shared = groups.filter(g => answer.sharedWith.includes(g.id));
   return <div className="flow">
-    <div className="meta"><time dateTime={question.date}>{dateLabel(question.date)}</time><span>{question.category}</span><span>NO. {question.no}</span></div>
+    <div className="meta"><time dateTime={question.date}>{dateLabel(question.date)}</time></div>
     <h1 className="question-body" tabIndex={-1}>{question.body}</h1>
     <div className="record">
       <strong>{question.choices.find(c => c.id === answer.sel)?.text}</strong>

@@ -2,7 +2,6 @@ import { Icon } from '../components/UI.jsx';
 
 export default function Question({ question, answer, onPick, onReason, onSubmit }) {
   return <div className="flow">
-    <div className="meta"><span>{question.category}</span><span>NO. {question.no}</span></div>
     <h1 className="question-body" tabIndex={-1}>{question.body}</h1>
     <div className="choices">{question.choices.map((c, i) => <button key={c.id} className={`choice ${answer.sel === c.id ? 'on' : ''}`} disabled={answer.submitted} aria-pressed={answer.sel === c.id} onClick={() => onPick(c.id)}><span className="letter">{String.fromCharCode(65 + i)}</span><span>{c.text}</span>{answer.sel === c.id && <Icon name="check" size={18} />}</button>)}</div>
     {(!answer.submitted || answer.reason) && <div className="field">
