@@ -6,6 +6,7 @@ import { TOPICS } from './Feed.jsx';
 import { currentStreak } from './Today.jsx';
 import { QuestionRow } from './Archive.jsx';
 import { ACHIEVEMENTS } from '../achievements.js';
+import { WorldTree } from '../motifs.jsx';
 
 const [TODAY_YEAR, TODAY_MONTH, TODAY_DAY] = TODAY.date.split('-').map(Number);
 
@@ -25,7 +26,7 @@ export default function Records({ answers, achieved, comments, profile, joinedOn
   return <>
     <h1 className="visually-hidden" tabIndex={-1}>나</h1>
     <div className="profile">
-      <Avatar name={profile.name || '나'} color={profile.color} />
+      <Avatar name={profile.name || '나'} color={profile.color} photo={profile.photo} />
       <div>
         <strong>{profile.name || '나'}</strong>
         <ul className="profile-stats">
@@ -35,6 +36,7 @@ export default function Records({ answers, achieved, comments, profile, joinedOn
         </ul>
       </div>
     </div>
+    {profile.bio && <p className="profile-bio">{profile.bio}</p>}
     <button className="btn-secondary profile-edit" onClick={() => go('settings/profile')}>프로필 편집</button>
     <Fruits earned={earned} />
     <div className="calendar-month">
@@ -71,6 +73,27 @@ function Fruits({ earned }) {
     </button>)}</div>
     {shown && <p className="fruit-note" aria-live="polite"><strong>{shown.name}</strong>{Number(shown.on.slice(5, 7))}월 {Number(shown.on.slice(8, 10))}일 · {shown.desc}</p>}
   </div>;
+}
+
+// 다른 사람의 프로필입니다. 이름·소개·열매 아래에 그 사람의 나무가 있습니다.
+export function MemberProfile({ member }) {
+  const earned = Object.entries(member.achieved).map(([id, a]) => ({ ...ACHIEVEMENTS.find(x => x.id === id), on: a.on }));
+  return <>
+    <div className="profile member">
+      <Avatar {...member} />
+      <div>
+        <strong>{member.name}</strong>
+        <ul className="profile-stats">
+          <li><strong>{member.answers}</strong>선택</li>
+          <li><strong>{member.streak}</strong>연속</li>
+          <li><strong>{member.comments}</strong>댓글</li>
+        </ul>
+      </div>
+    </div>
+    {member.bio && <p className="profile-bio">{member.bio}</p>}
+    <Fruits earned={earned} />
+    <WorldTree count={member.answers} fruits={earned} />
+  </>;
 }
 
 function DayRecords({ date, answers, go }) {

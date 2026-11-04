@@ -42,7 +42,14 @@ export const QUESTIONS = [
 ];
 
 export const TODAY = QUESTIONS[0];
-export const MEMBERS = [{ id: 'm1', name: '서연', handle: 'seoyeon.k', color: 'peach' }, { id: 'm2', name: '민준', handle: 'minjun_02', color: 'blue' }, { id: 'm3', name: '하은', handle: 'haeun', color: 'sage' }, { id: 'm4', name: '지우', handle: 'jiwoo.day', color: 'lilac' }];
+// 다른 사람의 샘플 프로필입니다. answers는 선택 수(나무의 선 수), streak은 연속 일수, comments는 댓글 수, achieved는 맺은 업적(맺은 순서)입니다.
+const achieved = list => Object.fromEntries(list.map(([id, on]) => [id, { on }]));
+export const MEMBERS = [
+  { id: 'm1', name: '서연', handle: 'seoyeon.k', color: 'peach', photo: '/members/m1.jpg', bio: '천천히 읽고 오래 생각하는 편이에요.', answers: 64, streak: 41, comments: 31, achieved: achieved([['first', '2026-08-21'], ['past', '2026-08-22'], ['comment1', '2026-08-25'], ['streak7', '2026-08-27'], ['share1', '2026-08-28'], ['answer10', '2026-08-30'], ['streak30', '2026-09-19'], ['answer30', '2026-09-20']]) },
+  { id: 'm2', name: '민준', handle: 'minjun_02', color: 'blue', bio: '질문 하나로 하루를 시작해요.', answers: 23, streak: 12, comments: 9, achieved: achieved([['first', '2026-09-30'], ['comment1', '2026-10-02'], ['streak7', '2026-10-06'], ['answer10', '2026-10-09']]) },
+  { id: 'm3', name: '하은', handle: 'haeun', color: 'sage', bio: '목요일 모임 사람들과 함께 걸어요.', answers: 112, streak: 3, comments: 57, achieved: achieved([['first', '2026-07-01'], ['share1', '2026-07-02'], ['past', '2026-07-03'], ['comment1', '2026-07-04'], ['streak7', '2026-07-07'], ['answer10', '2026-07-10'], ['share10', '2026-07-24'], ['streak30', '2026-07-30'], ['answer30', '2026-07-31'], ['answer100', '2026-10-24']]) },
+  { id: 'm4', name: '지우', handle: 'jiwoo.day', color: 'lilac', bio: '', answers: 6, streak: 2, comments: 2, achieved: achieved([['first', '2026-10-30'], ['comment1', '2026-11-01']]) },
+];
 export const DEMO_GROUPS = [
   { id: 'g1', name: '한 걸음 청년부', description: '서로의 생각을 듣고, 함께 한 걸음씩 자라가요.', code: 'GARA01', color: 'sage', owner: false, members: MEMBERS.slice(0, 3) },
   { id: 'g2', name: '목요일의 작은 모임', description: '목요일마다 나누는 우리의 질문과 이야기.', code: 'GARA26', color: 'peach', owner: false, members: MEMBERS.slice(2) },

@@ -28,8 +28,15 @@ export function Empty({ title, label, onClick }) {
   return <div className="empty"><p>{title}</p>{label && <button className="btn-text" onClick={onClick}>{label}</button>}</div>;
 }
 
-export function Avatar({ name, color = 'sage' }) {
-  return <span className={`avatar ${color}`} aria-hidden="true">{name.slice(0, 1)}</span>;
+export function Avatar({ name, color = 'sage', photo }) {
+  return <span className={`avatar ${color}`} aria-hidden="true">{photo ? <img src={photo} alt="" /> : name.slice(0, 1)}</span>;
+}
+
+// 누르면 그 사람의 프로필로 갑니다. 누를 곳이 없으면(내 글) 그대로 보여 줍니다.
+// 아바타는 이름과 같은 곳으로 가므로 한 번만 읽히도록 숨깁니다.
+export function ProfileLink({ onClick, avatar, children }) {
+  if (!onClick) return children;
+  return <button className="profile-link" onClick={onClick} {...(avatar && { tabIndex: -1, 'aria-hidden': true })}>{children}</button>;
 }
 
 export function BottomNav({ active, go }) {

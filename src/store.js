@@ -7,7 +7,7 @@ export const STEPS = ['answer', 'result', 'reading', 'done', 'share'];
 export const emptyAnswer = () => ({ sel: null, reason: '', submitted: false, completed: false, sharedWith: [], shareDraft: null, lastStep: null });
 export const PROFILE_COLORS = ['sage', 'blue', 'peach', 'lilac'];
 export const THEMES = ['light', 'dark', 'auto'];
-export const initialState = () => ({ started: false, answers: {}, groups: DEMO_GROUPS, joined: ['g1'], profile: { name: '', handle: '', color: 'blue' }, theme: 'auto', messages: [], comments: [], likes: [], achieved: {} });
+export const initialState = () => ({ started: false, answers: {}, groups: DEMO_GROUPS, joined: ['g1'], profile: { name: '', handle: '', bio: '', photo: '', color: 'blue' }, theme: 'auto', messages: [], comments: [], likes: [], achieved: {} });
 
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const text = (value, fallback = '') => typeof value === 'string' ? value : fallback;
@@ -56,6 +56,8 @@ export function loadState() {
         profile: {
           name: text(saved.profile?.name).slice(0, 10),
           handle: /^[a-z0-9._]{1,20}$/.test(saved.profile?.handle) ? saved.profile.handle : '',
+          bio: text(saved.profile?.bio).slice(0, 80),
+          photo: /^data:image\/jpeg;base64,/.test(saved.profile?.photo) ? saved.profile.photo : '',
           color: PROFILE_COLORS.includes(saved.profile?.color) ? saved.profile.color : 'blue',
         },
         theme: THEMES.includes(saved.theme) ? saved.theme : 'auto',

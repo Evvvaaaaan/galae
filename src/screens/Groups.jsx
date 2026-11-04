@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { QUESTIONS, TODAY, SAMPLE_SHARES, dateLabel } from '../questionData.js';
-import { Header, Icon, Avatar, Empty } from '../components/UI.jsx';
+import { Header, Icon, Avatar, Empty, ProfileLink } from '../components/UI.jsx';
 
 export function Groups({ state, go }) {
   const groups = state.groups.filter(g => state.joined.includes(g.id));
@@ -70,14 +70,14 @@ export function GroupForm({ mode, group, state, onCreate, onJoin, onSave, go }) 
   </>;
 }
 
-export function GroupDetail({ group, state, go, openQuestion, initialQuestionId, onSend }) {
+export function GroupDetail({ group, state, go, openQuestion, initialQuestionId, onSend, onProfile }) {
   const [text, setText] = useState('');
   const [open, setOpen] = useState(false);
   const questionId = initialQuestionId || TODAY.id;
   const question = QUESTIONS.find(q => q.id === questionId);
   const answer = state.answers[questionId];
   const shared = answer?.sharedWith.includes(group.id);
-  const me = { name: state.profile.name || '나', color: state.profile.color };
+  const me = { name: state.profile.name || '나', color: state.profile.color, photo: state.profile.photo };
   const posts = [...SAMPLE_SHARES.filter(s => s.groupId === group.id && s.questionId === questionId), ...(shared ? [{ memberId: 'me', sel: answer.sel, note: answer.reason }] : [])];
   const messages = state.messages.filter(m => m.groupId === group.id && m.questionId === questionId);
   function send(e) { e.preventDefault(); if (!text.trim()) return; onSend(questionId, text); setText(''); }
@@ -108,10 +108,11 @@ export function GroupDetail({ group, state, go, openQuestion, initialQuestionId,
           {posts.map(post => {
             const mine = post.memberId === 'me';
             const member = mine ? me : group.members.find(m => m.id === post.memberId) || { name: '멤버', color: 'sage' };
+            const link = member.id && (() => onProfile(member.id));
             return <div className={`bubble-row ${mine ? 'mine' : ''}`} key={post.memberId}>
-              {!mine && <Avatar {...member} />}
+              {!mine && <ProfileLink avatar onClick={link}><Avatar {...member} /></ProfileLink>}
               <div className="bubble-wrap">
-                {!mine && <span className="bubble-name">{member.name}</span>}
+                {!mine && <ProfileLink onClick={link}><span className="bubble-name">{member.name}</span></ProfileLink>}
                 <div className="bubble"><span className="chip">{question.choices.find(c => c.id === post.sel)?.short}</span>{post.note && <p className="preserve-lines">{post.note}</p>}</div>
               </div>
             </div>;
@@ -128,7 +129,7 @@ export function GroupDetail({ group, state, go, openQuestion, initialQuestionId,
   </>;
 }
 
-export function GroupMembers({ group, profile, questionId, go, onLeave }) {
+export function GroupMembers({ group, profile, questionId, go, onLeave, onProfile }) {
   const [copied, setCopied] = useState('');
   const [confirmLeave, setConfirmLeave] = useState(false);
   async function copy() { try { await navigator.clipboard.writeText(group.code); setCopied('복사됨'); } catch { setCopied('복사할 수 없어요'); } }
@@ -137,8 +138,8 @@ export function GroupMembers({ group, profile, questionId, go, onLeave }) {
     <div className="flow">
       <div className="invite"><strong>{group.code}</strong><button className="btn-text" onClick={copy}>{copied || '복사'}</button></div>
       <div className="list">
-        <div className="list-row"><Avatar name={profile.name || '나'} color={profile.color} /><span>{profile.name || '나'}</span><small className="hint">{group.owner ? '그룹장' : '멤버'}</small></div>
-        {group.members.map((m, i) => <div className="list-row" key={m.id}><Avatar {...m} /><span>{m.name}</span><small className="hint">{!group.owner && i === 0 ? '그룹장' : '멤버'}</small></div>)}
+        <div className="list-row"><Avatar name={profile.name || '나'} color={profile.color} photo={profile.photo} /><span>{profile.name || '나'}</span><small className="hint">{group.owner ? '그룹장' : '멤버'}</small></div>
+        {group.members.map((m, i) => <div className="list-row" key={m.id}><ProfileLink avatar onClick={() => onProfile(m.id)}><Avatar {...m} /></ProfileLink><span><ProfileLink onClick={() => onProfile(m.id)}>{m.name}</ProfileLink></span><small className="hint">{!group.owner && i === 0 ? '그룹장' : '멤버'}</small></div>)}
       </div>
       {group.owner && <button className="btn-text" onClick={() => go(`groups/${group.id}/settings`)}>그룹 설정</button>}
       <div className="actions"><button className="btn-text muted" onClick={() => setConfirmLeave(true)}>그룹 나가기</button></div>

@@ -10,7 +10,7 @@ export function Settings({ profile, theme, onTheme, go, onLogout, onReset }) {
   const [confirmReset, setConfirmReset] = useState(false);
   return <div className="flow">
     <div className="list">
-      <button className="list-row" onClick={() => go('settings/profile')}><Avatar name={profile.name || '나'} color={profile.color} /><span>{profile.name || '나'}</span></button>
+      <button className="list-row" onClick={() => go('settings/profile')}><Avatar name={profile.name || '나'} color={profile.color} photo={profile.photo} /><span>{profile.name || '나'}</span></button>
       <button className="list-row" disabled>알림</button>
       <div className="list-row theme-row"><span>화면 모드</span><div className="tabs">{THEMES.map(t => <button key={t} aria-pressed={theme === t} onClick={() => onTheme(t)}>{THEME_LABELS[t]}</button>)}</div></div>
     </div>
@@ -36,13 +36,33 @@ export function Settings({ profile, theme, onTheme, go, onLogout, onReset }) {
 export function ProfileForm({ profile, onSave }) {
   const [name, setName] = useState(profile.name);
   const [handle, setHandle] = useState(profile.handle);
+  const [bio, setBio] = useState(profile.bio);
+  const [photo, setPhoto] = useState(profile.photo);
   const [color, setColor] = useState(profile.color);
-  return <form className="flow" onSubmit={e => { e.preventDefault(); onSave({ name: name.trim(), handle, color }); }}>
-    <div className="group-preview"><Avatar name={name.trim() || '나'} color={color} /></div>
+  // 저장 공간을 아끼려고 정사각형 256px JPEG로 줄여 둡니다.
+  function pick(file) {
+    if (!file) return;
+    const img = new Image();
+    img.onload = () => {
+      const size = Math.min(img.width, img.height);
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = 256;
+      canvas.getContext('2d').drawImage(img, (img.width - size) / 2, (img.height - size) / 2, size, size, 0, 0, 256, 256);
+      setPhoto(canvas.toDataURL('image/jpeg', 0.85));
+      URL.revokeObjectURL(img.src);
+    };
+    img.src = URL.createObjectURL(file);
+  }
+  return <form className="flow" onSubmit={e => { e.preventDefault(); onSave({ name: name.trim(), handle, bio: bio.trim(), photo, color }); }}>
+    <div className="group-preview">
+      <label className="photo-pick"><Avatar name={name.trim() || '나'} color={color} photo={photo} /><input type="file" accept="image/*" aria-label="프로필 사진" className="visually-hidden" onChange={e => { pick(e.target.files[0]); e.target.value = ''; }} /></label>
+      {photo && <button type="button" className="btn-text muted" onClick={() => setPhoto('')}>사진 삭제</button>}
+    </div>
     <div className="color-picker">{PROFILE_COLORS.map(c => <button type="button" key={c} className={c} aria-label={COLOR_LABELS[c]} aria-pressed={color === c} onClick={() => setColor(c)} />)}</div>
     <input className="note-input" aria-label="이름" placeholder="이름" maxLength={10} value={name} onChange={e => setName(e.target.value)} />
     {/* 아이디는 영문 소문자, 숫자, 마침표, 밑줄만 씁니다. */}
     <input className="note-input" aria-label="아이디" placeholder="아이디" maxLength={20} autoCapitalize="none" autoCorrect="off" spellCheck={false} value={handle} onChange={e => setHandle(e.target.value.toLowerCase().replace(/[^a-z0-9._]/g, ''))} />
+    <textarea className="note-input" aria-label="소개" placeholder="소개" rows={3} maxLength={80} value={bio} onChange={e => setBio(e.target.value)} />
     <button className="btn-primary">저장</button>
   </form>;
 }

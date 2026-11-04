@@ -89,6 +89,7 @@ svg { flex-shrink: 0; }
 .blue { background: #e1eaf0; color: #4d6c7e; }
 .peach { background: #f3e5d9; color: #9c7151; }
 .lilac { background: #e9e3f0; color: #7b648c; }
+.avatar img { width: 100%; height: 100%; border-radius: inherit; object-fit: cover; }
 .avatar-stack { display: flex; }
 .avatar-stack .avatar { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--bg); margin-left: -6px; font-size: 10px; }
 
@@ -304,7 +305,9 @@ label.list-row { cursor: pointer; }
 .question-menu { position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 11; max-height: 280px; overflow-y: auto; margin: 0; padding: 6px; list-style: none; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); box-shadow: 0 8px 24px rgba(51, 50, 47, .08); }
 .question-menu button { display: block; width: 100%; padding: 11px 10px; border: 0; border-radius: 8px; background: none; text-align: left; font-size: 14px; color: var(--ink-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .question-menu button[aria-pressed=true] { background: var(--sel-bg); color: var(--key); }
-.group-preview { display: flex; justify-content: center; }
+.group-preview { display: flex; flex-direction: column; align-items: center; }
+.photo-pick { cursor: pointer; }
+.photo-pick:active { opacity: .55; }
 .group-preview .avatar { width: 72px; height: 72px; border-radius: 24px; font-size: 26px; }
 .color-picker { display: flex; justify-content: center; gap: 14px; }
 .color-picker button { width: 28px; height: 28px; border-radius: 50%; border: 2px solid transparent; }
@@ -333,6 +336,7 @@ label.list-row { cursor: pointer; }
 .profile-stats button { padding: 0; border: 0; background: none; text-align: center; }
 .profile-stats button:active { opacity: .55; }
 .profile-stats strong { font-family: var(--serif); font-size: 18px; font-weight: 400; color: var(--ink); }
+.profile-bio { margin: 16px 0 0; font-size: 14px; line-height: 1.6; white-space: pre-line; }
 .profile-edit { min-height: 44px; margin-top: 20px; border: 0; background: var(--bar-track); color: var(--ink); }
 .fruits { margin-top: 21px; }
 .fruits + .calendar-month { margin-top: 21px; }
@@ -343,6 +347,15 @@ label.list-row { cursor: pointer; }
 .fruit-row button[aria-pressed="true"] circle { stroke: var(--key); stroke-width: 1; }
 .fruit-note { display: flex; flex-direction: column; gap: 4px; margin-top: 8px; font-size: 13px; color: var(--ink-sub); }
 .fruit-note strong { font-family: var(--serif); font-size: 16px; font-weight: 400; color: var(--ink); }
+.profile-link { display: inline-flex; flex-shrink: 0; align-self: flex-start; padding: 0; border: 0; background: none; font: inherit; color: inherit; text-align: left; }
+.profile-link:active { opacity: .55; }
+.profile-bio + .world-tree, .fruits + .world-tree { margin-top: 40px; }
+/* 다른 사람 프로필에서는 나무를 남은 공간의 가운데에 둡니다. */
+.screen:has(> .profile.member) { display: flex; flex-direction: column; }
+.screen:has(> .profile.member) > .world-tree { margin-top: auto; margin-bottom: auto; padding-top: 40px; }
+/* 고리를 눌러 뜨는 설명은 나무를 밀지 않고 위에 겹쳐 뜹니다. */
+.screen:has(> .profile.member) > .fruits { position: relative; z-index: 1; }
+.screen:has(> .profile.member) .fruit-note { position: absolute; top: 100%; left: 0; right: 0; }
 .avatar-stack small { align-self: center; margin-left: 8px; font-size: 11px; color: var(--ink-sub); }
 .add-menu-wrap { position: relative; }
 .add-menu { left: auto; right: 0; min-width: 120px; }

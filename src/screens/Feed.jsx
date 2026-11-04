@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import PARADOXES from '../../content/paradoxes.json';
-import { Avatar, Empty, Icon } from '../components/UI.jsx';
+import { Avatar, Empty, Icon, ProfileLink } from '../components/UI.jsx';
 import { MEMBERS, SAMPLE_COMMENTS, TODAY } from '../questionData.js';
 
 // 검증을 마친 주제만 보입니다. 개발 서버에서는 검증 전 주제도 확인할 수 있습니다.
@@ -10,13 +10,15 @@ const VISIBLE = PARADOXES.filter(p => import.meta.env.DEV || p.checked);
 const DAY = Math.floor(Date.parse(TODAY.date) / 86400000);
 export const TOPICS = VISIBLE.length <= 5 ? VISIBLE : Array.from({ length: 5 }, (_, i) => VISIBLE[(DAY * 5 + i) % VISIBLE.length]);
 
-export default function Feed({ initialTopic, comments, likes, profile, onComment, onLike }) {
+export default function Feed({ initialTopic, initialComments, comments, likes, profile, onComment, onLike, onProfile }) {
   const feedRef = useRef(null);
   const [open, setOpen] = useState(null);
   const [copied, setCopied] = useState(null);
   useEffect(() => {
     if (initialTopic) feedRef.current.querySelector(`[data-topic="${initialTopic}"]`)?.scrollIntoView({ block: 'start' });
-  }, [initialTopic]);
+    // 프로필에서 돌아오면 보던 댓글 시트를 다시 엽니다.
+    if (initialTopic && initialComments) setOpen(initialTopic);
+  }, [initialTopic, initialComments]);
 
   async function share(topic) {
     const url = `${location.origin}${location.pathname}#/feed/${topic.id}`;
@@ -45,11 +47,11 @@ export default function Feed({ initialTopic, comments, likes, profile, onComment
       </section>)}
       <div className="feed-page feed-end"><Empty title="모든 생각을 다 보셨어요" /></div>
     </div>
-    {open && <Comments key={open} frame={feedRef.current.closest('.frame')} topic={TOPICS.find(t => t.id === open)} comments={comments.filter(c => c.topicId === open)} likes={likes} profile={profile} onComment={onComment} onLike={onLike} onClose={() => setOpen(null)} />}
+    {open && <Comments key={open} frame={feedRef.current.closest('.frame')} topic={TOPICS.find(t => t.id === open)} comments={comments.filter(c => c.topicId === open)} likes={likes} profile={profile} onComment={onComment} onLike={onLike} onProfile={memberId => onProfile(memberId, `feed/${open}/comments`)} onClose={() => setOpen(null)} />}
   </>;
 }
 
-function Comments({ frame, topic, comments, likes, profile, onComment, onLike, onClose }) {
+function Comments({ frame, topic, comments, likes, profile, onComment, onLike, onProfile, onClose }) {
   const [text, setText] = useState('');
   const [replyTo, setReplyTo] = useState(null);
   const [shown, setShown] = useState([]);
@@ -77,7 +79,7 @@ function Comments({ frame, topic, comments, likes, profile, onComment, onLike, o
     else if (delta > 80) full ? setFull(false) : onClose();
     setDrag(null);
   }
-  const me = { name: profile.name || '나', handle: profile.handle || profile.name || '나', color: profile.color };
+  const me = { name: profile.name || '나', handle: profile.handle || profile.name || '나', color: profile.color, photo: profile.photo };
   function send(e) { e.preventDefault(); if (!text.trim()) return; onComment(topic.id, text, replyTo?.id); if (replyTo && !shown.includes(replyTo.id)) setShown([...shown, replyTo.id]); setText(''); setReplyTo(null); }
   const all = [
     ...SAMPLE_COMMENTS.filter(c => c.topicId === topic.id).map(c => ({ ...c, member: MEMBERS.find(m => m.id === c.memberId) })),
@@ -88,9 +90,10 @@ function Comments({ frame, topic, comments, likes, profile, onComment, onLike, o
   function row(c) {
     const liked = likes.includes(c.id);
     const count = c.likes + (liked ? 1 : 0);
+    const link = c.memberId && (() => onProfile(c.memberId));
     return <li key={c.id} className={c.parentId ? 'reply' : undefined}>
-      <Avatar {...c.member} />
-      <div className="comment-body"><p className="preserve-lines"><strong className="comment-name">{c.member.handle}</strong> {c.text}</p><button className="comment-reply" onClick={() => reply(c)}>답글 달기</button></div>
+      <ProfileLink avatar onClick={link}><Avatar {...c.member} /></ProfileLink>
+      <div className="comment-body"><p className="preserve-lines"><strong className="comment-name"><ProfileLink onClick={link}>{c.member.handle}</ProfileLink></strong> {c.text}</p><button className="comment-reply" onClick={() => reply(c)}>답글 달기</button></div>
       <button className={`comment-like ${liked ? 'on' : ''}`} aria-label="공감" aria-pressed={liked} onClick={() => onLike(c.id)}><Icon name="up" size={15} />{count > 0 && <span>{count}</span>}</button>
     </li>;
   }
