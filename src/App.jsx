@@ -18,7 +18,7 @@ import { Groups, GroupForm, GroupDetail, GroupMembers, GroupsAddMenu } from './s
 import { BottomNav, Header, Icon } from './components/UI.jsx';
 import { QUESTIONS, TODAY, MEMBERS, dateLabel } from './questionData.js';
 import { recordAchievements } from './achievements.js';
-import { STORAGE_KEY, STEPS, loadState, emptyAnswer, updateAnswer, completeAnswer, questionStep, questionRoute, rememberQuestionRoute, previousStep, leaveGroup, addMessage, addComment, toggleLike } from './store.js';
+import { STORAGE_KEY, STEPS, loadState, emptyAnswer, updateAnswer, completeAnswer, questionStep, questionRoute, rememberQuestionRoute, previousStep, leaveGroup, kickMember, addMessage, addComment, toggleLike } from './store.js';
 
 const routeFromLocation = () => location.hash.replace(/^#\/?/, '') || 'today';
 // 진행 선 세 칸: 선택 / 결과·다른 생각 / 확장하기
@@ -130,7 +130,7 @@ export default function App() {
     else {
       const group = state.groups.find(g => g.id === id && state.joined.includes(id));
       if (group && requestedStep === 'settings' && group.owner && !extra) content = <GroupForm key={`${id}/settings`} mode="edit" group={group} go={go} onSave={fields => { setState(s => ({ ...s, groups: s.groups.map(g => g.id === id ? { ...g, ...fields } : g) })); go(`groups/${id}/members`); }} />;
-      else if (group && (!requestedStep || requestedStep === 'members' || QUESTIONS.some(q => q.id === requestedStep))) content = requestedStep === 'members' ? <GroupMembers key={id} group={group} profile={state.profile} questionId={extra} go={go} onLeave={groupId => { setState(s => leaveGroup(s, groupId)); go('groups'); }} onProfile={openProfile} /> : <GroupDetail key={`${id}/${requestedStep || ''}`} initialQuestionId={requestedStep} group={group} state={state} go={go} openQuestion={openQuestion} onSend={(questionId, text) => setState(s => addMessage(s, id, questionId, text))} onProfile={openProfile} />;
+      else if (group && (!requestedStep || requestedStep === 'members' || QUESTIONS.some(q => q.id === requestedStep))) content = requestedStep === 'members' ? <GroupMembers key={id} group={group} profile={state.profile} questionId={extra} go={go} onKick={memberId => setState(s => kickMember(s, id, memberId))} onLeave={groupId => { setState(s => leaveGroup(s, groupId)); go('groups'); }} onProfile={openProfile} /> : <GroupDetail key={`${id}/${requestedStep || ''}`} initialQuestionId={requestedStep} group={group} state={state} go={go} openQuestion={openQuestion} onSend={(questionId, text) => setState(s => addMessage(s, id, questionId, text))} onProfile={openProfile} />;
     }
   } else if (section === 'records' && !requestedStep) {
     if (!id) content = <Records answers={state.answers} achieved={state.achieved} comments={state.comments} profile={state.profile} joinedOn={state.joinedOn} go={go} />;

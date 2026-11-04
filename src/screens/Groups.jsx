@@ -78,7 +78,7 @@ export function GroupDetail({ group, state, go, openQuestion, initialQuestionId,
   const answer = state.answers[questionId];
   const shared = answer?.sharedWith.includes(group.id);
   const me = { name: state.profile.name || '나', color: state.profile.color, photo: state.profile.photo };
-  const posts = [...SAMPLE_SHARES.filter(s => s.groupId === group.id && s.questionId === questionId), ...(shared ? [{ memberId: 'me', sel: answer.sel, note: answer.reason }] : [])];
+  const posts = [...SAMPLE_SHARES.filter(s => s.groupId === group.id && s.questionId === questionId && group.members.some(m => m.id === s.memberId)), ...(shared ? [{ memberId: 'me', sel: answer.sel, note: answer.reason }] : [])];
   const messages = state.messages.filter(m => m.groupId === group.id && m.questionId === questionId);
   function send(e) { e.preventDefault(); if (!text.trim()) return; onSend(questionId, text); setText(''); }
   return <>
@@ -91,29 +91,22 @@ export function GroupDetail({ group, state, go, openQuestion, initialQuestionId,
           <ul className="question-menu">{QUESTIONS.map(q => <li key={q.id}><button aria-pressed={q.id === questionId} onClick={() => { setOpen(false); go(`groups/${group.id}/${q.id}`); }}>{dateLabel(q.date)} · {q.title}</button></li>)}</ul>
         </>}
       </div>
-      {!answer?.submitted ? <>
-        <div className="group-question">
-          <strong>{question.title}</strong>
-          <p>{question.body}</p>
-        </div>
-        <div className="locked">
-          <button className="btn-primary" onClick={() => openQuestion(questionId)}>답변하기</button>
-        </div>
-      </> : <>
         <div className="chat">
           <div className="group-question">
             <strong>{question.title}</strong>
             <p>{question.body}</p>
+            {!answer?.submitted && <button className="btn-primary" onClick={() => openQuestion(questionId)}>{answer?.sel != null ? '갈래 이어가기' : questionId === TODAY.id ? '오늘의 갈래 시작하기' : '갈래 시작하기'}</button>}
           </div>
           {posts.map(post => {
             const mine = post.memberId === 'me';
+            const veiled = !mine && !answer?.submitted;
             const member = mine ? me : group.members.find(m => m.id === post.memberId) || { name: '멤버', color: 'sage' };
             const link = member.id && (() => onProfile(member.id));
             return <div className={`bubble-row ${mine ? 'mine' : ''}`} key={post.memberId}>
               {!mine && <ProfileLink avatar onClick={link}><Avatar {...member} /></ProfileLink>}
               <div className="bubble-wrap">
                 {!mine && <ProfileLink onClick={link}><span className="bubble-name">{member.name}</span></ProfileLink>}
-                <div className="bubble"><span className="chip">{question.choices.find(c => c.id === post.sel)?.short}</span>{post.note && <p className="preserve-lines">{post.note}</p>}</div>
+                <div className={`bubble ${veiled ? 'veiled' : ''}`}><span className="chip" aria-hidden={veiled}>{question.choices.find(c => c.id === post.sel)?.short}</span>{post.note && <p className="preserve-lines" aria-hidden={veiled}>{post.note}</p>}{veiled && <span className="veil">갈래를 선택하면 볼 수 있어요</span>}</div>
               </div>
             </div>;
           })}
@@ -124,14 +117,14 @@ export function GroupDetail({ group, state, go, openQuestion, initialQuestionId,
           <input aria-label="메시지" placeholder="메시지" maxLength={300} value={text} onChange={e => setText(e.target.value)} />
           <button className="icon-button" aria-label="보내기" disabled={!text.trim()}><Icon name="send" size={20} /></button>
         </form>
-      </>}
     </div>
   </>;
 }
 
-export function GroupMembers({ group, profile, questionId, go, onLeave, onProfile }) {
+export function GroupMembers({ group, profile, questionId, go, onKick, onLeave, onProfile }) {
   const [copied, setCopied] = useState('');
   const [confirmLeave, setConfirmLeave] = useState(false);
+  const [kicking, setKicking] = useState(null);
   async function copy() { try { await navigator.clipboard.writeText(group.code); setCopied('복사됨'); } catch { setCopied('복사할 수 없어요'); } }
   return <>
     <Header back={() => go(`groups/${group.id}${questionId ? `/${questionId}` : ''}`)} title={group.name} />
@@ -139,15 +132,21 @@ export function GroupMembers({ group, profile, questionId, go, onLeave, onProfil
       <div className="invite"><strong>{group.code}</strong><button className="btn-text" onClick={copy}>{copied || '복사'}</button></div>
       <div className="list">
         <div className="list-row"><Avatar name={profile.name || '나'} color={profile.color} photo={profile.photo} /><span>{profile.name || '나'}</span><small className="hint">{group.owner ? '그룹장' : '멤버'}</small></div>
-        {group.members.map((m, i) => <div className="list-row" key={m.id}><ProfileLink avatar onClick={() => onProfile(m.id)}><Avatar {...m} /></ProfileLink><span><ProfileLink onClick={() => onProfile(m.id)}>{m.name}</ProfileLink></span><small className="hint">{!group.owner && i === 0 ? '그룹장' : '멤버'}</small></div>)}
+        {group.members.map((m, i) => <div className="list-row" key={m.id}><ProfileLink avatar onClick={() => onProfile(m.id)}><Avatar {...m} /></ProfileLink><span><ProfileLink onClick={() => onProfile(m.id)}>{m.name}</ProfileLink></span>{group.owner ? <button className="btn-text muted" onClick={() => setKicking(m)}>내보내기</button> : <small className="hint">{i === 0 ? '그룹장' : '멤버'}</small>}</div>)}
       </div>
-      {group.owner && <button className="btn-text" onClick={() => go(`groups/${group.id}/settings`)}>그룹 설정</button>}
-      <div className="actions"><button className="btn-text muted" onClick={() => setConfirmLeave(true)}>그룹 나가기</button></div>
+      <div className="actions">{group.owner && <button className="btn-text" onClick={() => go(`groups/${group.id}/settings`)}>그룹 설정</button>}<button className="btn-text muted" onClick={() => setConfirmLeave(true)}>그룹 나가기</button></div>
       {confirmLeave && createPortal(<>
         <button className="sheet-backdrop" aria-label="닫기" onClick={() => setConfirmLeave(false)} />
         <div className="dialog" role="alertdialog" aria-labelledby="leave-title">
-          <p id="leave-title">그룹을 나갈까요?</p>
+          <p id="leave-title">{group.owner ? <>그룹장이 나가면 그룹이 사라져요.<br />나갈까요?</> : '그룹을 나갈까요?'}</p>
           <div className="dialog-actions"><button className="btn-text" onClick={() => setConfirmLeave(false)}>취소</button><button className="btn-text danger" onClick={() => onLeave(group.id)}>나가기</button></div>
+        </div>
+      </>, document.querySelector('.frame'))}
+      {kicking && createPortal(<>
+        <button className="sheet-backdrop" aria-label="닫기" onClick={() => setKicking(null)} />
+        <div className="dialog" role="alertdialog" aria-labelledby="kick-title">
+          <p id="kick-title">{kicking.name} 님을 내보낼까요?</p>
+          <div className="dialog-actions"><button className="btn-text" onClick={() => setKicking(null)}>취소</button><button className="btn-text danger" onClick={() => { onKick(kicking.id); setKicking(null); }}>내보내기</button></div>
         </div>
       </>, document.querySelector('.frame'))}
     </div>

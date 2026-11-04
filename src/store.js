@@ -7,7 +7,7 @@ export const STEPS = ['answer', 'result', 'reading', 'done', 'share'];
 export const emptyAnswer = () => ({ sel: null, reason: '', submitted: false, completed: false, sharedWith: [], shareDraft: null, lastStep: null });
 export const PROFILE_COLORS = ['sage', 'blue', 'peach', 'lilac'];
 export const THEMES = ['light', 'dark', 'auto'];
-export const initialState = () => ({ started: false, answers: {}, groups: DEMO_GROUPS, joined: ['g1'], profile: { name: '', handle: '', bio: '', photo: '', color: 'blue' }, theme: 'auto', messages: [], comments: [], likes: [], achieved: {} });
+export const initialState = () => ({ started: false, answers: {}, groups: DEMO_GROUPS, joined: ['g1', 'g2'], profile: { name: '', handle: '', bio: '', photo: '', color: 'blue' }, theme: 'auto', messages: [], comments: [], likes: [], achieved: {} });
 
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const text = (value, fallback = '') => typeof value === 'string' ? value : fallback;
@@ -101,9 +101,11 @@ export function rememberQuestionRoute(state, route) {
   return state.answers[id]?.lastStep === step ? state : updateAnswer(state, id, { lastStep: step });
 }
 
+// 그룹장이 나가면 그룹이 사라집니다.
 export function leaveGroup(state, groupId) {
   return {
     ...state,
+    groups: state.groups.find(g => g.id === groupId)?.owner ? state.groups.filter(g => g.id !== groupId) : state.groups,
     joined: state.joined.filter(id => id !== groupId),
     messages: state.messages.filter(m => m.groupId !== groupId),
     answers: Object.fromEntries(Object.entries(state.answers).map(([id, answer]) => [id, {
@@ -112,6 +114,10 @@ export function leaveGroup(state, groupId) {
       shareDraft: answer.shareDraft?.filter(g => g !== groupId) ?? null,
     }])),
   };
+}
+
+export function kickMember(state, groupId, memberId) {
+  return { ...state, groups: state.groups.map(g => g.id === groupId ? { ...g, members: g.members.filter(m => m.id !== memberId) } : g) };
 }
 
 export function addMessage(state, groupId, questionId, value) {

@@ -52,7 +52,7 @@ export const MEMBERS = [
 ];
 export const DEMO_GROUPS = [
   { id: 'g1', name: '한 걸음 청년부', description: '서로의 생각을 듣고, 함께 한 걸음씩 자라가요.', code: 'GARA01', color: 'sage', owner: false, members: MEMBERS.slice(0, 3) },
-  { id: 'g2', name: '목요일의 작은 모임', description: '목요일마다 나누는 우리의 질문과 이야기.', code: 'GARA26', color: 'peach', owner: false, members: MEMBERS.slice(2) },
+  { id: 'g2', name: '목요일의 작은 모임', description: '목요일마다 나누는 우리의 질문과 이야기.', code: 'GARA26', color: 'peach', owner: true, members: MEMBERS.slice(2) },
 ];
 export const SAMPLE_SHARES = [
   { groupId: 'g1', questionId: 'q037', memberId: 'm1', sel: 1, note: '잘못을 말해주는 것도 친구를 아끼는 방법일 수 있겠다는 생각이 들었어요.' },
