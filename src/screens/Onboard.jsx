@@ -1,6 +1,28 @@
 import { useState } from 'react';
-import { ONBOARD } from '../data.js';
 import { OnboardMotif } from '../motifs.jsx';
+
+const ONBOARD = [
+  {
+    title: "매일 하나의 질문이 주어집니다",
+    sub: "하루에 하나, 질문이 찾아옵니다.\n질문에 답하여 나의 가치관과 생각을 정리해봐요.",
+    cta: "다음",
+  },
+  {
+    title: "먼저 답하고, 그다음 함께 봅니다",
+    sub: "질문에 답하면 다른 사람들의 관점도 확인할 수 있어요.\n그룹 안에서 서로의 생각을 나눠보세요.",
+    cta: "다음",
+  },
+  {
+    title: "짧은 이야기로 시야를 넓혀요",
+    sub: "생각 탭에는 여러 가지 흥미로운 이야기들이 기다리고 있어요.\n새로운 정보와 지식으로 더 깊은 생각을 시도해보세요.",
+    cta: "다음",
+  },
+  {
+    title: "답할수록 나만의 나무가 자라요",
+    sub: "답을 하나 남길 때마다 나무에 가지가 하나씩 자라나요.\n나를 돌아보며 나무와 함께 성장해보세요.",
+    cta: "시작하기",
+  },
+];
 
 export default function Onboard({ go }) {
   const [step, setStep] = useState(0);

@@ -4,7 +4,8 @@ import Onboard from './screens/Onboard.jsx';
 import Account from './screens/Account.jsx';
 import Today from './screens/Today.jsx';
 import Archive from './screens/Archive.jsx';
-import Feed, { TOPICS } from './screens/Feed.jsx';
+import Feed from './screens/Feed.jsx';
+import { TOPICS } from './topics.js';
 import Question from './screens/Question.jsx';
 import Result from './screens/Result.jsx';
 import Comments from './screens/Comments.jsx';
@@ -110,16 +111,24 @@ export default function App() {
       const sent = sentGroups(state, id);
       const flowGo = next => STEPS.includes(next) ? go(`question/${id}/${next}`) : go(next);
       const next = () => flowGo(STEPS[STEPS.indexOf(step) + 1]);
+      const openChoice = choiceId => go(`question/${id}/result/${choiceId}`);
+      const share = () => fromGroup ? shareToGroup(id, fromGroup.id) : flowGo('share');
       let flow;
       switch (step) {
         case 'answer': flow = <Question question={question} answer={answer} onPick={sel => { if (!answer.submitted) edit({ sel }); }} onReason={reason => { if (!answer.submitted) edit({ reason }); }} onSubmit={() => { if (answer.sel === null) return; setState(s => submitAnswer(s, id, answer.sel, answer.reason, TODAY.date)); if (redoing) edit({ submitted: true }); flowGo('result'); }} />; break;
-        case 'result': flow = choice ? <Comments question={question} choice={choice} comments={question.opinions[question.choices.indexOf(choice)].items} answer={answer} profile={state.profile} onProfile={openProfile} /> : <Result question={question} sel={answer.sel} onOpen={choiceId => go(`question/${id}/result/${choiceId}`)} next={next} />; break;
+        case 'result': flow = choice ? <Comments question={question} choice={choice} comments={question.opinions[question.choices.indexOf(choice)].items} answer={answer} profile={state.profile} onProfile={openProfile} /> : <Result question={question} sel={answer.sel} onOpen={openChoice} next={next} />; break;
         case 'reading': flow = <Reading question={question} next={() => { if (answer.completed) return flowGo('summary'); setRedo(null); setState(s => completeAnswer(s, id)); next(); }} />; break;
-        case 'done': flow = <Done question={question} answer={answer} sent={sent} go={flowGo} onShare={() => fromGroup ? shareToGroup(id, fromGroup.id) : flowGo('share')} />; break;
-        case 'summary': flow = <Summary question={question} answer={answer} groups={state.groups} sent={sent} onOpen={choiceId => go(`question/${id}/result/${choiceId}`)} onShare={() => fromGroup ? shareToGroup(id, fromGroup.id) : flowGo('share')} onReading={() => flowGo('reading')} onRetry={() => { setRedo({ id, answer: { sel: null, reason: '', submitted: false, completed: false } }); flowGo('answer'); }} />; break;
+        case 'done': flow = <Done question={question} answer={answer} sent={sent} go={flowGo} onShare={share} />; break;
+        case 'summary': flow = <Summary question={question} answer={answer} groups={state.groups} sent={sent} onOpen={openChoice} onShare={share} onReading={() => flowGo('reading')} onRetry={() => { setRedo({ id, answer: { sel: null, reason: '', submitted: false, completed: false } }); flowGo('answer'); }} />; break;
         case 'share': flow = <Share key={id} question={question} answer={answer} groups={joinedGroups(state)} sent={sent} onDraft={shareDraft => patch(id, { shareDraft })} onSave={groupIds => setState(s => shareAnswer(s, id, groupIds))} go={go} />; break;
       }
-      const back = () => answer.completed && ((choice && step === 'result') || step === 'reading') ? flowGo('summary') : choice && step === 'result' ? flowGo('result') : step === 'share' && [`question/${id}/done`, `question/${id}/summary`].includes(prevRoute.current) ? go(prevRoute.current) : previousStep(step) ? flowGo(previousStep(step)) : go(home);
+      const back = () => {
+        if (answer.completed && ((choice && step === 'result') || step === 'reading')) return flowGo('summary');
+        if (choice && step === 'result') return flowGo('result');
+        if (step === 'share' && [`question/${id}/done`, `question/${id}/summary`].includes(prevRoute.current)) return go(prevRoute.current);
+        if (previousStep(step)) return flowGo(previousStep(step));
+        go(home);
+      };
       const position = PROGRESS[step];
       content = <><Header back={back} title={`${id === TODAY.id ? '오늘의 갈래' : '지난 갈래'} · ${dateLabel(question.date)}`} />{position !== undefined && <ol className="progress">{['나의 선택', '다른 생각', '확장하기'].map((label, i) => <li key={label} className={i <= position ? 'on' : ''} aria-current={i === position ? 'step' : undefined}><span />{label}</li>)}</ol>}{flow}</>;
     }

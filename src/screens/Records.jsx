@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { QUESTIONS, TODAY } from '../questionData.js';
 import PARADOXES from '../../content/paradoxes.json';
 import { Avatar, Empty, Icon } from '../components/UI.jsx';
-import { TOPICS } from './Feed.jsx';
+import { TOPICS } from '../topics.js';
 import { QuestionRow } from './Archive.jsx';
-import { currentStreak, earnedList } from '../achievements.js';
+import { answeredDays, currentStreak, earnedList } from '../achievements.js';
 import { myself } from '../store.js';
 import { WorldTree } from '../motifs.jsx';
 
@@ -22,7 +22,7 @@ export default function Records({ answers, achieved, comments, profile, joinedOn
   const days = new Date(year, month, 0).getDate();
   const isTodayMonth = year === TODAY_YEAR && month === TODAY_MONTH;
   const earned = earnedList(achieved);
-  const done = new Set(Object.values(answers).map(a => a.answeredOn));
+  const done = answeredDays(answers);
   const me = myself(profile);
   return <>
     <h1 className="visually-hidden" tabIndex={-1}>나</h1>

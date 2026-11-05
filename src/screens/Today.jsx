@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { TODAY, MEMBERS, SAMPLE_SHARES, dateLabel } from '../questionData.js';
+import { TODAY, MEMBERS, dateLabel, groupShares } from '../questionData.js';
 import { joinedGroups } from '../store.js';
 import { Avatar, Icon } from '../components/UI.jsx';
 import { WorldTree } from '../motifs.jsx';
@@ -61,7 +61,7 @@ export default function Today({ state, go, openQuestion }) {
       </div>
     </section>
     <div className="list today-box">{groups.length ? groups.slice(0, 2).map(group => {
-      const sharers = SAMPLE_SHARES.filter(s => s.groupId === group.id && s.questionId === TODAY.id && group.members.some(m => m.id === s.memberId)).map(s => MEMBERS.find(m => m.id === s.memberId));
+      const sharers = groupShares(group, TODAY.id).map(s => MEMBERS.find(m => m.id === s.memberId));
       return <button className="list-row" key={group.id} onClick={() => go(`groups/${group.id}`)}>
         <Avatar name={group.name} color={group.color} photo={group.photo} />
         <span><strong>{group.name}</strong>{group.description && <small className="hint">{group.description}</small>}</span>

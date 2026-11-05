@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Avatar, resizePhoto } from '../components/UI.jsx';
-import { COLOR_LABELS, PROFILE_COLORS, cleanHandle, myself } from '../store.js';
-import { TOPICS } from './Feed.jsx';
+import { Avatar, PhotoColorPicker, SourceItem } from '../components/UI.jsx';
+import { cleanHandle, myself } from '../store.js';
+import { TOPICS } from '../topics.js';
 
 export function Settings({ profile, go, onLogout, onReset }) {
   const [confirmReset, setConfirmReset] = useState(false);
@@ -37,11 +37,7 @@ export function ProfileForm({ profile, onSave }) {
   const [photo, setPhoto] = useState(profile.photo);
   const [color, setColor] = useState(profile.color);
   return <form className="flow" onSubmit={e => { e.preventDefault(); onSave({ name: name.trim(), handle, bio: bio.trim(), photo, color }); }}>
-    <div className="group-preview">
-      <label className="photo-pick"><Avatar name={name.trim() || '나'} color={color} photo={photo} /><input type="file" accept="image/*" aria-label="프로필 사진" className="visually-hidden" onChange={e => { resizePhoto(e.target.files[0], setPhoto); e.target.value = ''; }} /></label>
-      {photo && <button type="button" className="btn-text muted" onClick={() => setPhoto('')}>사진 삭제</button>}
-    </div>
-    <div className="color-picker">{PROFILE_COLORS.map(c => <button type="button" key={c} className={c} aria-label={COLOR_LABELS[c]} aria-pressed={color === c} onClick={() => setColor(c)} />)}</div>
+    <PhotoColorPicker name={name.trim() || '나'} label="프로필 사진" photo={photo} color={color} onPhoto={setPhoto} onColor={setColor} />
     <input className="note-input" aria-label="이름" placeholder="이름" maxLength={10} value={name} onChange={e => setName(e.target.value)} />
     <input className="note-input" aria-label="아이디" placeholder="아이디" maxLength={20} autoCapitalize="none" autoCorrect="off" spellCheck={false} value={handle} onChange={e => setHandle(cleanHandle(e.target.value))} />
     <textarea className="note-input" aria-label="소개" placeholder="소개" rows={3} maxLength={80} value={bio} onChange={e => setBio(e.target.value)} />
@@ -54,7 +50,7 @@ export function Sources() {
   return <div className="flow">
     <ul className="feed-sources source-list">
       <li>성경 · 개역한글</li>
-      {sources.map(s => <li key={s.label}>{s.url ? <a href={s.url} target="_blank" rel="noreferrer">{s.label}</a> : s.label}</li>)}
+      {sources.map(s => <SourceItem key={s.label} source={s} />)}
     </ul>
   </div>;
 }

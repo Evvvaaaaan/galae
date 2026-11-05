@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { QUESTIONS, TODAY, SAMPLE_SHARES, choiceOf, dateLabel } from '../questionData.js';
-import { Header, Icon, Avatar, Empty, ProfileLink, resizePhoto } from '../components/UI.jsx';
-import { COLOR_LABELS, PROFILE_COLORS, joinedGroups, myself } from '../store.js';
+import { QUESTIONS, TODAY, choiceOf, dateLabel, groupShares } from '../questionData.js';
+import { Header, Icon, Avatar, Empty, ProfileLink, PhotoColorPicker } from '../components/UI.jsx';
+import { joinedGroups, myself } from '../store.js';
 
 export function Groups({ state, go }) {
   const groups = joinedGroups(state);
@@ -51,13 +51,7 @@ export function GroupForm({ mode, group, state, onCreate, onJoin, onSave, go }) 
   return <>
     <Header back={() => go(editing ? `groups/${group.id}/members` : 'groups')} title={editing ? '그룹 설정' : creating ? '그룹 만들기' : '그룹 참여'} />
     <form className="flow" onSubmit={submit}>
-      {creating && <>
-        <div className="group-preview">
-          <label className="photo-pick"><Avatar name={value.trim() || '갈'} color={color} photo={photo} /><input type="file" accept="image/*" aria-label="그룹 사진" className="visually-hidden" onChange={e => { resizePhoto(e.target.files[0], setPhoto); e.target.value = ''; }} /></label>
-          {photo && <button type="button" className="btn-text muted" onClick={() => setPhoto('')}>사진 삭제</button>}
-        </div>
-        <div className="color-picker">{PROFILE_COLORS.map(c => <button type="button" key={c} className={c} aria-label={COLOR_LABELS[c]} aria-pressed={color === c} onClick={() => setColor(c)} />)}</div>
-      </>}
+      {creating && <PhotoColorPicker name={value.trim() || '갈'} label="그룹 사진" photo={photo} color={color} onPhoto={setPhoto} onColor={setColor} />}
       <div className="field">
         <input className={`note-input ${creating ? '' : 'code-input'}`} aria-label={creating ? '그룹 이름' : '초대 코드'} placeholder={creating ? '이름' : '코드'} maxLength={creating ? 20 : 6} autoCapitalize={creating ? undefined : 'characters'} value={value} onChange={e => { setValue(creating ? e.target.value : e.target.value.toUpperCase()); setError(''); }} />
         {creating && <span className="count">{value.length}/20</span>}
@@ -79,7 +73,7 @@ export function GroupDetail({ group, state, go, openQuestion, initialQuestionId,
   const questionId = initialQuestionId || TODAY.id;
   const question = QUESTIONS.find(q => q.id === questionId);
   const answer = state.answers[questionId];
-  const posts = SAMPLE_SHARES.filter(s => s.groupId === group.id && s.questionId === questionId && group.members.some(m => m.id === s.memberId));
+  const posts = groupShares(group, questionId);
   const messages = state.messages.filter(m => m.groupId === group.id && m.questionId === questionId);
   function send(e) { e.preventDefault(); if (!text.trim()) return; onSend(questionId, text); setText(''); }
   return <>

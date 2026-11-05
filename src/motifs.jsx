@@ -76,6 +76,7 @@ export function OnboardMotif({ step }) {
 // 첫 선은 가운데, 그다음은 왼쪽·오른쪽을 번갈아 빈 곳을 메웁니다. 업적 하나마다 고리 열매가 맺힙니다.
 // 열매도 맺힌 순서대로 왼쪽·오른쪽을 번갈아, 그 방향에 가장 가까운 가지 끝에 답니다.
 const TREE = { cx: 172, ground: 214, fanY: 146 };
+const GROUND = `M20 ${TREE.ground} C 110 ${TREE.ground - 3}, 234 ${TREE.ground - 3}, 324 ${TREE.ground}`;
 
 function rng(seed) {
   let a = seed >>> 0;
@@ -156,7 +157,7 @@ function SeedTree() {
   const end = SEED_IN + SEED_GAP * (SEED_COUNT - 3) + 900;
   return (
     <svg className="seed-tree" viewBox="0 10 344 230" width="100%" aria-hidden="true">
-      <path d={`M20 ${TREE.ground} C 110 ${TREE.ground - 3}, 234 ${TREE.ground - 3}, 324 ${TREE.ground}`} stroke="#E4EEF6" strokeWidth={1} fill="none" />
+      <path d={GROUND} stroke="#E4EEF6" strokeWidth={1} fill="none" />
       <g fill="none" stroke="#6FA3CF" strokeOpacity={0.42} strokeLinecap="round">
         {Array.from({ length: SEED_COUNT }, (_, i) => {
           const { d, twigs } = i < 3 ? incoming(i) : thread(i);
@@ -208,7 +209,7 @@ export function WorldTree({ count, fruits = [], grow = false }) {
       <g className={dim && 'tree-dim'} style={dim}>
       {/* 카드 안쪽에서 완전히 사라지도록, 잘리는 가장자리(위·양옆)보다 작게 둡니다. */}
       <ellipse cx={TREE.cx} cy={TREE.fanY - 26} rx={136} ry={108} fill="url(#treeHalo)" />
-      <path d={`M20 ${TREE.ground} C 110 ${TREE.ground - 3}, 234 ${TREE.ground - 3}, 324 ${TREE.ground}`} stroke={T.ground} strokeWidth={1} fill="none" />
+      <path d={GROUND} stroke={T.ground} strokeWidth={1} fill="none" />
       <g filter="url(#treeGlow)" fill="none" strokeLinecap="round">
         {Array.from({ length: count }, (_, i) => {
           const { d, twigs } = thread(i);

@@ -92,11 +92,10 @@ src/
   components/       # 헤더, 하단 탭, 아이콘 등 공통 UI
   screens/          # 오늘, 생각, 질문, 그룹, 나 등 화면
   questionData.js   # 날짜별 질문, 샘플 멤버·그룹·나눔·댓글
-  data.js           # 온보딩 문구와 첫 질문 콘텐츠
+  topics.js         # 오늘 보여 줄 생각 피드 주제
   store.js          # 상태 저장·복원, 답변·그룹·댓글 갱신
   achievements.js   # 업적 15개와 판정
   motifs.jsx        # 갈래 모티프, 세계수
-  useGrow.js        # 비율 막대가 차오르는 연출
   index.css         # 공통 스타일과 반응형 화면 구성
 content/
   paradoxes.json    # 생각 피드 역설 주제

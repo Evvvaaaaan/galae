@@ -1,3 +1,5 @@
+import { COLOR_LABELS, PROFILE_COLORS } from '../store.js';
+
 export function Icon({ name, size = 22 }) {
   const paths = {
     today: 'M3 10 12 3l9 7M5 9v11h5v-6h4v6h5V9',
@@ -5,10 +7,9 @@ export function Icon({ name, size = 22 }) {
     feed: 'M4 7c4-3 12-3 16 0M4 12c4-3 12-3 16 0M4 17c4-3 12-3 16 0',
     search: 'm21 21-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0',
     groups: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M17 4a4 4 0 0 1 0 8M22 21v-2a4 4 0 0 0-3-3.87M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0',
-    records: 'M4 5h16v15H4zM4 10h16M8 3v4M16 3v4',
     me: 'M20 21a8 8 0 0 0-16 0M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0',
     back: 'm14 5-7 7 7 7', next: 'm10 5 7 7-7 7', arrow: 'M4 12h16m-6-6 6 6-6 6',
-    check: 'm5 12 4 4L19 6', send: 'M5 12h14m-6-6 6 6-6 6', settings: 'M4 7h9M17 7h3M4 17h3M11 17h9M15 5v4M9 15v4', more: 'M5 12h.01M12 12h.01M19 12h.01',
+    check: 'm5 12 4 4L19 6', send: 'M5 12h14m-6-6 6 6-6 6', more: 'M5 12h.01M12 12h.01M19 12h.01',
     comment: 'M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z', share: 'M12 15V3M7 8l5-5 5 5M5 13v7h14v-7',
     up: 'M12 19V5m-6 6 6-6 6 6', plus: 'M12 5v14M5 12h14', close: 'M6 6l12 12M18 6 6 18',
     gear: 'M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2zM15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0',
@@ -42,7 +43,7 @@ export function Avatar({ name, color = 'sage', photo }) {
 }
 
 // 저장 공간을 아끼려고 정사각형 256px JPEG로 줄여 둡니다.
-export function resizePhoto(file, done) {
+function resizePhoto(file, done) {
   if (!file) return;
   const img = new Image();
   img.onload = () => {
@@ -54,6 +55,21 @@ export function resizePhoto(file, done) {
     URL.revokeObjectURL(img.src);
   };
   img.src = URL.createObjectURL(file);
+}
+
+// 그룹 설정과 프로필 편집에서 쓰는 사진·색 고르기입니다.
+export function PhotoColorPicker({ name, label, photo, color, onPhoto, onColor }) {
+  return <>
+    <div className="group-preview">
+      <label className="photo-pick"><Avatar name={name} color={color} photo={photo} /><input type="file" accept="image/*" aria-label={label} className="visually-hidden" onChange={e => { resizePhoto(e.target.files[0], onPhoto); e.target.value = ''; }} /></label>
+      {photo && <button type="button" className="btn-text muted" onClick={() => onPhoto('')}>사진 삭제</button>}
+    </div>
+    <div className="color-picker">{PROFILE_COLORS.map(c => <button type="button" key={c} className={c} aria-label={COLOR_LABELS[c]} aria-pressed={color === c} onClick={() => onColor(c)} />)}</div>
+  </>;
+}
+
+export function SourceItem({ source: s }) {
+  return <li>{s.url ? <a href={s.url} target="_blank" rel="noreferrer">{s.label}</a> : s.label}</li>;
 }
 
 // 누르면 그 사람의 프로필로 갑니다. 누를 곳이 없으면(내 글) 그대로 보여 줍니다.

@@ -19,7 +19,7 @@ export const ACHIEVEMENTS = [
   { id: 'like100', name: '경청자', desc: '다른 생각에 100번 공감했어요', test: s => s.likes >= 100 },
 ];
 
-const DAY = 86400000;
+export const DAY = 86400000;
 export const addDays = (iso, n) => new Date(Date.parse(iso) + n * DAY).toISOString().slice(0, 10);
 
 // 맺은 업적을 맺은 순서대로, 맺은 날(on)과 함께 돌려줍니다.

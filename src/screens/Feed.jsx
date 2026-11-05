@@ -1,15 +1,9 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import PARADOXES from '../../content/paradoxes.json';
-import { Avatar, Empty, Icon, ProfileLink, shareOrCopy } from '../components/UI.jsx';
+import { Avatar, Empty, Icon, ProfileLink, SourceItem, shareOrCopy } from '../components/UI.jsx';
 import { myself } from '../store.js';
-import { MEMBERS, SAMPLE_COMMENTS, TODAY } from '../questionData.js';
-
-// 검증을 마친 주제만 보입니다. 개발 서버에서는 검증 전 주제도 확인할 수 있습니다.
-// 하루 5개를 날짜에 따라 돌아가며 보여 줍니다.
-const VISIBLE = PARADOXES.filter(p => import.meta.env.DEV || p.checked);
-const DAY = Math.floor(Date.parse(TODAY.date) / 86400000);
-export const TOPICS = VISIBLE.length <= 5 ? VISIBLE : Array.from({ length: 5 }, (_, i) => VISIBLE[(DAY * 5 + i) % VISIBLE.length]);
+import { MEMBERS, SAMPLE_COMMENTS } from '../questionData.js';
+import { TOPICS } from '../topics.js';
 
 export default function Feed({ initialTopic, initialComments, comments, likes, profile, onComment, onLike, onProfile }) {
   const feedRef = useRef(null);
@@ -35,7 +29,7 @@ export default function Feed({ initialTopic, initialComments, comments, likes, p
           <h2>{topic.title}</h2>
           {topic.cards.map((card, i) => <p key={i}>{card.text}</p>)}
           <footer className="feed-footer">
-            <ul className="feed-sources">{topic.sources.map(s => <li key={s.label}>{s.url ? <a href={s.url} target="_blank" rel="noreferrer">{s.label}</a> : s.label}</li>)}</ul>
+            <ul className="feed-sources">{topic.sources.map(s => <SourceItem key={s.label} source={s} />)}</ul>
             <div className="feed-actions">
           <button className="icon-button" aria-label="댓글" onClick={() => setOpen(topic.id)}><Icon name="comment" size={22} /></button>
           <button className="icon-button" aria-label={copied === topic.id ? '링크 복사됨' : '공유'} onClick={() => share(topic)}><Icon name={copied === topic.id ? 'check' : 'share'} size={22} /></button>
