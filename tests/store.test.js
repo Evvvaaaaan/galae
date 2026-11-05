@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { initialState, updateAnswer, completeAnswer, submitAnswer, shareAnswer, sentGroups, questionRoute, rememberQuestionRoute, leaveGroup, loadState, addMessage, addComment, previousStep, STORAGE_KEY } from '../src/store.js';
+import { initialState, updateAnswer, completeAnswer, submitAnswer, shareAnswer, sentGroups, questionRoute, rememberQuestionRoute, leaveGroup, loadState, addMessage, addComment, previousStep, questionBack, STORAGE_KEY } from '../src/store.js';
+import { recordAchievements } from '../src/achievements.js';
 
 function restore(saved) {
   globalThis.localStorage = { getItem: () => JSON.stringify(saved) };
@@ -246,4 +247,29 @@ test('공유는 보낸 때의 답이 담긴 메시지로 남고, 다시 답하�
   state = shareAnswer(state, 'q036', ['g1']);
   assert.deepEqual(state.messages.map(m => [m.groupId, m.sel, m.text]), [['g1', 0, '처음 생각'], ['g1', 2, '바뀐 생각']]);
   assert.deepEqual(restore(state).messages, state.messages);
+});
+
+test('질문 흐름의 뒤로가기는 단계·코멘트·완료 여부와 들어온 화면에 따라 정해진다', () => {
+  const base = { id: 'q037', completed: false, choice: false, prev: 'today', home: 'archive' };
+  assert.equal(questionBack({ ...base, step: 'answer' }), 'archive');
+  assert.equal(questionBack({ ...base, step: 'result' }), 'question/q037/answer');
+  assert.equal(questionBack({ ...base, step: 'reading' }), 'question/q037/result');
+  assert.equal(questionBack({ ...base, step: 'result', choice: true }), 'question/q037/result');
+  assert.equal(questionBack({ ...base, step: 'result', choice: true, completed: true }), 'question/q037/summary');
+  assert.equal(questionBack({ ...base, step: 'reading', completed: true }), 'question/q037/summary');
+  assert.equal(questionBack({ ...base, step: 'share', prev: 'question/q037/done' }), 'question/q037/done');
+  assert.equal(questionBack({ ...base, step: 'share', prev: 'question/q037/summary' }), 'question/q037/summary');
+  assert.equal(questionBack({ ...base, step: 'share', prev: 'groups/g1' }), 'archive');
+  assert.equal(questionBack({ ...base, step: 'done' }), 'archive');
+});
+
+test('개척자 업적은 데모 그룹이 아니라 직접 만든 그룹이 있을 때만 맺힌다', () => {
+  assert.equal(recordAchievements(initialState(), '2026-09-25').achieved.group, undefined);
+  const state = { ...initialState(), groups: [...initialState().groups, { id: 'mine', name: '새 그룹', owner: true, members: [] }] };
+  assert.deepEqual(recordAchievements(state, '2026-09-25').achieved.group, { on: '2026-09-25' });
+});
+
+test('공감은 남아 있는 샘플 댓글과 내 댓글에 대한 것만 복원한다', () => {
+  const comments = [{ id: 'c1', topicId: 'p001', text: '내 댓글' }];
+  assert.deepEqual(restore({ ...initialState(), comments, likes: ['s1', 'c1', 'gone', 3, 's1'] }).likes, ['s1', 'c1']);
 });

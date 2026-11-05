@@ -56,7 +56,7 @@ export function GroupForm({ mode, group, state, onCreate, onJoin, onSave, go }) 
         <input className={`note-input ${creating ? '' : 'code-input'}`} aria-label={creating ? '그룹 이름' : '초대 코드'} placeholder={creating ? '이름' : '코드'} maxLength={creating ? 20 : 6} autoCapitalize={creating ? undefined : 'characters'} value={value} onChange={e => { setValue(creating ? e.target.value : e.target.value.toUpperCase()); setError(''); }} />
         {creating && <span className="count">{value.length}/20</span>}
       </div>
-      {!creating && <p className="hint center">체험용 코드 GARA26</p>}
+      {!creating && <p className="hint center">체험용 코드 GARA01</p>}
       {creating && <div className="field">
         <textarea className="note-input" aria-label="그룹 소개" placeholder="소개" rows={3} maxLength={100} value={description} onChange={e => setDescription(e.target.value)} />
         <span className="count">{description.length}/100</span>

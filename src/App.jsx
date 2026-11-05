@@ -19,7 +19,7 @@ import { Groups, GroupForm, GroupDetail, GroupMembers, GroupsAddMenu } from './s
 import { BottomNav, Header, Icon } from './components/UI.jsx';
 import { QUESTIONS, TODAY, MEMBERS, dateLabel } from './questionData.js';
 import { recordAchievements } from './achievements.js';
-import { STORAGE_KEY, STEPS, loadState, emptyAnswer, updateAnswer, completeAnswer, submitAnswer, sentGroups, shareAnswer, questionStep, questionRoute, rememberQuestionRoute, previousStep, joinedGroups, leaveGroup, kickMember, addMessage, addComment, toggleLike } from './store.js';
+import { STORAGE_KEY, STEPS, loadState, emptyAnswer, updateAnswer, completeAnswer, submitAnswer, sentGroups, shareAnswer, questionStep, questionRoute, rememberQuestionRoute, questionBack, joinedGroups, leaveGroup, kickMember, addMessage, addComment, toggleLike } from './store.js';
 
 const routeFromLocation = () => location.hash.replace(/^#\/?/, '') || 'today';
 // 진행 선 세 칸: 선택 / 결과·다른 생각 / 확장하기
@@ -122,13 +122,7 @@ export default function App() {
         case 'summary': flow = <Summary question={question} answer={answer} groups={state.groups} sent={sent} onOpen={openChoice} onShare={share} onReading={() => flowGo('reading')} onRetry={() => { setRedo({ id, answer: { sel: null, reason: '', submitted: false, completed: false } }); flowGo('answer'); }} />; break;
         case 'share': flow = <Share key={id} question={question} answer={answer} groups={joinedGroups(state)} sent={sent} onDraft={shareDraft => patch(id, { shareDraft })} onSave={groupIds => setState(s => shareAnswer(s, id, groupIds))} go={go} />; break;
       }
-      const back = () => {
-        if (answer.completed && ((choice && step === 'result') || step === 'reading')) return flowGo('summary');
-        if (choice && step === 'result') return flowGo('result');
-        if (step === 'share' && [`question/${id}/done`, `question/${id}/summary`].includes(prevRoute.current)) return go(prevRoute.current);
-        if (previousStep(step)) return flowGo(previousStep(step));
-        go(home);
-      };
+      const back = () => go(questionBack({ id, step, completed: answer.completed, choice: !!choice, prev: prevRoute.current, home }));
       const position = PROGRESS[step];
       content = <><Header back={back} title={`${id === TODAY.id ? '오늘의 갈래' : '지난 갈래'} · ${dateLabel(question.date)}`} />{position !== undefined && <ol className="progress">{['나의 선택', '다른 생각', '확장하기'].map((label, i) => <li key={label} className={i <= position ? 'on' : ''} aria-current={i === position ? 'step' : undefined}><span />{label}</li>)}</ol>}{flow}</>;
     }

@@ -1,4 +1,4 @@
-import { DEMO_GROUPS, MEMBERS, QUESTIONS } from './questionData.js';
+import { DEMO_GROUPS, MEMBERS, QUESTIONS, SAMPLE_COMMENTS } from './questionData.js';
 import PARADOXES from '../content/paradoxes.json' with { type: 'json' };
 import { ACHIEVEMENTS } from './achievements.js';
 
@@ -54,6 +54,7 @@ export function loadState() {
       const answers = Object.fromEntries(Object.entries(isObject(saved.answers) ? saved.answers : {}).map(([id, answer]) => [id, restoreAnswer(answer, id, groups)]));
       // 공유가 메시지가 되기 전에 저장된 공유 그룹은 공유 메시지로 옮깁니다.
       const oldShares = Object.entries(answers).flatMap(([id, a]) => a.submitted ? strings(saved.answers[id]?.sharedWith).filter(g => groups.some(x => x.id === g)).map(groupId => ({ id: `${id}-${groupId}`, groupId, questionId: id, sel: a.sel, text: a.reason })) : []);
+      const comments = (Array.isArray(saved.comments) ? saved.comments : []).filter(c => isObject(c) && typeof c.id === 'string' && typeof c.text === 'string' && c.text && PARADOXES.some(p => p.id === c.topicId));
       return {
         started: saved.started === true,
         // 가입한 날입니다. 이 값이 생기기 전에 저장된 데이터는 가장 오래된 질문 날로 봅니다.
@@ -70,8 +71,9 @@ export function loadState() {
         },
         // 공유 메시지(sel이 있는 메시지)는 이유가 비어 있어도 됩니다.
         messages: [...oldShares, ...(Array.isArray(saved.messages) ? saved.messages : []).filter(m => isObject(m) && typeof m.id === 'string' && typeof m.text === 'string' && groups.some(g => g.id === m.groupId) && (m.sel === undefined ? m.text && QUESTIONS.some(q => q.id === m.questionId) : QUESTIONS.find(q => q.id === m.questionId)?.choices.some(c => c.id === m.sel)))],
-        comments: (Array.isArray(saved.comments) ? saved.comments : []).filter(c => isObject(c) && typeof c.id === 'string' && typeof c.text === 'string' && c.text && PARADOXES.some(p => p.id === c.topicId)),
-        likes: (Array.isArray(saved.likes) ? saved.likes : []).filter(id => typeof id === 'string'),
+        comments,
+        // 공감은 남아 있는 댓글(샘플 댓글과 내 댓글)에 대한 것만 둡니다.
+        likes: strings(saved.likes).filter(id => SAMPLE_COMMENTS.some(c => c.id === id) || comments.some(c => c.id === id)),
         achieved: Object.fromEntries(Object.entries(isObject(saved.achieved) ? saved.achieved : {}).filter(([id, a]) => ACHIEVEMENTS.some(x => x.id === id) && isObject(a) && isDate(a.on))),
       };
     }
@@ -121,6 +123,15 @@ export function questionStep(answer, requestedStep) {
 // 진행 단계의 뒤로가기 대상입니다. 나의 선택·완료·나누기는 질문에 들어오기 전 화면으로 돌아갑니다.
 const PREVIOUS = { result: 'answer', reading: 'result' };
 export const previousStep = step => PREVIOUS[step] ?? null;
+
+// 질문 흐름에서 뒤로가면 갈 경로입니다. choice는 선택지별 코멘트를 보는 중인지, prev는 바로 전 경로, home은 질문에 들어오기 전 화면입니다.
+export function questionBack({ id, step, completed, choice, prev, home }) {
+  if (completed && ((choice && step === 'result') || step === 'reading')) return `question/${id}/summary`;
+  if (choice && step === 'result') return `question/${id}/result`;
+  if (step === 'share' && [`question/${id}/done`, `question/${id}/summary`].includes(prev)) return prev;
+  if (previousStep(step)) return `question/${id}/${previousStep(step)}`;
+  return home;
+}
 
 export function questionRoute(id, answer) {
   return answer?.completed ? `question/${id}/summary` : `question/${id}/${questionStep(answer, answer?.lastStep)}`;
