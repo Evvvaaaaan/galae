@@ -5,15 +5,29 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "test": "node --test",
+    "test": "node --test tests/*.test.js",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "ios:sync": "npm run ios:sync:local",
+    "ios:open": "cap open ios",
+    "ios:run": "npm run ios:sync && cap run ios --no-sync",
+    "test:e2e": "playwright test",
+    "ios:check-release": "node scripts/check-release.mjs",
+    "ios:prepare-release": "npm test && npm run ios:check-release && vite build --mode production && cap sync ios",
+    "ios:sync:local": "vite build --mode development && cap sync ios"
   },
   "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/clipboard": "8.0.1",
+    "@capacitor/core": "8.6.0",
+    "@capacitor/ios": "8.6.0",
+    "@capacitor/share": "8.0.3",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
   },
   "devDependencies": {
+    "@capacitor/cli": "8.6.0",
+    "@playwright/test": "^1.64.1",
     "@vitejs/plugin-react": "^6.1.1",
     "vite": "^8.3.1"
   }

@@ -1,23 +1,22 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Avatar, Empty, Icon, ProfileLink, SourceItem, shareOrCopy } from '../components/UI.jsx';
-import { myself } from '../store.js';
-import { MEMBERS, SAMPLE_COMMENTS } from '../questionData.js';
-import { TOPICS } from '../topics.js';
+import { Avatar, Empty, Icon, ProfileLink, SourceItem } from '../components/UI.jsx';
+import { shareOrCopy, shareUrl } from '../platform.js';
 
-export default function Feed({ initialTopic, initialComments, comments, likes, profile, onComment, onLike, onProfile }) {
+export default function Feed({ topics: TOPICS, initialTopic, initialComments, comments, likes, profile, onComment, onLike, onProfile }) {
   const feedRef = useRef(null);
   const [open, setOpen] = useState(null);
   const [copied, setCopied] = useState(null);
   useEffect(() => {
-    if (initialTopic) feedRef.current.querySelector(`[data-topic="${initialTopic}"]`)?.scrollIntoView({ block: 'start' });
+    if (initialTopic) feedRef.current?.querySelector(`[data-topic="${initialTopic}"]`)?.scrollIntoView({ block: 'start' });
     // 프로필에서 돌아오면 보던 댓글 시트를 다시 엽니다.
     if (initialTopic && initialComments) setOpen(initialTopic);
   }, [initialTopic, initialComments]);
 
   async function share(topic) {
-    const url = `${location.origin}${location.pathname}#/feed/${topic.id}`;
-    if (!await shareOrCopy({ title: topic.title, text: `${topic.title}\n${topic.cards[0].text}`, url }, url)) return;
+    const url = shareUrl(`feed/${topic.id}`);
+    const text = `${topic.title}\n${topic.cards[0].text}`;
+    if (!await shareOrCopy({ title: topic.title, text, ...(url && { url }) }, url || text)) return;
     setCopied(topic.id); setTimeout(() => setCopied(c => c === topic.id ? null : c), 1500);
   }
 
@@ -37,7 +36,7 @@ export default function Feed({ initialTopic, initialComments, comments, likes, p
           </footer>
         </article>
       </section>)}
-      <div className="feed-page feed-end"><Empty title="모든 생각을 다 보셨어요" /></div>
+      <div className="feed-page feed-end"><Empty title={TOPICS.length ? '모든 생각을 다 보셨어요' : '아직 공개된 생각이 없어요'} /></div>
     </div>
     {open && <Comments key={open} frame={feedRef.current.closest('.frame')} topic={TOPICS.find(t => t.id === open)} comments={comments.filter(c => c.topicId === open)} likes={likes} profile={profile} onComment={onComment} onLike={onLike} onProfile={memberId => onProfile(memberId, `feed/${open}/comments`)} onClose={() => setOpen(null)} />}
   </>;
@@ -71,17 +70,13 @@ function Comments({ frame, topic, comments, likes, profile, onComment, onLike, o
     else if (delta > 80) full ? setFull(false) : onClose();
     setDrag(null);
   }
-  const me = myself(profile);
-  function send(e) { e.preventDefault(); if (!text.trim()) return; onComment(topic.id, text, replyTo?.id); if (replyTo && !shown.includes(replyTo.id)) setShown([...shown, replyTo.id]); setText(''); setReplyTo(null); }
-  const all = [
-    ...SAMPLE_COMMENTS.filter(c => c.topicId === topic.id).map(c => ({ ...c, member: MEMBERS.find(m => m.id === c.memberId) })),
-    ...comments.map(c => ({ ...c, member: me, likes: 0 })),
-  ];
+  async function send(e) { e.preventDefault(); if (!text.trim()) return; if (!await onComment(topic.id, text, replyTo?.id)) return; if (replyTo && !shown.includes(replyTo.id)) setShown([...shown, replyTo.id]); setText(''); setReplyTo(null); }
+  const all = comments;
   // 답글에 다시 답글을 달면 같은 댓글 아래에 이어 붙입니다.
   function reply(c) { setReplyTo({ id: c.parentId || c.id, handle: c.member.handle }); inputRef.current.focus(); }
   function row(c) {
     const liked = likes.includes(c.id);
-    const count = c.likes + (liked ? 1 : 0);
+    const count = c.likes;
     const link = c.memberId && (() => onProfile(c.memberId));
     return <li key={c.id} className={c.parentId ? 'reply' : undefined}>
       <ProfileLink avatar onClick={link}><Avatar {...c.member} /></ProfileLink>

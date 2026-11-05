@@ -1,5 +1,7 @@
 # 갈래 화면과 사용자 흐름
 
+> Integration update (2026-11-05): this file preserves the original product flow and demo implementation notes. The iOS branch now uses the backend for authentication and service data. Fixed demo dates, sample users/groups/statistics, client-calculated achievements, the shared local state key and record reset described below no longer apply to the running app. See [IOS_BACKEND_INTEGRATION.md](IOS_BACKEND_INTEGRATION.md) for the current data, content and release contract.
+
 2026-11-05 기준. 현재 프론트엔드 코드를 기준으로 한 화면·경로·규칙·저장 명세입니다. 기획 의도는 [PURPOSE.md](PURPOSE.md), 설계는 [PLAN.md](PLAN.md), 세계수와 업적은 [ACHIEVEMENTS.md](ACHIEVEMENTS.md)를 봅니다.
 
 ## 1. 디자인 원칙

@@ -4,7 +4,9 @@
 
 갈래는 일상의 딜레마에 먼저 나의 선택을 남기고, 다른 사람들의 생각과 성경의 시선을 통해 자신의 판단을 돌아보는 서비스입니다. 기독교 대학생과 청년 공동체를 대상으로, 정답을 정하기보다 선택의 이유를 생각하고 나누는 경험을 지향합니다.
 
-현재 저장소에는 **모바일 중심의 프론트엔드 데모**가 구현되어 있습니다. 아이디 가입 화면이 있지만 서버에 연결되어 있지 않아 아무 값으로나 시작할 수 있으며, 모든 데이터는 사용 중인 브라우저에 저장됩니다.
+The iOS branch now connects to the existing [Galae backend](https://github.com/ggm77/galae-backend) for authentication, questions, answers, groups, sharing, profiles, account deletion, approved AI reading and verified feed content. iOS sessions use Keychain. The scope is local integration verification and TestFlight build preparation; the production API is `https://galae.seohamin.com/api/v1`.
+
+Start with [the integration and release guide](docs/IOS_BACKEND_INTEGRATION.md). The API URL must include `/api/v1`. Existing demo data is not migrated to real accounts.
 
 ## 사용 흐름
 
@@ -26,21 +28,22 @@
 | 오늘 | 답할수록 자라는 세계수와 업적 열매, 이번 주 출석, 오늘의 질문, 가입 그룹 |
 | 생각 | 위아래로 넘기는 철학 역설 피드, 댓글·답글·공감, 공유 |
 | 질문 | 지난 질문 답변, 검색, 답변 상태 필터 |
-| 답변 | 선택·이유 제출, 예시 결과, 선택지별 코멘트, 확장하기(관점별 해설), 끝낸 질문의 요약·다시 하기 |
+| Answers | Server submission and statistics, anonymous opinions, approved reading, completion and retry |
 | 그룹 | 만들기, 초대 코드 참여, 질문별 그룹 대화, 멤버·코드 복사, 그룹장의 설정·내보내기, 나가기 |
-| 공유 | 내용 미리보기, 여러 그룹 선택, 공유 해제, 공유 초안 보존, 외부 공유 |
+| Sharing | Preview, multiple groups, saved targets, append-only shared messages and native external sharing |
 | 나 | 프로필(사진·소개), 열매, 달력과 날짜별 답변, 내 댓글, 다른 사람 프로필 |
 
 질문별 선택·이유·공유 초안은 탭 이동과 새로고침 뒤에도 남습니다. 끝내지 않은 질문은 마지막으로 보던 단계에서 이어지고, 끝낸 질문은 요약 화면으로 열립니다. 화면과 규칙은 [docs/APP_FLOW.md](docs/APP_FLOW.md), 세계수와 업적은 [docs/ACHIEVEMENTS.md](docs/ACHIEVEMENTS.md)에 정리되어 있습니다.
 
 ## 로컬 실행
 
-Node.js 22.12 이상과 npm이 필요합니다. 현재 데모는 별도의 환경 변수나 API 키 없이 실행됩니다.
+Node.js 22.12+, npm and the running Java 25 backend are required. Copy `.env.example` to `.env.local` for local development. See the integration guide for backend configuration.
 
 ```sh
 git clone https://github.com/jeondowon/galae.git
 cd galae
 npm ci
+cp .env.example .env.local
 npm run dev
 ```
 
@@ -57,19 +60,13 @@ npm run dev
 
 빌드 결과를 확인하려면 `npm run build` 이후 `npm run preview`를 실행합니다.
 
-## 데모 체험 안내
+## Server data and local storage
 
-- 처음 방문하면 예시 그룹 **한 걸음 청년부**와 **목요일의 작은 모임**(내가 그룹장)에 가입된 상태로 시작합니다. 목요일의 작은 모임을 나간 뒤에는 그룹이 사라지므로 초대 코드로 다시 들어갈 수 없습니다. 한 걸음 청년부는 나간 뒤 초대 코드 **`GARA01`**로 다시 참여할 수 있습니다.
-- 질문은 모두 6개이며, 데모의 오늘은 **2026년 9월 25일**로 고정되어 있습니다.
-- 생각 피드는 배포 빌드에서 검증을 마친 주제만 보이고, 개발 서버에서는 모든 주제가 보입니다.
-- 참여 수, 선택 비율, 다른 사람의 의견·나눔·댓글, 샘플 멤버는 예시 데이터입니다.
-- 설정의 **기록 초기화**는 시연·개발용입니다. 답변과 업적만 지우며, 서버 연동 시 제거합니다.
+Questions, statistics, submitted answers, approved reading, groups, messages, profiles and achievements come from the server. Only unsubmitted answer drafts remain in localStorage, separated by API URL and user ID. iOS credentials are stored in Keychain; browser verification uses sessionStorage. Logout clears the active account state, credentials and local drafts. The server currently does not revoke issued JWTs.
 
-### 저장 방식과 구현 범위
+The server seeds six September questions. Older questions retain their publication dates and are labeled as recent questions. All seeded thought topics remain hidden until reviewed; an empty feed is expected. Sample users, statistics, groups and comments are not displayed. The demo reset action has been removed.
 
-데이터는 `localStorage`의 `garae.frontend.v1` 키에 저장됩니다. 브라우저나 접속 주소가 달라지면 저장 공간도 달라지며, 사이트 데이터를 삭제하면 기록이 사라집니다.
-
-실제 인증, 서버 API, 사용자 간 전송, 기기 간 동기화, 실시간 통계, AI 해설 생성은 아직 연결되어 있지 않습니다. 그룹 초대와 공유도 같은 브라우저 안에서만 동작합니다. 결과 잠금과 그룹별 표시 제한은 화면 동작이므로 서비스 운영 시 서버의 권한 검증이 필요합니다. 배포 방안은 [docs/DEPLOY.md](docs/DEPLOY.md)를 봅니다.
+Run `npm test` for unit/regression checks and `npm run test:e2e` against a disposable local backend for two-account browser integration. Use `npm run ios:sync:local` for Simulator development. The public API is set in `.env.production`. Run `npm run ios:prepare-release` before distribution.
 
 ## 기술 구성
 
@@ -79,8 +76,8 @@ npm run dev
 | 개발·빌드 | Vite 8 |
 | 스타일 | CSS, Pretendard, 고운바탕 |
 | 화면 이동 | URL 해시 기반 라우팅 |
-| 상태 저장 | React 상태와 브라우저 `localStorage` |
-| 자동 테스트 | Node.js 기본 테스트 러너 |
+| Data | REST API, React state, account-specific local drafts; iOS Keychain sessions |
+| Tests | Node.js test runner and Playwright browser integration |
 
 글꼴은 외부 CDN에서 불러오며, 연결할 수 없으면 기본 글꼴로 표시됩니다.
 
@@ -88,13 +85,17 @@ npm run dev
 
 ```text
 src/
-  App.jsx           # 화면 이동과 앱 상태 연결
+  api.js            # Authenticated API client and shared token refresh
+  session.js        # iOS Keychain / browser session storage
+  serverState.js    # API response mapping and account draft isolation
+  useServer.js      # Server reads, mutations and active conversation polling
+  App.jsx           # Screen routing and server actions
   components/       # 헤더, 하단 탭, 아이콘 등 공통 UI
   screens/          # 오늘, 생각, 질문, 그룹, 나 등 화면
-  questionData.js   # 날짜별 질문, 샘플 멤버·그룹·나눔·댓글
-  topics.js         # 오늘 보여 줄 생각 피드 주제
-  store.js          # 상태 저장·복원, 답변·그룹·댓글 갱신
-  achievements.js   # 업적 15개와 판정
+  questionData.js   # Legacy demo fixtures and formatting helpers; not the server data source
+  topics.js         # Legacy demo feed rotation
+  store.js          # Shared flow helpers and legacy demo regression functions
+  achievements.js   # Achievement display definitions; awards come from the backend
   motifs.jsx        # 갈래 모티프, 세계수
   index.css         # 공통 스타일과 반응형 화면 구성
 content/
@@ -121,4 +122,10 @@ docs/
 - [역설 피드 검증 기록](docs/VERIFICATION.md)
 - [역설 주제 후보](docs/paradox-topics.md)
 
-현재 화면·저장·공유 정책은 `docs/APP_FLOW.md`를 기준으로 합니다.
+See `docs/IOS_BACKEND_INTEGRATION.md` for current server integration and storage behavior. `docs/APP_FLOW.md` retains the original product flow specification.
+
+## iOS release development
+
+The `release/ios-app-store` branch includes a Capacitor iOS project. Build and
+sync a local development bundle with `npm run ios:sync:local`, then open Xcode with `npm run ios:open`. Use `npm run ios:prepare-release` after configuring the hosted API for distribution.
+See [the integration guide](docs/IOS_BACKEND_INTEGRATION.md) for local setup, native sessions and TestFlight preparation. Physical-device validation and distribution signing are still required before upload.

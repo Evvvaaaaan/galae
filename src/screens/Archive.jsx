@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { QUESTIONS, choiceOf, dateLabel } from '../questionData.js';
+import { choiceOf, dateLabel } from '../questionData.js';
 import { Icon, Empty } from '../components/UI.jsx';
 
 const STATUS = ['전체', '미답변', '답변 완료'];
 
-export default function Archive({ answers, openQuestion }) {
+export default function Archive({ questions: QUESTIONS, answers, openQuestion }) {
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState(STATUS[0]);
   const filtered = QUESTIONS.filter(q => (status === STATUS[0] || (status === STATUS[2] ? answers[q.id]?.submitted : !answers[q.id]?.submitted)) && `${q.title} ${q.body}`.includes(query.trim()));

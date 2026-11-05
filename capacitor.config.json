@@ -1,0 +1,10 @@
+{
+  "appId": "com.handong.galae",
+  "appName": "갈래",
+  "webDir": "dist",
+  "backgroundColor": "#FDFDFC",
+  "ios": {
+    "contentInset": "never",
+    "preferredContentMode": "mobile"
+  }
+}

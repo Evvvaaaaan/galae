@@ -17,15 +17,6 @@ export function Icon({ name, size = 22 }) {
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={paths[name] || paths.arrow} /></svg>;
 }
 
-// 공유 창을 띄우고, 공유 창이 없으면 copyText를 복사합니다. 복사했으면 true를 돌려줍니다.
-export async function shareOrCopy(data, copyText) {
-  if (navigator.share) {
-    try { await navigator.share(data); } catch { /* 공유 창을 닫았습니다. */ }
-    return false;
-  }
-  try { await navigator.clipboard.writeText(copyText); return true; } catch { /* 복사할 수 없는 환경입니다. */ return false; }
-}
-
 export function Header({ back, title, action }) {
   return <header className="page-header">
     {back ? <button className="icon-button" aria-label="뒤로" onClick={back}><Icon name="back" size={20} /></button> : <span />}

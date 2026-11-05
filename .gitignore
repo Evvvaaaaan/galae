@@ -1,3 +1,17 @@
 node_modules
 dist
+.env
+.env.*
+!.env.example
+!.env.production
+playwright-report
+test-results
+artifacts
 AGENTS.md
+
+# android build
+.android-home/
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties

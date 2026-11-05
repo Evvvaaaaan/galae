@@ -1,5 +1,7 @@
 # 배포 방안
 
+> Historical web deployment proposal. The current task targets iOS and the existing Java backend. Use [IOS_BACKEND_INTEGRATION.md](IOS_BACKEND_INTEGRATION.md) for the current backend configuration, local verification and TestFlight preparation procedure.
+
 공모전 제출까지 앱 스토어 심사를 마치기 어려워서, 포트폴리오 사이트에 앱 형식으로 배포하는 방안을 정리합니다.
 
 ## 현재 상태

@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: galae
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+
+server:
+  port: ${PORT:8080}
+  forward-headers-strategy: framework
+
+jwt:
+  secret: ${JWT_SECRET}
+  access-token:
+    expr-time: 3600
+  refresh-token:
+    expr-time: 1209600
+
+# Current backend main ignores allowed-origins and permits all origins.
+# Restore server-side allowlist enforcement before relying on this value.
+cors:
+  allowed-origins: ${CORS_ALLOWED_ORIGINS:capacitor://localhost}
+
+galae:
+  zone: Asia/Seoul
+  feed:
+    include-unchecked: false
+  seed:
+    enabled: true
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+# Optional: admin-only AI generation. Never expose this key in VITE_ values.
+bizrouter:
+  api-key: ${BIZROUTER_API_KEY:}
+  base-url: ${BIZROUTER_BASE_URL:https://api.bizrouter.ai/v1}
+  model: ${BIZROUTER_MODEL:anthropic/claude-sonnet-5.5}
+  timeout-seconds: 120

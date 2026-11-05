@@ -1,20 +1,16 @@
 import { useState } from 'react';
 import { Avatar, PhotoColorPicker, SourceItem } from '../components/UI.jsx';
 import { cleanHandle, myself } from '../store.js';
-import { TOPICS } from '../topics.js';
 
-export function Settings({ profile, go, onLogout, onReset }) {
-  const [confirmReset, setConfirmReset] = useState(false);
+export function Settings({ profile, go, onLogout }) {
   const me = myself(profile);
   return <div className="flow">
     <div className="list">
       <button className="list-row" onClick={() => go('settings/profile')}><Avatar {...me} /><span>{me.name}</span></button>
-      <button className="list-row" disabled>알림</button>
     </div>
     <div className="list">
-      <button className="list-row" disabled>계정 연결</button>
       <button className="list-row" onClick={onLogout}>로그아웃</button>
-      <button className="list-row" disabled>탈퇴</button>
+      <button className="list-row" onClick={() => go('settings/withdraw')}>탈퇴</button>
     </div>
     <div className="list">
       <button className="list-row" onClick={() => go('settings/onboard')}>갈래 소개</button>
@@ -23,11 +19,17 @@ export function Settings({ profile, go, onLogout, onReset }) {
       <button className="list-row" disabled>개인정보처리방침</button>
       <button className="list-row" disabled>문의</button>
     </div>
-    {/* 개발·시연용: 답변 기록만 지워 처음부터 다시 체험합니다. 서버 연동 시 제거합니다. */}
-    <div className="actions">{confirmReset
-      ? <><button className="btn-text danger" onClick={() => { onReset(); setConfirmReset(false); }}>초기화</button><button className="btn-text" onClick={() => setConfirmReset(false)}>취소</button></>
-      : <button className="btn-text muted" onClick={() => setConfirmReset(true)}>기록 초기화</button>}</div>
+
   </div>;
+}
+
+export function WithdrawForm({ onWithdraw }) {
+  const [password, setPassword] = useState('');
+  return <form className="flow" onSubmit={async e => { e.preventDefault(); await onWithdraw(password); }}>
+    <p className="sub">탈퇴하면 내 프로필, 답변, 댓글과 메시지가 삭제됩니다. 내가 그룹장인 그룹도 삭제되며 되돌릴 수 없습니다.</p>
+    <input className="note-input" type="password" aria-label="현재 비밀번호" placeholder="현재 비밀번호" autoComplete="current-password" maxLength={72} value={password} onChange={e => setPassword(e.target.value)} />
+    <button className="btn-primary" disabled={!password}>탈퇴하기</button>
+  </form>;
 }
 
 export function ProfileForm({ profile, onSave }) {
@@ -36,7 +38,7 @@ export function ProfileForm({ profile, onSave }) {
   const [bio, setBio] = useState(profile.bio);
   const [photo, setPhoto] = useState(profile.photo);
   const [color, setColor] = useState(profile.color);
-  return <form className="flow" onSubmit={e => { e.preventDefault(); onSave({ name: name.trim(), handle, bio: bio.trim(), photo, color }); }}>
+  return <form className="flow" onSubmit={async e => { e.preventDefault(); await onSave({ name: name.trim(), handle, bio: bio.trim(), photo, color }); }}>
     <PhotoColorPicker name={name.trim() || '나'} label="프로필 사진" photo={photo} color={color} onPhoto={setPhoto} onColor={setColor} />
     <input className="note-input" aria-label="이름" placeholder="이름" maxLength={10} value={name} onChange={e => setName(e.target.value)} />
     <input className="note-input" aria-label="아이디" placeholder="아이디" maxLength={20} autoCapitalize="none" autoCorrect="off" spellCheck={false} value={handle} onChange={e => setHandle(cleanHandle(e.target.value))} />
@@ -45,7 +47,7 @@ export function ProfileForm({ profile, onSave }) {
   </form>;
 }
 
-export function Sources() {
+export function Sources({ topics: TOPICS }) {
   const sources = [...new Map(TOPICS.flatMap(t => t.sources).map(s => [s.label, s])).values()];
   return <div className="flow">
     <ul className="feed-sources source-list">

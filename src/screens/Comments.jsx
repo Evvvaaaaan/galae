@@ -1,9 +1,8 @@
-import { Avatar, ProfileLink } from '../components/UI.jsx';
-import { MEMBERS } from '../questionData.js';
+import { Avatar } from '../components/UI.jsx';
 import { myself } from '../store.js';
 
 // 결과 화면에서 고른 선택지의 댓글입니다. 위에는 질문 카드, 아래에는 그 선택지를 고른 사람들의 이유가 달립니다.
-export default function Comments({ question, choice, comments, answer, profile, onProfile }) {
+export default function Comments({ question, choice, comments, answer, profile, page, onMore }) {
   const me = myself(profile);
   const mine = answer.sel === choice.id && answer.reason;
   return <div className="flow">
@@ -15,10 +14,9 @@ export default function Comments({ question, choice, comments, answer, profile, 
     <ul className="comment-list">
       {mine && <li><Avatar {...me} /><div><span className="bubble-name">{me.name}</span><p className="preserve-lines">{answer.reason}</p></div></li>}
       {comments.map((item, i) => {
-        const member = MEMBERS[i % MEMBERS.length];
-        const link = () => onProfile(member.id);
-        return <li key={item}><ProfileLink avatar onClick={link}><Avatar {...member} /></ProfileLink><div><ProfileLink onClick={link}><span className="bubble-name">{member.name}</span></ProfileLink><p>{item}</p></div></li>;
+        return <li key={`${i}-${item}`}><Avatar name="익명" /><div><span className="bubble-name">익명</span><p className="preserve-lines">{item}</p></div></li>;
       })}
     </ul>
+    {page?.hasNext && <button className="btn-text" onClick={onMore}>더 보기</button>}
   </div>;
 }

@@ -40,6 +40,8 @@ svg { flex-shrink: 0; }
 @media (min-width: 480px) {
   .frame { height: min(900px, calc(100dvh - 48px)); margin: 24px auto; border: 1px solid var(--line); border-radius: 28px; box-shadow: 0 14px 65px #2b4a630b; }
 }
+.native body { background: var(--bg); }
+.native .frame { max-width: none; height: 100dvh; margin: 0; border: 0; border-radius: 0; box-shadow: none; }
 .screen { position: absolute; inset: 0; overflow-y: auto; padding: calc(28px + env(safe-area-inset-top)) 28px 40px; animation: scrIn 280ms ease-out both; scrollbar-width: none; }
 .app-screen { bottom: calc(64px + env(safe-area-inset-bottom)); }
 .screen.flush { padding: 0; overflow: hidden; }
@@ -347,11 +349,11 @@ label.list-row { cursor: pointer; }
 .profile-link:active { opacity: .55; }
 .profile-bio + .world-tree, .fruits + .world-tree { margin-top: 40px; }
 /* 다른 사람 프로필에서는 나무를 남은 공간의 가운데에 둡니다. */
-.screen:has(> .profile.member) { display: flex; flex-direction: column; }
-.screen:has(> .profile.member) > .world-tree { margin-top: auto; margin-bottom: auto; padding-top: 40px; }
+.screen:has(> .app-content > .profile.member) { display: flex; flex-direction: column; }
+.screen:has(> .app-content > .profile.member) > .app-content > .world-tree { margin-top: auto; margin-bottom: auto; padding-top: 40px; }
 /* 고리를 눌러 뜨는 설명은 나무를 밀지 않고 위에 겹쳐 뜹니다. */
-.screen:has(> .profile.member) > .fruits { position: relative; z-index: 1; }
-.screen:has(> .profile.member) .fruit-note { position: absolute; top: 100%; left: 0; right: 0; }
+.screen:has(> .app-content > .profile.member) > .app-content > .fruits { position: relative; z-index: 1; }
+.screen:has(> .app-content > .profile.member) .fruit-note { position: absolute; top: 100%; left: 0; right: 0; }
 .avatar-stack small { align-self: center; margin-left: 8px; font-size: 11px; color: var(--ink-sub); }
 .add-menu-wrap { position: relative; }
 .add-menu { left: auto; right: 0; min-width: 120px; }
@@ -404,3 +406,6 @@ label.list-row { cursor: pointer; }
   .fruit-caption p { animation: none !important; }
   .fruit-caption p:last-child { opacity: 1; }
 }
+
+/* Preserve the screen layout while preventing duplicate server writes. */
+.app-content { display: contents; border: 0; padding: 0; margin: 0; min-width: 0; }

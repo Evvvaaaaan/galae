@@ -2,17 +2,17 @@ import { useState } from 'react';
 import { Header } from '../components/UI.jsx';
 import { cleanHandle } from '../store.js';
 
-// 가입과 로그인 화면입니다. 비밀번호 확인과 저장은 서버를 붙일 때 연결합니다.
 export default function Account({ mode, back, onDone }) {
   const signup = mode === 'signup';
   const [handle, setHandle] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [error, setError] = useState('');
-  function submit(e) {
+  async function submit(e) {
     e.preventDefault();
     if (password.length < 8) { setError('비밀번호는 8자 이상이에요'); return; }
-    onDone({ handle, name: name.trim() });
+    if (password.length > 72) { setError('비밀번호는 72자 이내로 입력해 주세요'); return; }
+    await onDone({ handle, password, ...(signup && { name: name.trim() }) });
   }
   return <>
     <Header back={back} title={signup ? '가입' : '로그인'} />
