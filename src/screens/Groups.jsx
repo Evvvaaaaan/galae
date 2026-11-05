@@ -75,9 +75,7 @@ export function GroupDetail({ group, state, go, openQuestion, initialQuestionId,
   const questionId = initialQuestionId || TODAY.id;
   const question = QUESTIONS.find(q => q.id === questionId);
   const answer = state.answers[questionId];
-  const shared = answer?.sharedWith.includes(group.id);
-  const me = myself(state.profile);
-  const posts = [...SAMPLE_SHARES.filter(s => s.groupId === group.id && s.questionId === questionId && group.members.some(m => m.id === s.memberId)), ...(shared ? [{ memberId: 'me', sel: answer.sel, note: answer.reason }] : [])];
+  const posts = SAMPLE_SHARES.filter(s => s.groupId === group.id && s.questionId === questionId && group.members.some(m => m.id === s.memberId));
   const messages = state.messages.filter(m => m.groupId === group.id && m.questionId === questionId);
   function send(e) { e.preventDefault(); if (!text.trim()) return; onSend(questionId, text); setText(''); }
   return <>
@@ -97,19 +95,18 @@ export function GroupDetail({ group, state, go, openQuestion, initialQuestionId,
             {!answer?.submitted && <button className="btn-primary" onClick={() => openQuestion(questionId)}>{answer?.sel != null ? '갈래 이어가기' : questionId === TODAY.id ? '오늘의 갈래 시작하기' : '갈래 시작하기'}</button>}
           </div>
           {posts.map(post => {
-            const mine = post.memberId === 'me';
-            const veiled = !mine && !answer?.submitted;
-            const member = mine ? me : group.members.find(m => m.id === post.memberId) || { name: '멤버', color: 'sage' };
+            const veiled = !answer?.submitted;
+            const member = group.members.find(m => m.id === post.memberId) || { name: '멤버', color: 'sage' };
             const link = member.id && (() => onProfile(member.id));
-            return <div className={`bubble-row ${mine ? 'mine' : ''}`} key={post.memberId}>
-              {!mine && <ProfileLink avatar onClick={link}><Avatar {...member} /></ProfileLink>}
+            return <div className="bubble-row" key={post.memberId}>
+              <ProfileLink avatar onClick={link}><Avatar {...member} /></ProfileLink>
               <div className="bubble-wrap">
-                {!mine && <ProfileLink onClick={link}><span className="bubble-name">{member.name}</span></ProfileLink>}
+                <ProfileLink onClick={link}><span className="bubble-name">{member.name}</span></ProfileLink>
                 <div className={`bubble ${veiled ? 'veiled' : ''}`}><span className="chip" aria-hidden={veiled}>{choiceOf(question, post.sel)?.short}</span>{post.note && <p className="preserve-lines" aria-hidden={veiled}>{post.note}</p>}{veiled && <span className="veil">갈래를 선택하면 볼 수 있어요</span>}</div>
               </div>
             </div>;
           })}
-          {messages.map(m => <div className="bubble-row mine" key={m.id}><div className="bubble-wrap"><div className="bubble"><p className="preserve-lines">{m.text}</p></div></div></div>)}
+          {messages.map(m => <div className="bubble-row mine" key={m.id}><div className="bubble-wrap"><div className="bubble">{m.sel !== undefined && <span className="chip">{choiceOf(question, m.sel)?.short}</span>}{m.text && <p className="preserve-lines">{m.text}</p>}</div></div></div>)}
           {!posts.length && !messages.length && <Empty title="첫 번째 생각을 나눠주세요" />}
         </div>
         <form className="chat-input" onSubmit={send}>

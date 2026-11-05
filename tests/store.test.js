@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { initialState, updateAnswer, completeAnswer, submitAnswer, questionRoute, rememberQuestionRoute, leaveGroup, loadState, addMessage, addComment, previousStep, STORAGE_KEY } from '../src/store.js';
+import { initialState, updateAnswer, completeAnswer, submitAnswer, shareAnswer, sentGroups, questionRoute, rememberQuestionRoute, leaveGroup, loadState, addMessage, addComment, previousStep, STORAGE_KEY } from '../src/store.js';
 
 function restore(saved) {
   globalThis.localStorage = { getItem: () => JSON.stringify(saved) };
@@ -18,7 +18,6 @@ test('선택 이유 초안은 질문별로 복원되고 완료 후에도 유지�
   state = restore(completeAnswer(state, 'q037'));
   assert.equal(state.answers.q037.reason, '친구의 이야기를 먼저 듣고 싶어요.\n회복할 기회도 필요해요.');
   assert.equal(state.answers.q037.completed, true);
-  assert.deepEqual(state.answers.q037.sharedWith, []);
 });
 
 test('이유를 작성하지 않은 답변도 제출 상태를 유지한다', () => {
@@ -85,7 +84,7 @@ test('필드가 손상된 답변은 정상 문장을 보존하고 잘못된 필�
   } });
   assert.equal(state.started, false);
   assert.equal(state.answers.q037.reason, '보존할 문장');
-  assert.deepEqual(state.answers.q037.sharedWith, []);
+  assert.deepEqual(state.messages, []);
   assert.equal(state.answers.q037.completed, false);
   assert.equal(state.answers.q037.shareDraft, null);
   assert.equal(state.answers.q037.lastStep, null);
@@ -93,7 +92,6 @@ test('필드가 손상된 답변은 정상 문장을 보존하고 잘못된 필�
   assert.equal(state.answers.q036.submitted, false);
   assert.equal(state.answers.q036.completed, false);
   assert.equal(state.answers.q036.reason, '');
-  assert.deepEqual(state.answers.q036.sharedWith, []);
   assert.equal(state.answers.q035.reason, '');
   assert.doesNotThrow(() => leaveGroup(state, 'g1'));
 });
@@ -120,61 +118,62 @@ test('질문별 초안과 제출 상태가 서로 섞이지 않는다', () => {
   assert.equal(state.answers.q037.sel, 1);
   assert.equal(state.answers.q036.sel, 0);
   assert.equal(state.answers.q036.submitted, false);
-  assert.deepEqual(state.answers.q037.sharedWith, []);
   assert.deepEqual(initial.answers, {});
 });
 
-test('그룹을 나가면 그 그룹의 공유만 해제하고 선택과 이유는 유지한다', () => {
+test('그룹을 나가면 그 그룹에 보낸 공유만 사라지고 선택과 이유는 유지한다', () => {
   let state = { ...initialState(), joined: ['g1', 'g2'] };
-  state = updateAnswer(state, 'q037', { sel: 0, submitted: true, completed: true, reason: '나의 생각', sharedWith: ['g1', 'g2'] });
-  state = updateAnswer(state, 'q036', { sel: 2, submitted: true, sharedWith: ['g1'] });
+  state = updateAnswer(state, 'q037', { sel: 0, submitted: true, completed: true, reason: '나의 생각' });
+  state = updateAnswer(state, 'q036', { sel: 2, submitted: true });
+  state = shareAnswer(shareAnswer(state, 'q037', ['g1', 'g2']), 'q036', ['g1']);
   const result = leaveGroup(state, 'g1');
   assert.deepEqual(result.joined, ['g2']);
-  assert.deepEqual(result.answers.q037.sharedWith, ['g2']);
-  assert.deepEqual(result.answers.q036.sharedWith, []);
+  assert.deepEqual(sentGroups(result, 'q037'), ['g2']);
+  assert.deepEqual(sentGroups(result, 'q036'), []);
   assert.equal(result.answers.q037.reason, '나의 생각');
   assert.equal(result.answers.q037.completed, true);
   assert.equal(result.answers.q036.sel, 2);
-  assert.deepEqual(state.answers.q037.sharedWith, ['g1', 'g2']);
+  assert.deepEqual(sentGroups(state, 'q037'), ['g1', 'g2']);
 });
 
-test('공유 대상 초안은 저장 전까지 공개 대상에 반영되지 않으며 질문별로 복원된다', () => {
-  let state = updateAnswer(initialState(), 'q037', { sel: 1, submitted: true, sharedWith: ['g1'] });
+test('공유 대상 초안은 보내기 전까지 그룹에 반영되지 않으며 질문별로 복원된다', () => {
+  let state = shareAnswer(updateAnswer(initialState(), 'q037', { sel: 1, submitted: true }), 'q037', ['g1']);
   state = updateAnswer(state, 'q037', { shareDraft: ['g2'] });
   state = updateAnswer(state, 'q036', { shareDraft: [] });
-  assert.deepEqual(state.answers.q037.sharedWith, ['g1']);
+  assert.deepEqual(sentGroups(state, 'q037'), ['g1']);
   globalThis.localStorage = { getItem: () => JSON.stringify(state) };
   try {
     const restored = loadState();
     assert.deepEqual(restored.answers.q037.shareDraft, ['g2']);
     assert.deepEqual(restored.answers.q036.shareDraft, []);
-    const saved = updateAnswer(restored, 'q037', { sharedWith: restored.answers.q037.shareDraft, shareDraft: null });
-    assert.deepEqual(saved.answers.q037.sharedWith, ['g2']);
+    const saved = shareAnswer(restored, 'q037', restored.answers.q037.shareDraft);
+    assert.deepEqual(sentGroups(saved, 'q037'), ['g1', 'g2']);
     assert.equal(saved.answers.q037.shareDraft, null);
   } finally { delete globalThis.localStorage; }
 });
 
 test('탈퇴한 그룹은 공유 대상 초안에서도 제거된다', () => {
-  const state = updateAnswer(initialState(), 'q037', { sharedWith: ['g1'], shareDraft: ['g1', 'g2'] });
+  const state = updateAnswer(initialState(), 'q037', { shareDraft: ['g1', 'g2'] });
   const result = leaveGroup(state, 'g1');
-  assert.deepEqual(result.answers.q037.sharedWith, []);
   assert.deepEqual(result.answers.q037.shareDraft, ['g2']);
   assert.deepEqual(state.answers.q037.shareDraft, ['g1', 'g2']);
 });
 
-test('어제 저장한 답변을 유지하면서 새 공유 초안 필드만 보완한다', () => {
+test('공유가 메시지가 되기 전에 저장한 공유 그룹은 공유 메시지로 옮긴다', () => {
   const saved = { ...initialState(), started: true, answers: { q037: { sel: 1, submitted: true, reason: '어제 남긴 생각', sharedWith: ['g1'] } } };
   globalThis.localStorage = { getItem: () => JSON.stringify(saved) };
   try {
     const restored = loadState();
     assert.equal(restored.answers.q037.reason, '어제 남긴 생각');
-    assert.deepEqual(restored.answers.q037.sharedWith, ['g1']);
+    assert.deepEqual(sentGroups(restored, 'q037'), ['g1']);
+    assert.equal(restored.answers.q037.sharedWith, undefined);
+    assert.deepEqual(restore(restored).messages, restored.messages);
     assert.equal(restored.answers.q037.shareDraft, null);
   } finally { delete globalThis.localStorage; }
 });
 
 test('저장된 답변과 그룹을 복원하고 손상된 저장 데이터는 초기화한다', () => {
-  const saved = updateAnswer({ ...initialState(), started: true, joinedOn: '2026-09-20' }, 'q036', { sel: 1, submitted: true, answeredOn: '2026-09-24', sharedWith: ['g1'] });
+  const saved = updateAnswer({ ...initialState(), started: true, joinedOn: '2026-09-20' }, 'q036', { sel: 1, submitted: true, answeredOn: '2026-09-24' });
   globalThis.localStorage = { getItem: key => key === STORAGE_KEY ? JSON.stringify(saved) : null };
   assert.deepEqual(loadState(), saved);
   globalThis.localStorage = { getItem: () => '{broken' };
@@ -222,8 +221,22 @@ test('처음 답하면 답한 날을 남기고, 다시 답하면 선택과 이�
   state = submitAnswer(state, 'q036', 0, '처음 생각', '2026-09-24');
   assert.equal(state.answers.q036.submitted, true);
   assert.equal(state.answers.q036.answeredOn, '2026-09-24');
-  state = updateAnswer(completeAnswer(state, 'q036'), 'q036', { sharedWith: ['g1'] });
+  state = completeAnswer(state, 'q036');
   const before = state.answers.q036;
   state = submitAnswer(state, 'q036', 2, '바뀐 생각', '2026-09-26');
   assert.deepEqual(state.answers.q036, { ...before, sel: 2, reason: '바뀐 생각' });
+  assert.equal(submitAnswer(state, 'q036', 2, '바뀐 생각', '2026-09-27'), state);
+});
+
+test('공유는 보낸 때의 답이 담긴 메시지로 남고, 다시 답하면 새 답은 아직 보내지 않은 상태가 된다', () => {
+  let state = submitAnswer(initialState(), 'q036', 0, '처음 생각', '2026-09-24');
+  state = shareAnswer(state, 'q036', ['g1']);
+  assert.deepEqual(sentGroups(state, 'q036'), ['g1']);
+  assert.equal(shareAnswer(state, 'q036', ['g1']).messages.length, 1);
+  state = submitAnswer(updateAnswer(state, 'q036', { shareDraft: ['g2'] }), 'q036', 2, '바뀐 생각', '2026-09-26');
+  assert.deepEqual(sentGroups(state, 'q036'), []);
+  assert.equal(state.answers.q036.shareDraft, null);
+  state = shareAnswer(state, 'q036', ['g1']);
+  assert.deepEqual(state.messages.map(m => [m.groupId, m.sel, m.text]), [['g1', 0, '처음 생각'], ['g1', 2, '바뀐 생각']]);
+  assert.deepEqual(restore(state).messages, state.messages);
 });

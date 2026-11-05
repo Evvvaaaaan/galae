@@ -1,8 +1,8 @@
 import { ResultBars } from './Result.jsx';
 import { choiceOf } from '../questionData.js';
 
-export default function Summary({ question, answer, groups, onOpen, onShare, onReading, onRetry }) {
-  const shared = groups.filter(g => answer.sharedWith.includes(g.id));
+export default function Summary({ question, answer, groups, sent, onOpen, onShare, onReading, onRetry }) {
+  const shared = groups.filter(g => sent.includes(g.id));
   return <div className="flow summary">
     <h1 className="question-body" tabIndex={-1}>{question.body}</h1>
     <div className="record">

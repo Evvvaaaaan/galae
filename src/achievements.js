@@ -49,7 +49,7 @@ function stats(state) {
   return {
     answers: answered.length,
     past: answered.filter(([id, a]) => a.answeredOn !== QUESTIONS.find(q => q.id === id)?.date).length,
-    shares: answered.filter(([, a]) => a.sharedWith.length).length,
+    shares: new Set(state.messages.filter(m => m.sel !== undefined).map(m => m.questionId)).size,
     comments: state.comments.length,
     likes: state.likes.length,
     owner: state.groups.some(g => g.owner),
