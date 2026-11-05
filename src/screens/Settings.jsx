@@ -71,7 +71,7 @@ export function NotifySettings({ notify, onChange }) {
   return <div className="flow">
     <figure className="notify-preview">
       <div className="banner" aria-hidden="true">
-        <span className="banner-icon"><img src="/logo.png" alt="" /></span>
+        <img className="banner-icon" src="/icon-192.png" alt="" />
         <span><strong>갈래</strong><small>지금</small><p>새로운 갈래가 도착했어요.</p></span>
       </div>
       <figcaption className="hint">이렇게 표시됩니다.</figcaption>
