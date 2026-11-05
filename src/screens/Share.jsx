@@ -24,7 +24,7 @@ export default function Share({ question, answer, groups, sent, onDraft, onSave,
     </div>
     {groups.length ? <>
       <div className="list">{groups.map(group => <label className={`list-row ${selected.includes(group.id) ? 'on' : ''}`} key={group.id}>
-        <Avatar name={group.name} color={group.color} /><span>{group.name}</span>
+        <Avatar name={group.name} color={group.color} photo={group.photo} /><span>{group.name}</span>
         <small className="hint">{group.members.length + 1}명</small>
         <input type="checkbox" checked={selected.includes(group.id)} disabled={sent.includes(group.id)} onChange={() => toggle(group.id)} />
       </label>)}</div>

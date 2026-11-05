@@ -40,7 +40,7 @@ function restoreGroups(value) {
     return {
       id: group.id, name: text(group.name, fallback?.name || '이름 없는 그룹'),
       description: text(group.description, fallback?.description), code: text(group.code, fallback?.code),
-      color: text(group.color, 'sage'), owner: group.owner === true,
+      color: text(group.color, 'sage'), ...(/^data:image\/jpeg;base64,/.test(group.photo) && { photo: group.photo }), owner: group.owner === true,
       members: Array.isArray(group.members) ? group.members.filter(m => isObject(m) && typeof m.id === 'string').map(m => MEMBERS.find(x => x.id === m.id) || { id: m.id, name: text(m.name, '멤버'), color: text(m.color, 'sage') }) : fallback?.members || [],
     };
   });

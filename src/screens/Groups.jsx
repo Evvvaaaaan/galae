@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { QUESTIONS, TODAY, SAMPLE_SHARES, choiceOf, dateLabel } from '../questionData.js';
-import { Header, Icon, Avatar, Empty, ProfileLink } from '../components/UI.jsx';
+import { Header, Icon, Avatar, Empty, ProfileLink, resizePhoto } from '../components/UI.jsx';
 import { COLOR_LABELS, PROFILE_COLORS, joinedGroups, myself } from '../store.js';
 
 export function Groups({ state, go }) {
@@ -9,7 +9,7 @@ export function Groups({ state, go }) {
   return <>
     <h1 className="visually-hidden" tabIndex={-1}>그룹</h1>
     {groups.length ? <div className="list">{groups.map(group => <button className="group-row" key={group.id} onClick={() => go(`groups/${group.id}`)}>
-      <div className="group-row-head"><Avatar name={group.name} color={group.color} /><strong>{group.name}</strong></div>
+      <div className="group-row-head"><Avatar name={group.name} color={group.color} photo={group.photo} /><strong>{group.name}</strong></div>
       {group.description && <p className="record-note">{group.description}</p>}
       <span className="avatar-stack">{group.members.slice(0, 3).map(m => <Avatar key={m.id} {...m} />)}<small>{group.members.length + 1}명</small></span>
     </button>)}</div> : <Empty title="함께할 첫 그룹을 만나보세요" />}
@@ -35,11 +35,12 @@ export function GroupForm({ mode, group, state, onCreate, onJoin, onSave, go }) 
   const [value, setValue] = useState(editing ? group.name : '');
   const [description, setDescription] = useState(editing ? group.description || '' : '');
   const [color, setColor] = useState(editing ? group.color : 'sage');
+  const [photo, setPhoto] = useState(editing ? group.photo || '' : '');
   const [error, setError] = useState('');
   const creating = mode === 'new' || editing;
   function submit(e) {
     e.preventDefault();
-    const fields = { name: value.trim(), description: description.trim(), color };
+    const fields = { name: value.trim(), description: description.trim(), color, photo };
     if (editing) { onSave(fields); return; }
     if (creating) { onCreate(fields); return; }
     const group = state.groups.find(g => g.code === value.trim().toUpperCase());
@@ -51,7 +52,10 @@ export function GroupForm({ mode, group, state, onCreate, onJoin, onSave, go }) 
     <Header back={() => go(editing ? `groups/${group.id}/members` : 'groups')} title={editing ? '그룹 설정' : creating ? '그룹 만들기' : '그룹 참여'} />
     <form className="flow" onSubmit={submit}>
       {creating && <>
-        <div className="group-preview"><Avatar name={value.trim() || '갈'} color={color} /></div>
+        <div className="group-preview">
+          <label className="photo-pick"><Avatar name={value.trim() || '갈'} color={color} photo={photo} /><input type="file" accept="image/*" aria-label="그룹 사진" className="visually-hidden" onChange={e => { resizePhoto(e.target.files[0], setPhoto); e.target.value = ''; }} /></label>
+          {photo && <button type="button" className="btn-text muted" onClick={() => setPhoto('')}>사진 삭제</button>}
+        </div>
         <div className="color-picker">{PROFILE_COLORS.map(c => <button type="button" key={c} className={c} aria-label={COLOR_LABELS[c]} aria-pressed={color === c} onClick={() => setColor(c)} />)}</div>
       </>}
       <div className="field">

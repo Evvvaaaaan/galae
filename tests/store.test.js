@@ -110,6 +110,13 @@ test('그룹과 멤버의 손상은 다른 정상 답변을 잃지 않고 복구
   assert.equal(restore({ ...saved, groups: null }).answers.q037.reason, '보존할 문장');
 });
 
+test('그룹 사진은 JPEG 데이터만 복원한다', () => {
+  const photo = 'data:image/jpeg;base64,AAAA';
+  const state = restore({ ...initialState(), groups: [{ id: 'a', photo }, { id: 'b', photo: 'https://x/y.png' }] });
+  assert.equal(state.groups[0].photo, photo);
+  assert.equal(state.groups[1].photo, undefined);
+});
+
 test('질문별 초안과 제출 상태가 서로 섞이지 않는다', () => {
   const initial = initialState();
   let state = updateAnswer(initial, 'q037', { sel: 1, submitted: true, reason: '오늘의 생각' });
