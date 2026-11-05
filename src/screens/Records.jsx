@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Avatar, Empty, Icon } from '../components/UI.jsx';
+import { Avatar, Empty, Icon, Confirm } from '../components/UI.jsx';
 import { QuestionRow } from './Archive.jsx';
 import { answeredDays, earnedList } from '../achievements.js';
 import { myself } from '../store.js';
@@ -70,9 +70,10 @@ function Fruits({ earned }) {
   </div>;
 }
 
-// 다른 사람의 프로필입니다. 이름·소개·열매 아래에 그 사람의 나무가 있습니다.
-export function MemberProfile({ member }) {
+// 다른 사람의 프로필입니다. 이름·소개·열매 아래에 그 사람의 나무와 차단 줄이 있습니다.
+export function MemberProfile({ member, blocked, onBlock, onUnblock }) {
   const earned = earnedList(member.achieved);
+  const [confirming, setConfirming] = useState(false);
   return <>
     <div className="profile member">
       <Avatar {...member} />
@@ -88,6 +89,10 @@ export function MemberProfile({ member }) {
     {member.bio && <p className="profile-bio">{member.bio}</p>}
     <Fruits earned={earned} />
     <WorldTree count={member.answers} fruits={earned} />
+    <div className="list member-actions">
+      {blocked ? <button className="list-row" onClick={onUnblock}>차단 해제</button> : <button className="list-row" onClick={() => setConfirming(true)}>차단하기</button>}
+    </div>
+    {confirming && <Confirm id="block-title" action="차단" onCancel={() => setConfirming(false)} onConfirm={() => { setConfirming(false); onBlock(); }}>{member.name}님의 댓글과 메시지를 내 화면에서 숨길까요?</Confirm>}
   </>;
 }
 

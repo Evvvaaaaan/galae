@@ -11,6 +11,9 @@ async function signup(page, handle, name) {
   await page.getByRole('textbox', { name: '아이디', exact: true }).fill(handle);
   await page.getByLabel('비밀번호', { exact: true }).fill(password);
   await page.getByRole('textbox', { name: '이름', exact: true }).fill(name);
+  await page.getByRole('checkbox', { name: /만 14세 이상/ }).check();
+  await page.getByRole('checkbox', { name: /이용약관/ }).check();
+  await page.getByRole('checkbox', { name: /개인정보 수집/ }).check();
   await page.getByRole('button', { name: '가입', exact: true }).click();
   await page.getByRole('button', { name: '건너뛰기' }).click();
   await expect(page.getByRole('navigation', { name: '주 메뉴' })).toBeVisible();

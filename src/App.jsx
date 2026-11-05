@@ -14,7 +14,7 @@ import Done from './screens/Done.jsx';
 import Summary from './screens/Summary.jsx';
 import Share from './screens/Share.jsx';
 import Records, { MyComments, MemberProfile } from './screens/Records.jsx';
-import { Settings, NotifySettings, ProfileForm, Sources, LegalDoc, WithdrawForm } from './screens/Settings.jsx';
+import { Settings, NotifySettings, ProfileForm, Sources, LegalDoc, WithdrawForm, Safety, ReportForm, BlockedUsers } from './screens/Settings.jsx';
 import { Groups, GroupForm, GroupDetail, GroupMembers, GroupsAddMenu } from './screens/Groups.jsx';
 import { BottomNav, Header, Icon } from './components/UI.jsx';
 import { dateLabel } from './questionData.js';
@@ -166,7 +166,7 @@ export default function App() {
     const member = state.members[id];
     const from = profileFrom.current?.split('/')[0];
     active = from === 'question' ? origin?.split('/')[0] : from;
-    if (member) content = <><Header back={() => go(profileFrom.current || 'today')} title={member.handle} /><MemberProfile member={member} /></>;
+    if (member) content = <><Header back={() => go(profileFrom.current || 'today')} title={member.handle} /><MemberProfile member={member} blocked={state.blocks.some(block => block.id === id)} onBlock={() => run(() => mutate(`/users/me/blocks/${id}`, 'PUT'))} onUnblock={() => run(() => mutate(`/users/me/blocks/${id}`, 'DELETE'))} /></>;
   } else if (section === 'settings' && !requestedStep) {
     active = 'records';
     if (!id) content = <><Header back={() => go('records')} title="설정" /><Settings profile={state.profile} go={go} onLogout={() => run(async () => { await server.logout(); go('today'); setWelcome('login'); })} /></>;
@@ -177,6 +177,9 @@ export default function App() {
     }
     else if (id === 'notify') content = <><Header back={() => go('settings')} title="알림" /><NotifySettings notify={notify} onChange={setNotify} /></>;
     else if (id === 'sources') content = <><Header back={() => go('settings')} title="출처" /><Sources topics={TOPICS} /></>;
+    else if (id === 'safety') content = <><Header back={() => go('settings')} title="신고 및 차단" /><Safety go={go} /></>;
+    else if (id === 'report') content = <><Header back={() => go('settings/safety')} title="신고하기" /><ReportForm profile={state.profile} go={go} /></>;
+    else if (id === 'blocks') content = <><Header back={() => go('settings/safety')} title="차단한 사용자" /><BlockedUsers blocks={state.blocks} onUnblock={userId => run(() => mutate(`/users/me/blocks/${userId}`, 'DELETE'))} /></>;
     else if (id in LEGAL_TITLES) content = <><Header back={() => go('settings')} title={LEGAL_TITLES[id]} /><LegalDoc doc={id} /></>;
     else if (id === 'withdraw') content = <><Header back={() => go('settings')} title="탈퇴" /><WithdrawForm onWithdraw={password => run(async () => {
       await server.api.request('/users/me', { method: 'DELETE', body: { password } });

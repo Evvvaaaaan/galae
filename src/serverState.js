@@ -1,6 +1,6 @@
 import { emptyAnswer } from './store.js';
 
-export const blankState = () => ({ started: false, questions: [], today: null, todayDate: '', topics: [], answers: {}, groups: [], joined: [], profile: {}, achieved: {}, messages: [], comments: [], myComments: [], likes: [], members: {}, shares: {} });
+export const blankState = () => ({ started: false, questions: [], today: null, todayDate: '', topics: [], answers: {}, groups: [], joined: [], profile: {}, achieved: {}, messages: [], comments: [], myComments: [], likes: [], members: {}, shares: {}, blocks: [] });
 export const answerFromApi = answer => answer ? { ...emptyAnswer(), sel: answer.choiceId, reason: answer.reason || '', submitted: true, completed: answer.completed, answeredOn: answer.answeredOn, lastStep: answer.lastStep, shareDraft: answer.shareDraft?.map(String) ?? null } : emptyAnswer();
 export const achievementsFromApi = list => Object.fromEntries(list.map(a => [a.id, { on: a.achievedOn }]));
 
@@ -17,8 +17,10 @@ export function groupFromApi(api, group, userId) {
 }
 
 export async function loadSnapshot(api) {
-  const [profile, list, groups, feed, myComments] = await Promise.all([
+  const [profile, list, groups, feed, myComments, blocks] = await Promise.all([
     api.request('/users/me'), api.request('/questions'), api.request('/groups'), api.request('/feed'), api.request('/users/me/comments'),
+    // 차단 목록은 뒤에 붙은 기능이라, 아직 배포되지 않은 서버에서도 나머지 화면은 열리게 합니다.
+    api.request('/users/me/blocks').catch(error => { if (error.status === 404) return []; throw error; }),
   ]);
   // Detail carries choices and the full saved answer, unlike the archive summary.
   const [details, groupDetails] = await Promise.all([
@@ -34,6 +36,7 @@ export async function loadSnapshot(api) {
     profile: userFromApi(api, profile), joinedOn: profile.joinedOn, achieved: achievementsFromApi(profile.achievements),
     groups: groupDetails.map(g => ({ ...groupFromApi(api, g, profile.id), todaySharedMembers: groups.find(x => x.id === g.id).todaySharedMembers.map(m => userFromApi(api, m)) })),
     joined: groups.map(g => String(g.id)), myComments,
+    blocks: blocks.map(block => ({ ...userFromApi(api, block.user), blockedAt: block.blockedAt })),
   };
 }
 

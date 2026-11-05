@@ -74,7 +74,7 @@ Web assets and generated Capacitor configuration are refreshed by `ios:sync`.
   Demo localStorage data is not imported into server accounts.
 - Existing external font requests remain. Offline font bundling and an audit
   of external data flows are still required before final privacy declarations.
-- Template app icons and splash artwork are development placeholders.
+- The final app icon and splash artwork are applied to the iOS asset catalog.
 
 ## Before TestFlight or App Store submission
 
@@ -84,16 +84,22 @@ The native shell now uses real backend APIs. The following full App Store checkl
   synchronization, or explicitly redesign the app as an honest offline product.
   Current login, statistics, members, comments, and sharing include demo data.
 - [ ] Replace the fixed demo date and prepare maintained question content.
-- [ ] Implement accessible privacy policy, terms and support contact screens,
-  plus public policy and support URLs for App Store Connect.
+- [x] Implement accessible privacy policy, terms and support contact screens.
+- [x] Add required signup consent for age, terms and privacy.
+- [ ] Add public policy and support URLs for App Store Connect.
 - [x] Connect password-confirmed account deletion to the backend; locally verified.
-- [ ] If user content is exchanged, implement reporting, blocking, moderation,
-  and the server-side access controls required for private group content.
+- [x] Add in-app reporting and blocking: 설정 → 신고 및 차단 sends a report to the
+  support inbox, and blocks are stored on the server and filter comments and
+  group messages.
+- [ ] Add server-side moderation (a profanity/spam filter and an operator queue)
+  for user-generated content.
+- [ ] Confirm the server-side access controls required for private group content.
 - [ ] Confirm the app offers sufficient ongoing utility under guideline 4.2;
   wrapping a demo does not establish eligibility for approval.
 - [ ] Finalize Bundle ID, signing team, entitlements and version/build numbers.
-- [ ] Supply final app icon, launch artwork, screenshots, description, age
-  rating, review instructions and a review account when authentication exists.
+- [x] Apply the final app icon and launch artwork to the iOS asset catalog.
+- [ ] Supply screenshots, description, age rating, review instructions and a
+  review account when authentication exists.
 - [ ] Audit app and SDK data access, supply any required privacy manifest
   declarations, and complete App Store Connect privacy answers based on the
   final behavior. Adding Preferences later requires a UserDefaults reason.

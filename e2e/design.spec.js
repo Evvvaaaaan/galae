@@ -3,10 +3,10 @@ import { test, expect } from '@playwright/test';
 // A separate checkout is the design reference; never overwrite the working app.
 test.skip(!process.env.GALAE_MAIN_REFERENCE_DIR, 'Set GALAE_MAIN_REFERENCE_DIR to a checkout of jeondowon/galae main.');
 
-function harness(screen, wrapped) {
+function harness(screen, wrapped, react, reactDom) {
   return `
-import React from '/node_modules/.vite/deps/react.js';
-import ReactDOMClient from '/node_modules/.vite/deps/react-dom_client.js';
+import React from ${JSON.stringify(react)};
+import ReactDOMClient from ${JSON.stringify(reactDom)};
 import { Header, BottomNav } from '/src/components/UI.jsx';
 import { MemberProfile } from '/src/screens/Records.jsx';
 import Question from '/src/screens/Question.jsx';
@@ -26,7 +26,13 @@ for (const viewport of [{ width: 390, height: 844 }, { width: 1280, height: 1000
       const metrics = [];
       for (const [name, origin, wrapped] of [['main', 'http://127.0.0.1:5188', false], ['current', 'http://127.0.0.1:5187', true]]) {
         const page = await browser.newPage({ viewport, reducedMotion: 'reduce' });
-        await page.route('**/src/main.jsx', route => route.fulfill({ contentType: 'application/javascript', body: harness(screen, wrapped) }));
+        await page.route('**/src/main.jsx', async route => {
+          const source = await (await route.fetch()).text();
+          const react = source.match(/["']([^"']*\/react\.js(?:\?[^"']*)?)["']/)?.[1];
+          const reactDom = source.match(/["']([^"']*\/react-dom_client\.js(?:\?[^"']*)?)["']/)?.[1];
+          if (!react || !reactDom) throw new Error('Cannot resolve the reference app React imports');
+          await route.fulfill({ contentType: 'application/javascript', body: harness(screen, wrapped, react, reactDom) });
+        });
         await page.goto(origin);
         const selector = screen === 'member' ? '.profile.member' : '.question-body';
         await expect(page.locator(selector)).toBeVisible();
