@@ -1,5 +1,17 @@
 # 생각 카드 썸네일 프롬프트
 
+## 뷔리당의 당나귀
+
+- 적용 이미지: `public/thumbnails/buridans-donkey.png`
+- 적용 대상: `content/paradoxes.json`의 `p005`
+- 생성 도구: 내장 `image_gen`
+- 생성 설정: `transparent_background: false`
+- 스타일 참조: `public/thumbnails/ship-of-theseus.png`
+
+```text
+Create an editorial book illustration of Buridan's donkey for a philosophy reading card. The attached Ship of Theseus image is the REQUIRED visual style reference only. Match its muted dusty blue ink #527C9C, irregular hand-engraved pen contours, selective parallel hatching and crosshatching, moderate detail and generous white highlights. Draw a single living donkey standing centrally between two identical loose hay heaps, one on each side, exactly equal in size and equally distant from the donkey. Three-quarter frontal view of the donkey, full body and all four legs visible, long upright ears, natural calm hesitant posture, head facing forward, not eating either heap. Symmetrical balanced arrangement with clear white gaps between donkey and each hay heap. Both heaps have the same volume and straw texture. Slightly rough fine pen lines describe the donkey's fur and anatomy, restrained hatching under the belly and around the legs, groups of short straw strokes describe the hay. Preserve the handcrafted old printed book illustration character of the reference, neither a simple outline icon nor an overly dense engraving. Single landscape 3:2 spot illustration on solid pure white, all subjects fully visible, ample margins, minimal ground hatching. No scenery, horizon, fences, people, harness, saddle, arrows, text, labels, border, glow, blur, gradients, color washes or solid colored fills. Match the reference as a companion illustration in the same series.
+```
+
 ## 테세우스의 배
 
 - 적용 이미지: `public/thumbnails/ship-of-theseus.png`
