@@ -5,7 +5,6 @@ import { answeredDays, earnedList } from '../achievements.js';
 import { myself } from '../store.js';
 import { WorldTree } from '../motifs.jsx';
 
-
 export default function Records({ questions: QUESTIONS, todayDate, answers, achieved, comments, profile, joinedOn, go, openQuestion }) {
   const [TODAY_YEAR, TODAY_MONTH, TODAY_DAY] = todayDate.split('-').map(Number);
   // 오늘이 있는 달에서 몇 달 떨어진 달을 보고 있는지입니다.
@@ -101,7 +100,7 @@ function DayRecords({ questions: QUESTIONS, date, answers, go, openQuestion }) {
 export function MyComments({ comments, go }) {
   if (!comments.length) return <Empty title="아직 남긴 댓글이 없어요" label="생각 보러 가기" onClick={() => go('feed')} />;
   return <div className="list">{[...comments].reverse().map(c => {
-    return <button className="record-row" key={c.id} onClick={() => go(`feed/${c.topicId}`)}>
+    return <button className="record-row" key={c.id} onClick={() => go(`feed/${c.topicId}/read`)}>
       <strong>{c.topicTitle}</strong>
       <p className="record-note preserve-lines">{c.text}</p>
     </button>;

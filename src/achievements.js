@@ -1,4 +1,4 @@
-import { QUESTIONS } from './questionData.js';
+import { DEMO_GROUPS, QUESTIONS } from './questionData.js';
 
 // 업적 15개입니다. 기준과 이름은 docs/ACHIEVEMENTS.md를 따릅니다.
 export const ACHIEVEMENTS = [
@@ -52,7 +52,8 @@ function stats(state) {
     shares: new Set(state.messages.filter(m => m.sel !== undefined).map(m => m.questionId)).size,
     comments: state.comments.length,
     likes: state.likes.length,
-    owner: state.groups.some(g => g.owner),
+    // 처음부터 그룹장인 데모 그룹은 내가 만든 그룹이 아닙니다.
+    owner: state.groups.some(g => g.owner && !DEMO_GROUPS.some(d => d.id === g.id)),
     streak: longestStreak(answered.map(([, a]) => a.answeredOn)),
   };
 }

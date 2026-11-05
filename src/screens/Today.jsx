@@ -10,13 +10,17 @@ const readSeen = key => { try { return Number(localStorage.getItem(key)) || 0; }
 // 홈에서 맺히는 모습을 이미 본 열매입니다. 처음이면 지금 있는 열매를 모두 본 것으로 둡니다.
 const FRUIT_KEY = 'galae.fruitSeen';
 const readFruits = key => { try { const v = JSON.parse(localStorage.getItem(key)); return Array.isArray(v) ? v : null; } catch { return null; } };
+// 오늘 칸이 채워지는 모습을 마지막으로 본 날입니다.
+export const STREAK_KEY = 'galae.streakSeen';
+const readStreak = key => { try { return localStorage.getItem(key); } catch { return null; } };
 
 const DAYS = ['월', '화', '수', '목', '금', '토', '일'];
 
 // 답한 날을 갈래 선으로 이어 이번 주를 보여 줍니다. 하루 빠지면 연속 일수는 다시 셉니다.
 const STREAK_COLORS = { on: '#A9C8E4', off: '#DCE7F0', bg: '#FDFDFC', key: '#2B4A63' };
 
-function Streak({ answers, today, streak }) {
+// 연이어 답한 두 날 사이에만 실선을 긋습니다. fresh면 어제에서 오늘로 선이 이어진 뒤 오늘 칸이 채워집니다.
+function Streak({ answers, today, streak, fresh }) {
   const c = STREAK_COLORS;
   const answered = answeredDays(answers);
   const dow = (new Date(Date.parse(today)).getUTCDay() + 6) % 7;
@@ -25,11 +29,11 @@ function Streak({ answers, today, streak }) {
   return <section className="today-box today-streak">
     <p className="streak"><b>{streak}</b>일째</p>
     <svg viewBox="0 0 344 54" width="100%" aria-hidden="true">
-      <path d={`M${x(0)} 20 L${x(dow)} 20`} stroke={c.on} strokeWidth={2.2} />
-      <path d={`M${x(dow)} 20 L${x(6)} 20`} stroke={c.off} strokeWidth={1.4} strokeDasharray="3 4" />
+      <path d={`M${x(0)} 20 L${x(6)} 20`} stroke={c.off} strokeWidth={1.4} strokeDasharray="3 4" />
+      {week.map((d, i) => i > 0 && answered.has(d) && answered.has(week[i - 1]) && <path key={d} className={fresh && i === dow ? 'streak-draw' : undefined} pathLength={1} d={`M${x(i - 1)} 20 L${x(i)} 20`} stroke={c.on} strokeWidth={2.2} />)}
       {week.map((d, i) => i === dow && !answered.has(d)
         ? <circle key={d} cx={x(i)} cy={20} r={6} fill={c.bg} stroke={c.key} strokeWidth={1.5} />
-        : <circle key={d} cx={x(i)} cy={20} r={answered.has(d) ? 5 : 3.5} fill={answered.has(d) ? c.on : c.off} />)}
+        : <circle key={d} className={fresh && i === dow ? 'streak-fresh' : undefined} cx={x(i)} cy={20} r={answered.has(d) ? 5 : 3.5} fill={answered.has(d) ? c.on : c.off} />)}
       {DAYS.map((name, i) => <text key={name} x={x(i)} y={46} textAnchor="middle">{name}</text>)}
     </svg>
   </section>;
@@ -39,6 +43,7 @@ export default function Today({ state, go, openQuestion }) {
   const TODAY = state.today;
   const seenKey = `${SEEN_KEY}:${state.profile.id}`;
   const fruitKey = `${FRUIT_KEY}:${state.profile.id}`;
+  const streakKey = `${STREAK_KEY}:${state.profile.id}`;
   const answer = state.answers[TODAY?.id];
   const groups = joinedGroups(state);
   const answeredCount = state.profile.answers;
@@ -49,9 +54,13 @@ export default function Today({ state, go, openQuestion }) {
   useEffect(() => { try { localStorage.setItem(fruitKey, JSON.stringify(achievedIds)); } catch { /* 저장할 수 없는 환경입니다. */ } }, [achievedIds.join()]);
   const fruits = earnedList(state.achieved).map(a => ({ ...a, fresh: !seenFruits.includes(a.id) }));
   useEffect(() => { try { localStorage.setItem(seenKey, String(answeredCount)); } catch { /* 저장할 수 없는 환경입니다. */ } }, [answeredCount]);
+  // 오늘 처음 답한 뒤 홈에 처음 돌아왔을 때만 오늘 칸을 채웁니다. 개발 서버에서는 확인할 수 있도록 홈에 올 때마다 채웁니다.
+  const answeredToday = !!TODAY && answeredDays(state.answers).has(TODAY.date);
+  const [streakFresh] = useState(() => answeredToday && (import.meta.env.DEV || readStreak(streakKey) !== TODAY.date));
+  useEffect(() => { if (answeredToday) try { localStorage.setItem(streakKey, TODAY.date); } catch { /* 저장할 수 없는 환경입니다. */ } }, [answeredToday]);
   return <div className="today">
     <WorldTree count={answeredCount} fruits={fruits} grow={grow} />
-    <Streak answers={state.answers} today={state.todayDate} streak={state.profile.streak} />
+    <Streak answers={state.answers} today={state.todayDate} streak={state.profile.streak} fresh={streakFresh} />
     {TODAY ? <section className="today-card">
       <div className="today-card-body">
         <div className="row"><time dateTime={TODAY.date}>{dateLabel(TODAY.date)}</time></div>

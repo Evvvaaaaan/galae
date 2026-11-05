@@ -1,9 +1,9 @@
-import { DEMO_GROUPS, MEMBERS, QUESTIONS } from './questionData.js';
+import { DEMO_GROUPS, MEMBERS, QUESTIONS, SAMPLE_COMMENTS, SAMPLE_NOTIFICATIONS } from './questionData.js';
 import PARADOXES from '../content/paradoxes.json' with { type: 'json' };
-import { ACHIEVEMENTS } from './achievements.js';
+import { ACHIEVEMENTS, earnedList } from './achievements.js';
 
 export const STORAGE_KEY = 'garae.frontend.v1';
-export const STEPS = ['answer', 'result', 'reading', 'done', 'share', 'summary'];
+export const STEPS = ['answer', 'result', 'reading', 'done', 'summary'];
 export const emptyAnswer = () => ({ sel: null, reason: '', submitted: false, completed: false, shareDraft: null, lastStep: null });
 export const COLOR_LABELS = { sage: '초록', blue: '파랑', peach: '살구', lilac: '보라' };
 export const PROFILE_COLORS = Object.keys(COLOR_LABELS);
@@ -12,7 +12,9 @@ export const cleanHandle = value => value.toLowerCase().replace(/[^a-z0-9._]/g, 
 export const joinedGroups = state => state.groups.filter(g => state.joined.includes(g.id));
 // 이름이 없으면 '나'로 보여 줍니다.
 export const myself = profile => ({ name: profile.name || '나', handle: profile.handle || profile.name || '나', color: profile.color, photo: profile.photo });
-export const initialState = () => ({ started: false, answers: {}, groups: DEMO_GROUPS, joined: ['g1', 'g2'], profile: { name: '', handle: '', bio: '', photo: '', color: 'blue' }, messages: [], comments: [], likes: [], achieved: {} });
+// 알림 설정입니다. 실제 발송은 서버나 앱 포장을 붙일 때 연결합니다.
+export const defaultNotify = () => ({ question: true, time: '08:00', share: true, chat: true, comment: true });
+export const initialState = () => ({ started: false, answers: {}, groups: DEMO_GROUPS, joined: ['g1', 'g2'], profile: { name: '', handle: '', bio: '', photo: '', color: 'blue' }, notify: defaultNotify(), messages: [], comments: [], likes: [], achieved: {} });
 
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const text = (value, fallback = '') => typeof value === 'string' ? value : fallback;
@@ -46,6 +48,14 @@ function restoreGroups(value) {
   });
 }
 
+function restoreNotify(saved) {
+  const notify = defaultNotify();
+  if (!isObject(saved)) return notify;
+  for (const key of ['question', 'share', 'chat', 'comment']) if (typeof saved[key] === 'boolean') notify[key] = saved[key];
+  if (typeof saved.time === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(saved.time)) notify.time = saved.time;
+  return notify;
+}
+
 export function loadState() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
@@ -54,6 +64,7 @@ export function loadState() {
       const answers = Object.fromEntries(Object.entries(isObject(saved.answers) ? saved.answers : {}).map(([id, answer]) => [id, restoreAnswer(answer, id, groups)]));
       // 공유가 메시지가 되기 전에 저장된 공유 그룹은 공유 메시지로 옮깁니다.
       const oldShares = Object.entries(answers).flatMap(([id, a]) => a.submitted ? strings(saved.answers[id]?.sharedWith).filter(g => groups.some(x => x.id === g)).map(groupId => ({ id: `${id}-${groupId}`, groupId, questionId: id, sel: a.sel, text: a.reason })) : []);
+      const comments = (Array.isArray(saved.comments) ? saved.comments : []).filter(c => isObject(c) && typeof c.id === 'string' && typeof c.text === 'string' && c.text && PARADOXES.some(p => p.id === c.topicId));
       return {
         started: saved.started === true,
         // 가입한 날입니다. 이 값이 생기기 전에 저장된 데이터는 가장 오래된 질문 날로 봅니다.
@@ -68,10 +79,12 @@ export function loadState() {
           photo: /^data:image\/jpeg;base64,/.test(saved.profile?.photo) ? saved.profile.photo : '',
           color: PROFILE_COLORS.includes(saved.profile?.color) ? saved.profile.color : 'blue',
         },
+        notify: restoreNotify(saved.notify),
         // 공유 메시지(sel이 있는 메시지)는 이유가 비어 있어도 됩니다.
         messages: [...oldShares, ...(Array.isArray(saved.messages) ? saved.messages : []).filter(m => isObject(m) && typeof m.id === 'string' && typeof m.text === 'string' && groups.some(g => g.id === m.groupId) && (m.sel === undefined ? m.text && QUESTIONS.some(q => q.id === m.questionId) : QUESTIONS.find(q => q.id === m.questionId)?.choices.some(c => c.id === m.sel)))],
-        comments: (Array.isArray(saved.comments) ? saved.comments : []).filter(c => isObject(c) && typeof c.id === 'string' && typeof c.text === 'string' && c.text && PARADOXES.some(p => p.id === c.topicId)),
-        likes: (Array.isArray(saved.likes) ? saved.likes : []).filter(id => typeof id === 'string'),
+        comments,
+        // 공감은 남아 있는 댓글(샘플 댓글과 내 댓글)에 대한 것만 둡니다.
+        likes: strings(saved.likes).filter(id => SAMPLE_COMMENTS.some(c => c.id === id) || comments.some(c => c.id === id)),
         achieved: Object.fromEntries(Object.entries(isObject(saved.achieved) ? saved.achieved : {}).filter(([id, a]) => ACHIEVEMENTS.some(x => x.id === id) && isObject(a) && isDate(a.on))),
       };
     }
@@ -118,9 +131,17 @@ export function questionStep(answer, requestedStep) {
   return STEPS.includes(requestedStep) ? requestedStep : 'result';
 }
 
-// 진행 단계의 뒤로가기 대상입니다. 나의 선택·완료·나누기는 질문에 들어오기 전 화면으로 돌아갑니다.
+// 진행 단계의 뒤로가기 대상입니다. 나의 선택·완료는 질문에 들어오기 전 화면으로 돌아갑니다.
 const PREVIOUS = { result: 'answer', reading: 'result' };
 export const previousStep = step => PREVIOUS[step] ?? null;
+
+// 질문 흐름에서 뒤로가면 갈 경로입니다. choice는 선택지별 코멘트를 보는 중인지, home은 질문에 들어오기 전 화면입니다.
+export function questionBack({ id, step, completed, choice, home }) {
+  if (completed && ((choice && step === 'result') || step === 'reading')) return `question/${id}/summary`;
+  if (choice && step === 'result') return `question/${id}/result`;
+  if (previousStep(step)) return `question/${id}/${previousStep(step)}`;
+  return home;
+}
 
 export function questionRoute(id, answer) {
   return answer?.completed ? `question/${id}/summary` : `question/${id}/${questionStep(answer, answer?.lastStep)}`;
@@ -165,4 +186,11 @@ export function addComment(state, topicId, value, parentId) {
 
 export function toggleLike(state, id) {
   return { ...state, likes: state.likes.includes(id) ? state.likes.filter(l => l !== id) : [...state.likes, id] };
+}
+
+// 알림 목록입니다. 맺은 열매는 최근 것부터, 그 아래에 샘플 알림이 옵니다.
+export function notifications(state) {
+  const fruits = earnedList(state.achieved).reverse().map(a => ({ id: `fruit-${a.id}`, kind: 'fruit', achievement: a }));
+  const samples = SAMPLE_NOTIFICATIONS.map(n => ({ ...n, members: n.memberIds.map(id => MEMBERS.find(m => m.id === id)) }));
+  return [...fruits, ...samples];
 }

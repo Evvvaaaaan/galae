@@ -3,6 +3,7 @@
     "id": "p001",
     "category": "동일성",
     "title": "테세우스의 배",
+    "thumbnail": "/thumbnails/ship-of-theseus.png",
     "cards": [
       { "text": "아테네 사람들은 영웅 테세우스의 배를 오랫동안 보존했습니다. 판자가 썩으면 새 판자로 하나씩 갈아 끼웠습니다." },
       { "text": "시간이 흘러 옛 판자는 하나도 남지 않게 되었습니다. 이 배를 여전히 테세우스의 배라고 할 수 있을까요?" },
@@ -18,43 +19,10 @@
     "checked": null
   },
   {
-    "id": "p002",
-    "category": "윤리",
-    "title": "트롤리 문제",
-    "cards": [
-      { "text": "브레이크가 고장 난 전차가 달려오고 있습니다. 선로 앞에는 다섯 사람이 있습니다." },
-      { "text": "전차의 방향을 옆 선로로 바꾸면 다섯 사람은 살 수 있습니다. 대신 그곳에 있는 한 사람이 희생됩니다." },
-      { "text": "철학자들은 상황을 조금 바꿔 보았습니다. 이번에는 다리 위에 있는 사람을 밀어야 전차를 멈출 수 있습니다." },
-      { "text": "두 경우 모두 한 사람을 희생해 다섯을 살립니다. 그런데 많은 사람이 두 번째 상황에서는 망설입니다." },
-      { "text": "결과가 같아도 행동이 다르게 느껴지는 이유는 무엇일까요?" }
-    ],
-    "sources": [
-      { "label": "필리파 풋(1967), 주디스 자비스 톰슨(1976)" },
-      { "label": "SEP, 'Doing vs. Allowing Harm'", "url": "https://plato.stanford.edu/entries/doing-allowing/" },
-      { "label": "Wikipedia, 'Trolley problem'", "url": "https://en.wikipedia.org/wiki/Trolley_problem" }
-    ],
-    "checked": null
-  },
-  {
-    "id": "p003",
-    "category": "논리",
-    "title": "아킬레우스와 거북",
-    "cards": [
-      { "text": "발 빠른 영웅 아킬레우스가 거북과 달리기 시합을 합니다. 거북은 조금 앞에서 출발합니다." },
-      { "text": "아킬레우스가 거북이 있던 곳에 도착하면, 거북은 그새 조금 더 나아가 있습니다. 그곳에 다시 도착하면, 거북은 또 조금 앞에 있습니다." },
-      { "text": "철학자 제논은 이렇게 주장했습니다. 이 과정은 끝없이 반복되므로 아킬레우스는 거북을 따라잡을 수 없습니다." },
-      { "text": "우리는 아킬레우스가 이긴다는 것을 압니다. 하지만 제논의 논리에서 어디가 틀렸는지 설명하기는 생각보다 어렵습니다." },
-      { "text": "당연하다고 믿지만 이유를 설명하기 어려운 것이 있나요?" }
-    ],
-    "sources": [
-      { "label": "SEP, 'Zeno's Paradoxes'", "url": "https://plato.stanford.edu/entries/paradox-zeno/" }
-    ],
-    "checked": null
-  },
-  {
     "id": "p004",
     "category": "논리",
     "title": "더미의 역설",
+    "thumbnail": "/thumbnails/sorites-paradox.png",
     "cards": [
       { "text": "모래 더미에서 모래 한 알을 빼도 여전히 모래 더미입니다. 한 알 차이로 더미가 아니게 되지는 않으니까요." },
       { "text": "그렇다면 한 알을 또 빼도 더미입니다. 이렇게 계속 빼다 보면 결국 모래 한 알만 남습니다." },
@@ -74,7 +42,9 @@
     "cards": [
       { "text": "배고픈 당나귀 한 마리가 두 건초 더미 사이에 서 있습니다. 두 더미는 크기도, 거리도 똑같습니다." },
       { "text": "어느 쪽을 골라야 할 이유가 없습니다. 당나귀는 결국 아무것도 고르지 못한 채 굶어 죽습니다." },
-      { "text": "이 이야기는 14세기 철학자 뷔리당의 이름으로 알려져 있습니다. 하지만 정작 그의 저작에는 이 당나귀가 등장하지 않습니다." },
+      { "text": "이 이야기는 14세기 철학자 뷔리당의 이름으로 알려져 있습니다. 그는 두 길이 똑같이 좋아 보이면 의지는 판단을 미룰 수밖에 없다고 보았습니다. 훗날 사람들이 이 생각을 당나귀에 빗대어 꼬집었습니다." },
+      { "text": "뷔리당보다 200여 년 앞서 이슬람 철학자 가잘리는 다르게 생각했습니다. 똑같은 대추야자 두 개 앞에서도 사람은 결국 하나를 집어 든다는 것입니다." },
+      { "text": "17세기 철학자 라이프니츠는 완벽한 균형은 없다고 보았습니다. 우리가 미처 알아차리지 못하는 작은 끌림이 늘 마음을 어느 한쪽으로 기울인다는 것입니다." },
       { "text": "이유 없이도 무언가를 선택할 수 있을까요? 그렇다면 그 선택은 정말 자유로운 것일까요?" },
       { "text": "두 길이 똑같이 좋아 보일 때, 나는 무엇으로 결정하나요?" }
     ],
@@ -84,5 +54,356 @@
       { "label": "Wikipedia, 'Buridan's ass'", "url": "https://en.wikipedia.org/wiki/Buridan%27s_ass" }
     ],
     "checked": null
+  },
+  {
+    "id": "p006",
+    "category": "동일성",
+    "title": "순간이동 장치",
+    "cards": [
+      { "text": "지구에서 화성으로 가는 순간이동 장치가 있습니다. 장치는 내 몸을 낱낱이 기록한 뒤 없애고, 그 기록을 화성으로 보냅니다." },
+      { "text": "화성의 장치는 그 기록대로 원자 하나하나까지 똑같은 사람을 만들어 냅니다. 화성에서 깨어난 그 사람은 나일까요?" },
+      { "text": "이번에는 새 장치가 지구의 내 몸을 없애지 않는다고 해 봅시다. 이제 나와 똑같은 사람이 지구와 화성에 한 명씩 있게 됩니다." },
+      { "text": "철학자 데릭 파핏은 1984년 책 『이유와 인격』에서 이 사고실험을 다루었습니다. 그는 같은 사람인지보다 기억과 성격 같은 마음의 이어짐이 더 중요하다고 보았습니다." },
+      { "text": "내일 아침 깨어날 사람이 나라고 믿는 근거는 무엇일까요?" }
+    ],
+    "sources": [
+      { "label": "Wikipedia, 'Teletransportation paradox'", "url": "https://en.wikipedia.org/wiki/Teletransportation_paradox" },
+      { "label": "LSE Ph103 강의 노트, 'Lecture 5'", "url": "https://personal.lse.ac.uk/robert49/teaching/ph103/lecture5.html" },
+      { "label": "SEP, 'Personal Identity'", "url": "https://plato.stanford.edu/entries/identity-personal/" }
+    ],
+    "checked": "2026-11-05"
+  },
+  {
+    "id": "p007",
+    "category": "마음",
+    "title": "메리의 방",
+    "cards": [
+      { "text": "메리는 흑백으로 된 방 안에서 흑백 화면으로만 세상을 연구하는 뛰어난 과학자입니다. 그녀의 전공은 시각의 신경생리학입니다." },
+      { "text": "잘 익은 토마토나 하늘을 볼 때 무슨 일이 일어나는지, 메리는 물리적으로 빠짐없이 알고 있습니다. 하지만 색을 직접 본 적은 한 번도 없습니다." },
+      { "text": "어느 날 메리가 방을 나와 처음으로 빨간색을 봅니다. 그녀는 새로운 무언가를 알게 될까요?" },
+      { "text": "철학자 프랭크 잭슨은 1982년 이 사고실험을 내놓으며, 메리가 새로 배운다면 물리적인 것이 전부는 아니라고 주장했습니다. 그런데 훗날 잭슨 자신은 이 논증을 더는 받아들이지 않게 되었습니다." },
+      { "text": "직접 겪어 보아야만 알 수 있는 것이 나에게도 있을까요?" }
+    ],
+    "sources": [
+      { "label": "SEP, 'Qualia: The Knowledge Argument'", "url": "https://plato.stanford.edu/entries/qualia-knowledge/" },
+      { "label": "Wikipedia, 'Knowledge argument'", "url": "https://en.wikipedia.org/wiki/Knowledge_argument" }
+    ],
+    "checked": "2026-11-05"
+  },
+  {
+    "id": "p008",
+    "category": "윤리",
+    "title": "기게스의 반지",
+    "cards": [
+      { "text": "리디아 왕을 섬기던 한 양치기가 지진으로 갈라진 땅속에서 금반지 하나를 얻었다고 전해집니다. 반지를 만지작거리던 그는 자신이 남의 눈에 보이지 않게 된다는 것을 알았습니다." },
+      { "text": "그는 이 힘으로 왕비를 유혹하고, 왕비와 함께 왕을 죽인 뒤 나라를 차지했다고 전해집니다." },
+      { "text": "플라톤의 『국가』 2권에서 글라우콘은 이 이야기를 꺼냅니다. 이런 반지가 있다면 정의로운 사람도 부정한 사람과 똑같이 행동할 것이라는 이야기입니다." },
+      { "text": "그의 말대로라면 사람들은 원해서가 아니라 어쩔 수 없어서 정의롭게 사는 셈입니다. 글라우콘은 소크라테스에게 정의가 그 자체로 좋다는 것을 보여 달라고 청합니다." },
+      { "text": "아무도 보지 않을 때의 나는 어떤 사람일까요?" }
+    ],
+    "sources": [
+      { "label": "플라톤, 『국가』 2권 (Jowett 영역, Project Gutenberg)", "url": "https://www.gutenberg.org/cache/epub/1497/pg1497.txt" },
+      { "label": "Wikipedia, 'Ring of Gyges'", "url": "https://en.wikipedia.org/wiki/Ring_of_Gyges" }
+    ],
+    "checked": "2026-11-05"
+  },
+  {
+    "id": "p009",
+    "category": "사회",
+    "title": "무지의 베일",
+    "cards": [
+      { "text": "새로 세울 사회의 규칙을 정하는 자리에 앉았다고 해 봅시다. 단, 그 사회에서 내가 부자일지 가난할지, 어떤 성별과 재능을 갖고 태어날지는 알 수 없습니다." },
+      { "text": "철학자 존 롤스는 1971년 『정의론』에서 이런 조건을 무지의 베일이라고 불렀습니다. 자기 처지를 모르니 자신에게만 유리한 규칙을 고를 수 없습니다." },
+      { "text": "롤스는 이렇게 고르면, 가장 불리한 사람에게도 이익이 될 때만 불평등을 허용하는 원칙이 나온다고 보았습니다." },
+      { "text": "다른 생각도 있습니다. 존 하사니는 같은 조건이라면 사람들이 평균적인 행복을 가장 크게 하는 쪽을 고를 것이라고 보았습니다." },
+      { "text": "내가 누가 될지 모른다면, 나는 지금 우리 사회의 규칙을 그대로 고를까요?" }
+    ],
+    "sources": [
+      { "label": "SEP, 'Original Position'", "url": "https://plato.stanford.edu/entries/original-position/" },
+      { "label": "Wikipedia, 'Original position'", "url": "https://en.wikipedia.org/wiki/Original_position" }
+    ],
+    "checked": "2026-11-05"
+  },
+  {
+    "id": "p010",
+    "category": "확률",
+    "title": "몬티 홀 문제",
+    "cards": [
+      { "text": "문 세 개 가운데 하나 뒤에는 자동차가, 나머지 둘 뒤에는 염소가 있습니다. 내가 문 하나를 고르자, 답을 아는 진행자가 남은 문 가운데 염소가 있는 문 하나를 열어 보입니다." },
+      { "text": "진행자가 처음 고른 문을 그대로 둘지, 남은 문으로 바꿀지 묻습니다. 남은 문은 두 개이니 어느 쪽이든 반반처럼 보입니다." },
+      { "text": "그런데 문을 바꾸면 이길 확률이 3분의 2가 됩니다. 처음 고른 문이 맞을 확률은 여전히 3분의 1이기 때문입니다." },
+      { "text": "1990년 미국 잡지 『퍼레이드』의 칼럼에 바꾸는 편이 낫다는 답이 실리자, 틀렸다는 편지가 수천 통 쏟아졌습니다. 그중에는 박사 학위를 가진 사람들의 편지도 많았습니다." },
+      { "text": "내 직관이 틀렸다는 것을 받아들이기 가장 어려운 때는 언제일까요?" }
+    ],
+    "sources": [
+      { "label": "Wikipedia, 'Monty Hall problem'", "url": "https://en.wikipedia.org/wiki/Monty_Hall_problem" },
+      { "label": "Marilyn vos Savant, 'Game Show Problem' (보관본)", "url": "https://web.archive.org/web/2013/http://marilynvossavant.com/game-show-problem/" }
+    ],
+    "checked": "2026-11-05"
+  },
+  {
+    "id": "p011",
+    "category": "과학",
+    "title": "생일 문제",
+    "cards": [
+      { "text": "한 교실에 23명이 모여 있습니다. 이 가운데 생일이 같은 두 사람이 있을 확률은 얼마나 될까요?" },
+      { "text": "1년은 365일이니 그리 높지 않을 것 같습니다. 그런데 계산해 보면 절반을 조금 넘습니다." },
+      { "text": "23명 사이에는 서로 견주어 볼 짝이 253쌍이나 있기 때문입니다. 반면 나와 생일이 같은 사람이 그 안에 있을 확률은 10%도 되지 않습니다." },
+      { "text": "놀라운 우연은 나를 중심으로 셈할 때 드물어 보입니다. 하지만 우연은 나와 상관없는 수많은 짝 사이에서도 일어납니다." },
+      { "text": "내게 특별하게 느껴졌던 우연은 정말 드문 일이었을까요?" }
+    ],
+    "sources": [
+      { "label": "Wikipedia, 'Birthday problem'", "url": "https://en.wikipedia.org/wiki/Birthday_problem" },
+      { "label": "Wolfram MathWorld, 'Birthday Problem'", "url": "https://mathworld.wolfram.com/BirthdayProblem.html" },
+      { "label": "Durrett, Elementary Probability for Applications, 1장 (Temple University 강의 자료)", "url": "https://cis.temple.edu/~latecki/Courses/CIS2033-Spring12/ElementaryProbabilityforApplications/ch1.pdf" }
+    ],
+    "checked": "2026-11-05"
+  },
+  {
+    "id": "p012",
+    "category": "과학",
+    "title": "보이지 않는 고릴라",
+    "cards": [
+      { "text": "사람들에게 농구공을 주고받는 짧은 영상을 보여 주었습니다. 한 팀이 패스를 몇 번 하는지 세어 달라고 부탁했습니다." },
+      { "text": "영상 도중에 고릴라 옷을 입은 사람이 선수들 사이를 걸어 지나갑니다." },
+      { "text": "그런데 영상을 본 사람 가운데 절반가량은 고릴라를 보지 못했다고 답했습니다." },
+      { "text": "무언가에 집중하면 눈앞을 지나가는 것도 보지 못할 수 있습니다. 심리학에서는 이를 무주의 맹시라고 부릅니다." },
+      { "text": "지금 내가 열심히 세고 있는 것 때문에 지나쳐 버린 것은 무엇일까요?" }
+    ],
+    "sources": [
+      { "label": "Wikipedia, 'Inattentional blindness'", "url": "https://en.wikipedia.org/wiki/Inattentional_blindness" },
+      { "label": "Simons (2010), i-Perception 'Monkeying around with the gorillas in our midst'", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3563049/" }
+    ],
+    "checked": "2026-11-05"
+  },
+  {
+    "id": "p013",
+    "category": "과학",
+    "title": "마시멜로 실험",
+    "cards": [
+      { "text": "스탠퍼드 대학의 심리학자 미셸은 아이들 앞에 간식을 두고, 먹지 않고 기다리면 더 주겠다고 했습니다. 후속 연구에서는 오래 기다린 아이들이 자라서 학업 성적이 더 높았다고 보고되었습니다." },
+      { "text": "그렇다면 어릴 때의 참을성이 앞날을 정하는 것일까요? 연구자들은 이 질문을 다시 확인해 보기로 했습니다." },
+      { "text": "2018년, 훨씬 많고 다양한 아이들을 대상으로 다시 연구했습니다. 연관성은 원래 연구의 절반 정도였고, 가정 배경 등을 함께 고려하자 더 줄어들었습니다." },
+      { "text": "2012년의 다른 실험에서는 약속을 어기는 어른을 먼저 겪은 아이들이 훨씬 짧게 기다렸습니다. 기다림은 참을성만이 아니라 믿음의 문제일 수도 있습니다." },
+      { "text": "내가 잘 기다리지 못했던 때, 그것은 의지의 문제였을까요, 믿음의 문제였을까요?" }
+    ],
+    "sources": [
+      { "label": "Wikipedia, 'Stanford marshmallow experiment'", "url": "https://en.wikipedia.org/wiki/Stanford_marshmallow_experiment" },
+      { "label": "Watts, Duncan & Quan (2018), Psychological Science 'Revisiting the Marshmallow Test'", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6050075/" },
+      { "label": "University of Rochester 보도자료 (2012), 'The Marshmallow Study Revisited'", "url": "https://www.rochester.edu/news/printable.php?id=4622" }
+    ],
+    "checked": "2026-11-05"
+  },
+  {
+    "id": "p014",
+    "category": "과학",
+    "title": "떠올릴 때마다 다시 쓰이는 기억",
+    "cards": [
+      { "text": "2000년, 연구자들은 쥐에게 공포 기억을 학습시킨 뒤 그 기억을 다시 떠올리게 했습니다." },
+      { "text": "떠올린 직후 뇌의 편도체에서 단백질 합성을 막자, 쥐는 그 공포를 잊은 듯 행동했습니다. 이미 굳어 있던 기억이었습니다." },
+      { "text": "연구자들은 떠올린 기억이 잠시 불안정해지고, 다시 굳혀져야 남는다고 보았습니다. 이 과정을 재응고라고 부릅니다." },
+      { "text": "다만 같은 효과를 확인하지 못한 연구도 있어, 사람의 기억에서 어디까지 그런지는 지금도 논쟁 중입니다." },
+      { "text": "내가 자주 떠올리는 기억은 처음 그대로일까요, 떠올릴 때마다 조금씩 달라졌을까요?" }
+    ],
+    "sources": [
+      { "label": "Nader, Schafe & LeDoux (2000), Nature 406 (Europe PMC 초록)", "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:10.1038/35021052&resultType=core&format=json" },
+      { "label": "Wikipedia, 'Memory reconsolidation'", "url": "https://en.wikipedia.org/wiki/Memory_reconsolidation" },
+      { "label": "Walker & Stickgold (2016), PNAS 'Understanding the boundary conditions of memory reconsolidation'", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4948330/" }
+    ],
+    "checked": "2026-11-05"
+  },
+  {
+    "id": "p015",
+    "category": "과학",
+    "title": "별에서 온 몸",
+    "cards": [
+      { "text": "우주가 처음 생겼을 때는 수소와 헬륨 같은 가벼운 원소가 거의 전부였습니다." },
+      { "text": "탄소처럼 더 무거운 원소는 그 뒤 별 속에서 만들어졌습니다. 별이 생을 마칠 때 이 원소들은 우주로 흩어졌습니다." },
+      { "text": "우리 몸속의 탄소도 오래전 어느 별 안에서 만들어진 것입니다." },
+      { "text": "내 몸은 겨우 수십 년 전에 생겼지만, 그것을 이루는 재료는 훨씬 오래되었습니다." },
+      { "text": "그렇게 오래된 재료로 이루어진 나는 오늘 하루를 어떻게 보내고 싶을까요?" }
+    ],
+    "sources": [
+      { "label": "Wikipedia, 'Stellar nucleosynthesis'", "url": "https://en.wikipedia.org/wiki/Stellar_nucleosynthesis" },
+      { "label": "Natural History Museum, 'Are we really made of stardust?'", "url": "https://www.nhm.ac.uk/discover/are-we-really-made-of-stardust.html" }
+    ],
+    "checked": "2026-11-05"
+  },
+  {
+    "id": "p016",
+    "category": "역사",
+    "title": "젬멜바이스와 손 씻기",
+    "cards": [
+      { "text": "1840년대 빈의 한 종합병원에는 출산을 돕는 병동이 두 곳 있었습니다. 의사들이 맡은 병동에서 산모가 숨지는 비율이 조산사들이 맡은 병동보다 훨씬 높았습니다." },
+      { "text": "의사 젬멜바이스는 의사들이 시신을 해부한 뒤 곧바로 산모를 진찰한다는 점에 주목했습니다. 염소 용액으로 손을 씻게 하자 사망률이 크게 떨어졌습니다." },
+      { "text": "그러나 많은 의사들은 그의 주장을 받아들이지 않았습니다. 세균이 병을 일으킨다는 이론이 자리 잡기 전이라, 그는 왜 효과가 있는지 설명하지 못했습니다." },
+      { "text": "그는 1865년 정신병원에서 세상을 떠났습니다. 그의 생각은 그 뒤 파스퇴르의 세균 연구와 리스터의 소독법이 퍼지면서 다시 평가받았습니다." },
+      { "text": "이유는 설명하지 못해도 결과가 분명한 주장 앞에서, 나는 어떻게 할까요? 그 주장이 내 방식이 문제였다고 말한다면요?" }
+    ],
+    "sources": [
+      { "label": "Wikipedia, 'Ignaz Semmelweis'", "url": "https://en.wikipedia.org/wiki/Ignaz_Semmelweis" },
+      { "label": "Museum of Health Care at Kingston, 'Ignaz Semmelweis: The Saviour of Mothers'", "url": "https://www.museumofhealthcare.ca/blog/ignaz-semmelweis-the-saviour-of-mothers" },
+      { "label": "Imre et al., Semmelweis 자료 재분석 (PMC)", "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3807775/" }
+    ],
+    "checked": "2026-11-05"
+  },
+  {
+    "id": "p017",
+    "category": "역사",
+    "title": "페트로프의 경보",
+    "cards": [
+      { "text": "1983년 9월 26일, 소련의 조기경보 지휘소에서 스타니슬라프 페트로프 중령이 당직을 서고 있었습니다. 화면에 미국에서 미사일 다섯 기가 발사되었다는 경보가 떴습니다." },
+      { "text": "경보는 사람이 아니라 위성 감시 체계가 알린 것이었습니다. 그는 이 경보를 그대로 믿을지 정해야 했습니다." },
+      { "text": "그는 이 경보를 거짓 경보라고 판단했습니다. 뒤에 경보는 감시 체계의 오작동이었던 것으로 밝혀졌습니다." },
+      { "text": "그는 이 일로 보상을 받지 못했고, 다른 자리로 옮겨졌습니다. 이 일은 1990년대 후반에야 바깥에 알려졌습니다." },
+      { "text": "기계가 내놓은 답과 내 판단이 다를 때, 나는 무엇을 믿을까요?" }
+    ],
+    "sources": [
+      { "label": "Wikipedia, '1983 Soviet nuclear false alarm incident'", "url": "https://en.wikipedia.org/wiki/1983_Soviet_nuclear_false_alarm_incident" },
+      { "label": "U.S. National Park Service, 'Stanislav Petrov'", "url": "https://www.nps.gov/people/stanislav_petrov.htm" },
+      { "label": "Pavel Podvig, Russian Strategic Nuclear Forces, 'Did Stanislav Petrov save the world in 1983?'", "url": "https://russianforces.org/blog/2022/10/did_stanislav_petrov_save_the_.shtml" }
+    ],
+    "checked": "2026-11-05"
+  },
+  {
+    "id": "p018",
+    "category": "역사",
+    "title": "1914년 크리스마스 휴전",
+    "cards": [
+      { "text": "1914년 겨울, 제1차 세계대전의 서부 전선에서 영국군과 독일군은 가까운 참호를 사이에 두고 마주하고 있었습니다. 몇 달째 서로를 향해 총과 포를 쏘던 사이였습니다." },
+      { "text": "크리스마스이브 밤, 양쪽 참호에서 노랫소리가 오가기 시작했습니다. 이튿날 병사들은 참호 밖으로 나와 담배와 음식, 기념품을 주고받았습니다." },
+      { "text": "이 휴전은 위에서 내린 명령으로 시작된 것이 아니었습니다. 병사들 사이에서 저절로 생겨났고, 양쪽 지휘부는 이런 어울림을 달가워하지 않았습니다." },
+      { "text": "며칠 뒤 병사들은 다시 각자의 참호로 돌아갔습니다. 전쟁은 그 뒤로도 계속되었습니다." },
+      { "text": "적이라고 배운 사람의 얼굴을 가까이서 보게 되면, 무엇이 달라질까요?" }
+    ],
+    "sources": [
+      { "label": "Wikipedia, 'Christmas truce'", "url": "https://en.wikipedia.org/wiki/Christmas_truce" },
+      { "label": "Bruce Bairnsfather, 『Bullets & Billets』(1916), 8~9장 (Project Gutenberg)", "url": "https://www.gutenberg.org/ebooks/11232" }
+    ],
+    "checked": "2026-11-05"
+  },
+  {
+    "id": "p019",
+    "category": "역사",
+    "title": "훈민정음 반대 상소",
+    "cards": [
+      { "text": "1443년, 세종은 새 문자 훈민정음을 만들었습니다. 이듬해 집현전 부제학 최만리 등은 이에 반대하는 상소를 올렸습니다." },
+      { "text": "상소에는 중국과 다른 글자를 만드는 것은 대국을 섬기는 도리에 어긋나고, 학문에 도움이 되지 않는다는 걱정이 담겨 있었습니다. 널리 의논하지 않고 서두른다는 비판도 함께 있었습니다." },
+      { "text": "세종은 상소를 올린 학자들을 의금부에 가두었다가 이튿날 풀어 주었습니다. 최만리는 그 뒤 벼슬을 내려놓고 고향으로 돌아갔습니다." },
+      { "text": "지금 우리는 한글을 당연하게 씁니다. 그때 반대한 학자들에게도 자신이 지켜야 한다고 믿은 질서가 있었습니다." },
+      { "text": "결과를 아는 지금은 어느 쪽이 옳았는지 말하기 쉽습니다. 그 시대 한가운데에 있었다면, 나는 어느 쪽에 섰을까요?" }
+    ],
+    "sources": [
+      { "label": "『세종실록』 세종 26년 2월 20일, 최만리 등의 언문 반대 상소", "url": "https://sillok.history.go.kr/id/kda_12602020_001" },
+      { "label": "한국민족문화대백과사전, '최만리'", "url": "https://encykorea.aks.ac.kr/Article/E0057279" },
+      { "label": "위키백과, '최만리'", "url": "https://ko.wikipedia.org/wiki/%EC%B5%9C%EB%A7%8C%EB%A6%AC" }
+    ],
+    "checked": "2026-11-05"
+  },
+  {
+    "id": "p020",
+    "category": "역사",
+    "title": "장영실과 부서진 가마",
+    "cards": [
+      { "text": "장영실은 원나라 출신 아버지와 기생 어머니 사이에서 태어나 동래현의 관노로 지냈습니다. 세종은 그의 뛰어난 솜씨를 아껴 대신들과 의논한 끝에 벼슬을 주었습니다." },
+      { "text": "그는 스스로 시각을 알리는 물시계 자격루를 만들었습니다. 세종은 그 공을 들어 그의 벼슬을 높였습니다." },
+      { "text": "1442년, 그가 만들기를 감독한 임금의 가마가 부러지고 부서졌습니다. 그는 의금부에서 국문을 받았습니다." },
+      { "text": "세종은 그의 형벌을 두 등급 낮춰 주었습니다. 그래도 그는 불경죄로 벼슬을 빼앗기고 곤장을 맞는 벌을 받았습니다." },
+      { "text": "아끼던 사람이 잘못했을 때, 나는 그의 지난 공과 이번 잘못을 어떻게 저울질할까요?" }
+    ],
+    "sources": [
+      { "label": "『세종실록』 세종 15년 9월 16일, 장영실에게 호군의 관직을 더하는 일을 의논함", "url": "https://sillok.history.go.kr/id/kda_11509016_003" },
+      { "label": "『세종실록』 세종 24년 4월 27일, 장영실의 형을 두 등급 감함", "url": "https://sillok.history.go.kr/id/kda_12404027_002" },
+      { "label": "한국민족문화대백과사전, '장영실'", "url": "https://encykorea.aks.ac.kr/Article/E0048697" }
+    ],
+    "checked": "2026-11-05"
+  },
+  {
+    "id": "p021",
+    "category": "성경",
+    "title": "선한 사마리아인",
+    "cards": [
+      { "text": "누가복음은 한 율법사가 예수에게 내 이웃이 누구냐고 물은 장면을 전합니다. 예수는 그 물음에 이야기 하나로 답했습니다." },
+      { "text": "어떤 사람이 예루살렘에서 여리고로 내려가다 강도를 만나 거의 죽은 채 버려졌습니다. 그 길을 지나던 제사장과 레위인은 그를 보고도 피하여 지나갔습니다." },
+      { "text": "그를 멈춰 돌본 사람은 여행 중이던 한 사마리아인이었습니다. 그는 상처를 싸매고 주막에 데려가 돌봐 달라며 돈까지 맡겼습니다." },
+      { "text": "당시 유대인과 사마리아인은 서로 가까이하지 않던 사이로 알려져 있습니다. 이야기를 마친 예수는 누가 강도 만난 사람의 이웃이 되었느냐고 되물었습니다." },
+      { "text": "누가 내 이웃인지 묻는 것과 내가 누구의 이웃이 되어 줄지 묻는 것은 같은 질문일까요?" }
+    ],
+    "sources": [
+      { "label": "누가복음 10:25-37 (개역한글판), 위키문헌", "url": "https://ko.wikisource.org/wiki/%EA%B0%9C%EC%97%AD%ED%95%9C%EA%B8%80%ED%8C%90/%EB%88%84%EA%B0%80%EB%B3%B5%EC%9D%8C" },
+      { "label": "요한복음 4:9 (개역한글판), 위키문헌", "url": "https://ko.wikisource.org/wiki/%EA%B0%9C%EC%97%AD%ED%95%9C%EA%B8%80%ED%8C%90/%EC%9A%94%ED%95%9C%EB%B3%B5%EC%9D%8C" },
+      { "label": "Wikipedia, 'Parable of the Good Samaritan'", "url": "https://en.wikipedia.org/wiki/Parable_of_the_Good_Samaritan" }
+    ],
+    "checked": "2026-11-05"
+  },
+  {
+    "id": "p022",
+    "category": "성경",
+    "title": "돌아온 동생과 큰아들",
+    "cards": [
+      { "text": "누가복음은 두 아들을 둔 아버지의 이야기를 전합니다. 작은아들은 미리 나눠 받은 재산을 먼 나라에서 모두 허비하고 아버지에게 돌아왔습니다." },
+      { "text": "아버지는 아직 멀리 있는 아들을 보고 달려가 끌어안았습니다. 제일 좋은 옷을 입히고 살진 송아지를 잡아 잔치를 열었습니다." },
+      { "text": "밭에서 돌아온 큰아들은 잔치 소리를 듣고 화가 나 집에 들어가지 않았습니다. 여러 해 아버지를 섬겼지만 자신에게는 염소 새끼 한 마리도 주지 않았다고 말했습니다." },
+      { "text": "아버지는 “얘 너는 항상 나와 함께 있으니 내 것이 다 네 것이로되”라고 답했다고 성경은 전합니다. 이야기는 큰아들이 잔치에 들어갔는지 알려 주지 않은 채 끝납니다." },
+      { "text": "내가 큰아들이었다면, 나는 그 잔치에 들어갔을까요?" }
+    ],
+    "sources": [
+      { "label": "누가복음 15:11-32 (개역한글판), 위키문헌", "url": "https://ko.wikisource.org/wiki/%EA%B0%9C%EC%97%AD%ED%95%9C%EA%B8%80%ED%8C%90/%EB%88%84%EA%B0%80%EB%B3%B5%EC%9D%8C" },
+      { "label": "누가복음 15장 (개역한글), Bíblia Online", "url": "https://www.bibliaonline.com.br/kor/lc/15" },
+      { "label": "Wikipedia, 'Parable of the Prodigal Son'", "url": "https://en.wikipedia.org/wiki/Parable_of_the_Prodigal_Son" }
+    ],
+    "checked": "2026-11-05"
+  },
+  {
+    "id": "p023",
+    "category": "성경",
+    "title": "요나와 박넝쿨",
+    "cards": [
+      { "text": "요나서는 니느웨로 가라는 말씀을 들은 요나가 다시스로 도망쳤다고 전합니다. 우여곡절 끝에 그는 니느웨에 가서 경고를 전했습니다." },
+      { "text": "니느웨 사람들이 악한 길에서 돌이키자 하나님은 내리려던 재앙을 거두었습니다. 그러자 요나는 몹시 싫어하며 화를 냈습니다." },
+      { "text": "성 밖에 앉은 요나 위로 박넝쿨이 자라 그늘을 드리웠고, 요나는 크게 기뻐했습니다. 이튿날 벌레가 넝쿨을 씹어 시들게 하자 요나는 차라리 죽고 싶다고 말했습니다." },
+      { "text": "하나님은 수고하지도 않은 넝쿨을 그토록 아꼈다면 큰 성읍 니느웨를 아끼는 것이 어찌 옳지 않으냐고 물었습니다. 요나서는 요나의 대답 없이 이 질문으로 끝납니다." },
+      { "text": "내 그늘 하나가 사라진 일과 다른 사람이 용서받은 일 가운데, 나는 어느 쪽에 더 마음이 움직일까요?" }
+    ],
+    "sources": [
+      { "label": "요나 3:10-4:11 (개역한글판), 위키문헌", "url": "https://ko.wikisource.org/wiki/%EA%B0%9C%EC%97%AD%ED%95%9C%EA%B8%80%ED%8C%90/%EC%9A%94%EB%82%98" },
+      { "label": "Wikipedia, 'Book of Jonah'", "url": "https://en.wikipedia.org/wiki/Book_of_Jonah" }
+    ],
+    "checked": "2026-11-05"
+  },
+  {
+    "id": "p024",
+    "category": "불교",
+    "title": "키사 고타미와 겨자씨",
+    "cards": [
+      { "text": "사왓티에 살던 키사 고타미는 어린 아들을 잃었다고 전해집니다. 그녀는 아이의 죽음을 받아들이지 못하고 아이를 안은 채 집집마다 약을 구하러 다녔습니다." },
+      { "text": "한 사람이 그녀에게 붓다를 찾아가 보라고 했습니다. 붓다는 아무도 죽은 적 없는 집에서 흰 겨자씨를 얻어 오라고 했다고 전해집니다." },
+      { "text": "그녀는 집집마다 문을 두드렸지만 죽음을 겪지 않은 집은 한 곳도 없었습니다. 그녀가 찾던 겨자씨는 끝내 구하지 못했습니다." },
+      { "text": "그 길에서 그녀는 죽음이 어느 집에나 찾아온다는 것을 알게 되었다고 전해집니다. 그녀는 붓다에게 돌아갔고, 훗날 출가해 비구니가 되었다고 전해집니다." },
+      { "text": "내 슬픔이 나만의 것이 아니라는 사실을 알게 될 때, 나는 위로를 받을까요?" }
+    ],
+    "sources": [
+      { "label": "Buddhist Legends VIII.13 (법구경 주석, Burlingame 영역), Ancient Buddhist Texts", "url": "https://ancient-buddhist-texts.net/English-Texts/Buddhist-Legends/08-13.htm" },
+      { "label": "Therīgāthā 10.1 Kisāgotamī (Sujato 영역), SuttaCentral", "url": "https://suttacentral.net/thig10.1/en/sujato" },
+      { "label": "Wikipedia, 'Kisa Gotami'", "url": "https://en.wikipedia.org/wiki/Kisa_Gotami" }
+    ],
+    "checked": "2026-11-05"
+  },
+  {
+    "id": "p025",
+    "category": "불교",
+    "title": "독화살의 비유",
+    "cards": [
+      { "text": "수행자 말룽꺄뿟따는 붓다가 답하지 않고 남겨 둔 질문들이 마음에 걸렸다고 전해집니다. 세계는 영원한지, 깨달은 이는 죽은 뒤에도 존재하는지 같은 질문이었습니다." },
+      { "text": "그는 답을 듣지 못하면 수행을 그만두겠다는 마음으로 붓다를 찾아갔습니다. 붓다는 그에게 독화살을 맞은 사람의 이야기를 들려주었다고 전해집니다." },
+      { "text": "독이 묻은 화살을 맞은 사람이 있습니다. 그는 누가 쏘았는지, 활과 화살이 무엇으로 만들어졌는지 알기 전에는 화살을 뽑지 않겠다고 합니다." },
+      { "text": "그 답을 다 알기 전에 그 사람은 죽고 말 것이라고 붓다는 말했다고 전해집니다. 붓다는 그 질문들이 수행의 근본에 도움이 되지 않아 답하지 않았다고 설명했습니다." },
+      { "text": "지금 내 앞의 문제에서, 나는 화살을 뽑기보다 화살에 대해 묻는 데 머물러 있지는 않을까요?" }
+    ],
+    "sources": [
+      { "label": "Majjhima Nikāya 63 Cūḷamālukya Sutta (Sujato 영역), SuttaCentral", "url": "https://suttacentral.net/mn63/en/sujato" },
+      { "label": "Wikipedia, 'Parable of the Poisoned Arrow'", "url": "https://en.wikipedia.org/wiki/Parable_of_the_Poisoned_Arrow" }
+    ],
+    "checked": "2026-11-05"
   }
 ]
