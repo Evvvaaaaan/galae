@@ -32,9 +32,10 @@ test('two real accounts answer, share, unlock, poll, edit and leave without leak
   await expect(page.getByText('한 걸음 청년부')).toHaveCount(0);
   await expect(page.getByRole('button', { name: '최근 갈래 시작하기' })).toBeVisible();
   await page.getByRole('link', { name: '생각', exact: true }).click();
-  await expect(page.getByText('아직 공개된 생각이 없어요')).toBeVisible();
+  await expect(page.getByText('모든 생각을 다 보셨어요')).toBeVisible();
   await page.getByRole('link', { name: '오늘', exact: true }).click();
   await page.getByRole('button', { name: '최근 갈래 시작하기' }).click();
+  const questionId = /question\/([^/]+)/.exec(page.url())[1];
   await page.locator('.choice').nth(1).click();
   await page.getByRole('textbox', { name: '선택한 이유' }).fill('실제 서버에 남길 첫 번째 이유');
   await page.reload();
@@ -55,12 +56,12 @@ test('two real accounts answer, share, unlock, poll, edit and leave without leak
   await expect(page.locator('.invite strong')).toBeVisible();
   const code = await page.locator('.invite strong').innerText();
   const groupId = /groups\/(\d+)/.exec(page.url())[1];
-  await page.goto('/#/question/q037/share');
+  await page.goto(`/#/question/${questionId}/done`);
+  await page.getByRole('button', { name: '공유하기', exact: true }).click();
   await page.getByRole('checkbox').check();
   await page.getByRole('button', { name: '1개 그룹에 공유하기' }).click();
-  await expect(page.getByRole('button', { name: '저장됨' })).toBeVisible();
-  await expect(page.getByRole('checkbox')).toBeDisabled();
-  await page.getByRole('button', { name: '그룹에서 보기' }).click();
+  await expect(page.getByText('1개 그룹에 공유 중')).toBeVisible();
+  await page.goto(`/#/groups/${groupId}`);
   await expect(page.getByText('실제 서버에 남길 첫 번째 이유')).toBeVisible();
 
   const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
@@ -74,14 +75,14 @@ test('two real accounts answer, share, unlock, poll, edit and leave without leak
   await expect(second.getByText('실제 서버에 남길 첫 번째 이유')).toHaveCount(0);
   const loginResponse = await request.post(`${apiUrl}/auth/login`, { data: { handle: otherHandle, password } });
   const login = await loginResponse.json();
-  const locked = await request.get(`${apiUrl}/questions/q037/result`, { headers: { Authorization: `Bearer ${login.accessToken}` } });
+  const locked = await request.get(`${apiUrl}/questions/${questionId}/result`, { headers: { Authorization: `Bearer ${login.accessToken}` } });
   expect(locked.status()).toBe(403);
   await second.getByRole('button', { name: /갈래 시작하기/ }).click();
   await second.locator('.choice').nth(0).click();
   await second.getByRole('textbox', { name: '선택한 이유' }).fill('두 번째 계정의 이유');
   await second.getByRole('button', { name: '선택하기', exact: true }).click();
   await expect(second.getByText('같은 질문,서로 다른 갈래')).toBeVisible();
-  await second.goto(`/#/groups/${groupId}/q037`);
+  await second.goto(`/#/groups/${groupId}/${questionId}`);
   await expect(second.getByText('실제 서버에 남길 첫 번째 이유')).toBeVisible();
   await second.getByRole('textbox', { name: '메시지', exact: true }).fill('서로 다른 계정에서 전송한 메시지');
   await second.getByRole('button', { name: '보내기', exact: true }).click();
@@ -97,6 +98,7 @@ test('two real accounts answer, share, unlock, poll, edit and leave without leak
   await page.goto('/#/settings');
   await expect(page.getByRole('button', { name: '기록 초기화' })).toHaveCount(0);
   await page.getByRole('button', { name: '로그아웃', exact: true }).click();
+  await page.getByRole('alertdialog').getByRole('button', { name: '로그아웃', exact: true }).click();
   await page.getByRole('button', { name: '로그인', exact: true }).click();
   await page.getByRole('textbox', { name: '아이디', exact: true }).fill(otherHandle);
   await page.getByLabel('비밀번호', { exact: true }).fill(password);
@@ -128,6 +130,7 @@ test('two real accounts answer, share, unlock, poll, edit and leave without leak
 test('failed answer and message requests retain the draft and do not show success', async ({ page }) => {
   await signup(page, `e2e.fail.${Date.now().toString(36)}`, '실패검증');
   await page.getByRole('button', { name: /갈래 시작하기/ }).click();
+  const questionId = /question\/([^/]+)/.exec(page.url())[1];
   await page.locator('.choice').nth(0).click();
   await page.getByRole('textbox', { name: '선택한 이유' }).fill('실패해도 유지할 초안');
   await page.route('**/api/v1/questions/*/answer', route => route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ code: 'SERVICE_UNAVAILABLE', message: '검증용 서버 실패' }) }));
@@ -140,7 +143,7 @@ test('failed answer and message requests retain the draft and do not show succes
   await page.getByRole('button', { name: '만들기', exact: true }).click();
   await expect(page.locator('.invite strong')).toBeVisible();
   const groupId = /groups\/(\d+)/.exec(page.url())[1];
-  await page.goto(`/#/groups/${groupId}/q037`);
+  await page.goto(`/#/groups/${groupId}/${questionId}`);
   await page.getByRole('textbox', { name: '메시지', exact: true }).fill('실패해도 남아야 하는 메시지');
   await page.route('**/api/v1/groups/*/questions/*/messages', route => route.request().method() === 'POST' ? route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ code: 'SERVICE_UNAVAILABLE', message: '검증용 전송 실패' }) }) : route.continue());
   await page.getByRole('button', { name: '보내기', exact: true }).click();
@@ -172,6 +175,7 @@ test('verified-feed contract renders actual authors, replies and likes without s
   await page.getByRole('link', { name: '생각', exact: true }).click();
   await expect(page.getByRole('heading', { name: '검증 주제' })).toBeVisible();
   await expect(page.getByText('검수 전 노출 금지')).toHaveCount(0);
+  await page.getByRole('button', { name: /검증 주제/ }).click();
   await page.getByRole('button', { name: '댓글', exact: true }).click();
   await expect(page.getByText('verified.author', { exact: true })).toBeVisible();
   await expect(page.getByText('검증된 주제의 서버 댓글')).toBeVisible();
