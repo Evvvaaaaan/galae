@@ -15,16 +15,17 @@ import Done from './screens/Done.jsx';
 import Summary from './screens/Summary.jsx';
 import Share from './screens/Share.jsx';
 import Records, { MyComments, MemberProfile } from './screens/Records.jsx';
-import { Settings, NotifySettings, ProfileForm, Sources } from './screens/Settings.jsx';
+import { Settings, NotifySettings, ProfileForm, Sources, LegalDoc } from './screens/Settings.jsx';
 import { Groups, GroupForm, GroupDetail, GroupMembers, GroupsAddMenu } from './screens/Groups.jsx';
 import { BottomNav, Header, Icon } from './components/UI.jsx';
 import { QUESTIONS, TODAY, MEMBERS, dateLabel } from './questionData.js';
 import { recordAchievements } from './achievements.js';
-import { STORAGE_KEY, STEPS, loadState, emptyAnswer, updateAnswer, completeAnswer, submitAnswer, sentGroups, shareAnswer, questionStep, questionRoute, rememberQuestionRoute, questionBack, joinedGroups, leaveGroup, kickMember, addMessage, addComment, toggleLike } from './store.js';
+import { STORAGE_KEY, STEPS, initialState, loadState, emptyAnswer, updateAnswer, completeAnswer, submitAnswer, sentGroups, shareAnswer, questionStep, questionRoute, rememberQuestionRoute, questionBack, joinedGroups, leaveGroup, kickMember, addMessage, addComment, toggleLike } from './store.js';
 
 const routeFromLocation = () => location.hash.replace(/^#\/?/, '') || 'today';
 // 진행 선 세 칸: 선택 / 결과·다른 생각 / 확장하기
 const PROGRESS = { answer: 0, result: 1, reading: 2 };
+const LEGAL_TITLES = { terms: '이용약관', privacy: '개인정보처리방침', contact: '문의' };
 
 export default function App() {
   const [state, setSavedState] = useState(() => recordAchievements(loadState(), TODAY.date));
@@ -147,7 +148,7 @@ export default function App() {
     if (member) content = <><Header back={() => go(profileFrom.current || 'today')} title={member.handle} /><MemberProfile member={member} /></>;
   } else if (section === 'settings' && !requestedStep) {
     active = 'records';
-    if (!id) content = <><Header back={() => go('records')} title="설정" /><Settings profile={state.profile} go={go} onLogout={() => { go('today'); setWelcome('login'); setState(s => ({ ...s, started: false })); }} onReset={() => { try { localStorage.removeItem(STREAK_KEY); } catch { /* 저장할 수 없는 환경입니다. */ } setState(s => ({ ...s, answers: {}, achieved: {} })); }} /></>;
+    if (!id) content = <><Header back={() => go('records')} title="설정" /><Settings profile={state.profile} go={go} onLogout={() => { go('today'); setWelcome('login'); setState(s => ({ ...s, started: false })); }} onWithdraw={() => { try { localStorage.removeItem(STREAK_KEY); } catch { /* 저장할 수 없는 환경입니다. */ } go('today'); setWelcome('login'); setState(initialState()); }} onReset={() => { try { localStorage.removeItem(STREAK_KEY); } catch { /* 저장할 수 없는 환경입니다. */ } setState(s => ({ ...s, answers: {}, achieved: {} })); }} /></>;
     else if (id === 'profile') {
       // 나 탭의 프로필 줄에서 들어왔으면 나 탭으로, 설정에서 들어왔으면 설정으로 돌아갑니다.
       const profileBack = prevRoute.current === 'records' ? 'records' : 'settings';
@@ -155,6 +156,7 @@ export default function App() {
     }
     else if (id === 'notify') content = <><Header back={() => go('settings')} title="알림" /><NotifySettings notify={state.notify} onChange={notify => setState(s => ({ ...s, notify }))} /></>;
     else if (id === 'sources') content = <><Header back={() => go('settings')} title="출처" /><Sources /></>;
+    else if (id in LEGAL_TITLES) content = <><Header back={() => go('settings')} title={LEGAL_TITLES[id]} /><LegalDoc doc={id} /></>;
     else if (id === 'onboard') content = <Onboard go={() => go('settings')} />;
   }
   const tabRoot = state.started && (!id || (section === 'feed' && content)) && ['today', 'archive', 'feed', 'groups', 'records'].includes(section);
