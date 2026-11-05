@@ -1,6 +1,6 @@
-import { DEMO_GROUPS, MEMBERS, QUESTIONS, SAMPLE_COMMENTS } from './questionData.js';
+import { DEMO_GROUPS, MEMBERS, QUESTIONS, SAMPLE_COMMENTS, SAMPLE_NOTIFICATIONS } from './questionData.js';
 import PARADOXES from '../content/paradoxes.json' with { type: 'json' };
-import { ACHIEVEMENTS } from './achievements.js';
+import { ACHIEVEMENTS, earnedList } from './achievements.js';
 
 export const STORAGE_KEY = 'garae.frontend.v1';
 export const STEPS = ['answer', 'result', 'reading', 'done', 'summary'];
@@ -12,7 +12,9 @@ export const cleanHandle = value => value.toLowerCase().replace(/[^a-z0-9._]/g, 
 export const joinedGroups = state => state.groups.filter(g => state.joined.includes(g.id));
 // 이름이 없으면 '나'로 보여 줍니다.
 export const myself = profile => ({ name: profile.name || '나', handle: profile.handle || profile.name || '나', color: profile.color, photo: profile.photo });
-export const initialState = () => ({ started: false, answers: {}, groups: DEMO_GROUPS, joined: ['g1', 'g2'], profile: { name: '', handle: '', bio: '', photo: '', color: 'blue' }, messages: [], comments: [], likes: [], achieved: {} });
+// 알림 설정입니다. 실제 발송은 서버나 앱 포장을 붙일 때 연결합니다.
+export const defaultNotify = () => ({ question: true, time: '08:00', share: true, chat: true, comment: true });
+export const initialState = () => ({ started: false, answers: {}, groups: DEMO_GROUPS, joined: ['g1', 'g2'], profile: { name: '', handle: '', bio: '', photo: '', color: 'blue' }, notify: defaultNotify(), messages: [], comments: [], likes: [], achieved: {} });
 
 const isObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const text = (value, fallback = '') => typeof value === 'string' ? value : fallback;
@@ -46,6 +48,14 @@ function restoreGroups(value) {
   });
 }
 
+function restoreNotify(saved) {
+  const notify = defaultNotify();
+  if (!isObject(saved)) return notify;
+  for (const key of ['question', 'share', 'chat', 'comment']) if (typeof saved[key] === 'boolean') notify[key] = saved[key];
+  if (typeof saved.time === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(saved.time)) notify.time = saved.time;
+  return notify;
+}
+
 export function loadState() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
@@ -69,6 +79,7 @@ export function loadState() {
           photo: /^data:image\/jpeg;base64,/.test(saved.profile?.photo) ? saved.profile.photo : '',
           color: PROFILE_COLORS.includes(saved.profile?.color) ? saved.profile.color : 'blue',
         },
+        notify: restoreNotify(saved.notify),
         // 공유 메시지(sel이 있는 메시지)는 이유가 비어 있어도 됩니다.
         messages: [...oldShares, ...(Array.isArray(saved.messages) ? saved.messages : []).filter(m => isObject(m) && typeof m.id === 'string' && typeof m.text === 'string' && groups.some(g => g.id === m.groupId) && (m.sel === undefined ? m.text && QUESTIONS.some(q => q.id === m.questionId) : QUESTIONS.find(q => q.id === m.questionId)?.choices.some(c => c.id === m.sel)))],
         comments,
@@ -175,4 +186,11 @@ export function addComment(state, topicId, value, parentId) {
 
 export function toggleLike(state, id) {
   return { ...state, likes: state.likes.includes(id) ? state.likes.filter(l => l !== id) : [...state.likes, id] };
+}
+
+// 알림 목록입니다. 맺은 열매는 최근 것부터, 그 아래에 샘플 알림이 옵니다.
+export function notifications(state) {
+  const fruits = earnedList(state.achieved).reverse().map(a => ({ id: `fruit-${a.id}`, kind: 'fruit', achievement: a }));
+  const samples = SAMPLE_NOTIFICATIONS.map(n => ({ ...n, members: n.memberIds.map(id => MEMBERS.find(m => m.id === id)) }));
+  return [...fruits, ...samples];
 }

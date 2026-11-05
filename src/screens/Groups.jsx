@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { createPortal } from 'react-dom';
 import { QUESTIONS, TODAY, choiceOf, dateLabel, groupShares } from '../questionData.js';
-import { Header, Icon, Avatar, Empty, ProfileLink, PhotoColorPicker } from '../components/UI.jsx';
+import { Header, Icon, Avatar, Empty, ProfileLink, PhotoColorPicker, Confirm } from '../components/UI.jsx';
 import { joinedGroups, myself } from '../store.js';
 
 export function Groups({ state, go }) {
@@ -134,14 +133,4 @@ export function GroupMembers({ group, profile, questionId, go, onKick, onLeave, 
       {kicking && <Confirm id="kick-title" action="내보내기" onCancel={() => setKicking(null)} onConfirm={() => { onKick(kicking.id); setKicking(null); }}>{kicking.name} 님을 내보낼까요?</Confirm>}
     </div>
   </>;
-}
-
-function Confirm({ id, action, onCancel, onConfirm, children }) {
-  return createPortal(<>
-    <button className="sheet-backdrop" aria-label="닫기" onClick={onCancel} />
-    <div className="dialog" role="alertdialog" aria-labelledby={id}>
-      <p id={id}>{children}</p>
-      <div className="dialog-actions"><button className="btn-text" onClick={onCancel}>취소</button><button className="btn-text danger" onClick={onConfirm}>{action}</button></div>
-    </div>
-  </>, document.querySelector('.frame'));
 }

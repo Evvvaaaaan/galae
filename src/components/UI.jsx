@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import { COLOR_LABELS, PROFILE_COLORS } from '../store.js';
 
 export function Icon({ name, size = 22 }) {
@@ -11,6 +12,7 @@ export function Icon({ name, size = 22 }) {
     back: 'm14 5-7 7 7 7', next: 'm10 5 7 7-7 7', arrow: 'M4 12h16m-6-6 6 6-6 6',
     check: 'm5 12 4 4L19 6', send: 'M5 12h14m-6-6 6 6-6 6', more: 'M5 12h.01M12 12h.01M19 12h.01',
     comment: 'M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z',
+    bell: 'M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0', fruit: 'M12 8a6 6 0 1 0 0 12 6 6 0 0 0 0-12zM12 8V4m0 0c2 0 3 1 3 2',
     up: 'M12 19V5m-6 6 6-6 6 6', plus: 'M12 5v14M5 12h14', close: 'M6 6l12 12M18 6 6 18',
     gear: 'M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2zM15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0',
   };
@@ -72,4 +74,14 @@ export function ProfileLink({ onClick, avatar, children }) {
 
 export function BottomNav({ active, go }) {
   return <nav className="bottom-nav" aria-label="주 메뉴">{[['today', '오늘'], ['feed', '생각'], ['archive', '질문'], ['groups', '그룹'], ['records', '나', 'me']].map(([id, label, icon = id]) => <a key={id} href={`#/${id}`} aria-current={active === id ? 'page' : undefined} onClick={e => { e.preventDefault(); go(id); }}><Icon name={icon} size={21} />{label}</a>)}</nav>;
+}
+
+export function Confirm({ id, action, onCancel, onConfirm, children }) {
+  return createPortal(<>
+    <button className="sheet-backdrop" aria-label="닫기" onClick={onCancel} />
+    <div className="dialog" role="alertdialog" aria-labelledby={id}>
+      <p id={id}>{children}</p>
+      <div className="dialog-actions"><button className="btn-text" onClick={onCancel}>취소</button><button className="btn-text danger" onClick={onConfirm}>{action}</button></div>
+    </div>
+  </>, document.querySelector('.frame'));
 }

@@ -81,5 +81,11 @@ export const SAMPLE_COMMENTS = [
   { id: 's9', likes: 9, topicId: 'p005', memberId: 'm1', text: '저도 고르지 못하고 미룬 적이 많아서 공감됐어요.' },
   { id: 's10', likes: 1, topicId: 'p005', memberId: 'm2', text: '어느 쪽이든 고르는 것 자체가 이유가 될 수도 있겠어요.' },
 ];
+// 서버가 없어서 쓰는 샘플 알림입니다. 알림 목록에 나올 수 있는 형식을 모두 담습니다.
+export const SAMPLE_NOTIFICATIONS = [
+  { id: 'n1', kind: 'reply', memberIds: ['m1'], topicId: 'p001', text: '저도 비슷하게 생각했어요. 기억이 이어져 있으면 같은 사람 같아요.' },
+  { id: 'n2', kind: 'like', memberIds: ['m3', 'm1', 'm4'], topicId: 'p002' },
+  { id: 'n4', kind: 'like', memberIds: ['m2'], topicId: 'p001' },
+];
 export const choiceOf = (question, sel) => question.choices.find(c => c.id === sel);
 export const dateLabel = date => `${Number(date.slice(0, 4))}년 ${Number(date.slice(5, 7))}월 ${Number(date.slice(8, 10))}일`;
