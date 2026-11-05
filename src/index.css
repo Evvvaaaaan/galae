@@ -106,8 +106,8 @@ label.list-row { cursor: pointer; }
 .screen:has(.done, .summary) { display: flex; flex-direction: column; }
 .done, .summary { flex: 1; }
 .done .actions, .summary .actions { margin-top: auto; }
+.summary .actions .btn-secondary { margin-top: 4px; }
 .inline-actions { display: flex; gap: 20px; }
-.share-links { display: flex; justify-content: center; gap: 24px; margin-top: -13px; }
 
 /* 하단 탭 */
 .bottom-nav { position: absolute; left: 0; right: 0; bottom: 0; display: grid; grid-template-columns: repeat(5, 1fr); height: calc(64px + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom); border-top: 1px solid var(--line); background: var(--bg); z-index: 5; }
@@ -215,6 +215,7 @@ label.list-row { cursor: pointer; }
 .feed-actions .icon-button { margin: 0; color: var(--ink-sub); }
 .sheet-backdrop { position: absolute; inset: 0; border: 0; background: #33322f26; z-index: 6; animation: fadeIn 200ms ease-out both; }
 .sheet { position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; height: 75%; border-radius: 20px 20px 0 0; background: var(--bg); z-index: 7; outline: none; animation: sheetIn 240ms ease-out both; transition: transform 160ms ease-out, height 200ms ease-out; }
+.share-sheet { height: auto; gap: 24px; padding: 0 28px calc(24px + env(safe-area-inset-bottom)); }
 .sheet.full { height: 100%; border-radius: 0; padding-top: env(safe-area-inset-top); }
 .sheet.dragging { transition: none; }
 .sheet-handle { display: flex; justify-content: center; flex-shrink: 0; width: 100%; padding: 12px 0 20px; border: 0; background: none; touch-action: none; cursor: grab; }

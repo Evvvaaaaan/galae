@@ -250,16 +250,13 @@ test('공유는 보낸 때의 답이 담긴 메시지로 남고, 다시 답하�
 });
 
 test('질문 흐름의 뒤로가기는 단계·코멘트·완료 여부와 들어온 화면에 따라 정해진다', () => {
-  const base = { id: 'q037', completed: false, choice: false, prev: 'today', home: 'archive' };
+  const base = { id: 'q037', completed: false, choice: false, home: 'archive' };
   assert.equal(questionBack({ ...base, step: 'answer' }), 'archive');
   assert.equal(questionBack({ ...base, step: 'result' }), 'question/q037/answer');
   assert.equal(questionBack({ ...base, step: 'reading' }), 'question/q037/result');
   assert.equal(questionBack({ ...base, step: 'result', choice: true }), 'question/q037/result');
   assert.equal(questionBack({ ...base, step: 'result', choice: true, completed: true }), 'question/q037/summary');
   assert.equal(questionBack({ ...base, step: 'reading', completed: true }), 'question/q037/summary');
-  assert.equal(questionBack({ ...base, step: 'share', prev: 'question/q037/done' }), 'question/q037/done');
-  assert.equal(questionBack({ ...base, step: 'share', prev: 'question/q037/summary' }), 'question/q037/summary');
-  assert.equal(questionBack({ ...base, step: 'share', prev: 'groups/g1' }), 'archive');
   assert.equal(questionBack({ ...base, step: 'done' }), 'archive');
 });
 

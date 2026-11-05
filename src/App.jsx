@@ -36,8 +36,10 @@ export default function App() {
   const [origin, setOrigin] = useState(null);
   // 다시 하기로 새로 답하는 중인 답입니다. 선택하기를 누르기 전까지 저장된 답은 그대로이고, 확장하기를 마치면 끝납니다.
   const [redo, setRedo] = useState(null);
+  // 공유 시트를 연 화면의 경로입니다. 다른 화면으로 가면 시트는 닫힙니다.
+  const [sharing, setSharing] = useState(null);
   const mainRef = useRef(null);
-  // 바로 전 화면. 완료 → 나누기에서 뒤로가면 완료로 돌아가기 위해 씁니다.
+  // 바로 전 화면. 설정에서 프로필 편집 뒤 돌아갈 곳을 정할 때 씁니다.
   const prevRoute = useRef(null);
   useEffect(() => {
     const onHashChange = () => setRoute(routeFromLocation());
@@ -70,11 +72,10 @@ export default function App() {
   function welcomeGo(next) { if (['signup', 'signin', 'onboard'].includes(next)) setWelcome(next); else setState(s => ({ ...s, started: true, joinedOn: s.joinedOn || TODAY.date })); }
   function openQuestion(id) { go(questionRoute(id, state.answers[id])); }
   function patch(id, value) { setState(s => updateAnswer(s, id, value)); }
-  // 그룹에서 나누기를 누르면 그 그룹을 미리 체크한 채 공유 화면을 엽니다. 저장해야 공유됩니다.
-  function shareToGroup(id, groupId) {
-    const answer = state.answers[id];
-    patch(id, { shareDraft: [groupId, ...(answer.shareDraft ?? []).filter(g => g !== groupId)] });
-    go(`question/${id}/share`);
+  // 그룹에서 들어온 질문이면 그 그룹을 미리 체크한 채 공유 시트를 엽니다. 저장해야 공유됩니다.
+  function openShare(id, groupId) {
+    if (groupId) patch(id, { shareDraft: [groupId, ...(state.answers[id].shareDraft ?? []).filter(g => g !== groupId)] });
+    setSharing(route);
   }
   function createGroup(fields) {
     const id = crypto.randomUUID();
@@ -112,17 +113,17 @@ export default function App() {
       const flowGo = next => STEPS.includes(next) ? go(`question/${id}/${next}`) : go(next);
       const next = () => flowGo(STEPS[STEPS.indexOf(step) + 1]);
       const openChoice = choiceId => go(`question/${id}/result/${choiceId}`);
-      const share = () => fromGroup ? shareToGroup(id, fromGroup.id) : flowGo('share');
+      const share = () => openShare(id, fromGroup?.id);
       let flow;
       switch (step) {
         case 'answer': flow = <Question question={question} answer={answer} onPick={sel => { if (!answer.submitted) edit({ sel }); }} onReason={reason => { if (!answer.submitted) edit({ reason }); }} onSubmit={() => { if (answer.sel === null) return; setState(s => submitAnswer(s, id, answer.sel, answer.reason, TODAY.date)); if (redoing) edit({ submitted: true }); flowGo('result'); }} />; break;
         case 'result': flow = choice ? <Comments question={question} choice={choice} comments={question.opinions[question.choices.indexOf(choice)].items} answer={answer} profile={state.profile} onProfile={openProfile} /> : <Result question={question} sel={answer.sel} onOpen={openChoice} next={next} />; break;
         case 'reading': flow = <Reading question={question} next={() => { if (answer.completed) return flowGo('summary'); setRedo(null); setState(s => completeAnswer(s, id)); next(); }} />; break;
         case 'done': flow = <Done question={question} answer={answer} sent={sent} go={flowGo} onShare={share} />; break;
-        case 'summary': flow = <Summary question={question} answer={answer} groups={state.groups} sent={sent} onOpen={openChoice} onShare={share} onReading={() => flowGo('reading')} onRetry={() => { setRedo({ id, answer: { sel: null, reason: '', submitted: false, completed: false } }); flowGo('answer'); }} />; break;
-        case 'share': flow = <Share key={id} question={question} answer={answer} groups={joinedGroups(state)} sent={sent} onDraft={shareDraft => patch(id, { shareDraft })} onSave={groupIds => setState(s => shareAnswer(s, id, groupIds))} go={go} />; break;
+        case 'summary': flow = <Summary question={question} answer={answer} groups={state.groups} sent={sent} onOpen={openChoice} onShare={share} onHome={() => flowGo('today')} onReading={() => flowGo('reading')} onRetry={() => { setRedo({ id, answer: { sel: null, reason: '', submitted: false, completed: false } }); flowGo('answer'); }} />; break;
       }
-      const back = () => go(questionBack({ id, step, completed: answer.completed, choice: !!choice, prev: prevRoute.current, home }));
+      if ((step === 'done' || step === 'summary') && sharing === route) flow = <>{flow}<Share question={question} answer={answer} groups={joinedGroups(state)} sent={sent} onDraft={shareDraft => patch(id, { shareDraft })} onSave={groupIds => setState(s => shareAnswer(s, id, groupIds))} onClose={() => setSharing(null)} go={go} /></>;
+      const back = () => go(questionBack({ id, step, completed: answer.completed, choice: !!choice, home }));
       const position = PROGRESS[step];
       content = <><Header back={back} title={`${id === TODAY.id ? '오늘의 갈래' : '지난 갈래'} · ${dateLabel(question.date)}`} />{position !== undefined && <ol className="progress">{['나의 선택', '다른 생각', '확장하기'].map((label, i) => <li key={label} className={i <= position ? 'on' : ''} aria-current={i === position ? 'step' : undefined}><span />{label}</li>)}</ol>}{flow}</>;
     }
