@@ -172,9 +172,6 @@ label.list-row { cursor: pointer; }
 .seed-tree g path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: drawLine 900ms ease-out forwards; }
 .seed-tree g:nth-child(-n+3) > path:first-child { animation-duration: 1800ms; }
 .seed-tree g path.twig { animation-duration: 500ms; }
-.seed-tree .seed-fruit, .seed-tree .seed-ripple { transform-box: fill-box; transform-origin: center; }
-.seed-tree .seed-fruit { animation: fruitBloom 1100ms cubic-bezier(.3, 1.4, .5, 1) backwards; }
-.seed-tree .seed-ripple { opacity: 0; animation: fruitRipple 1600ms ease-out; }
 .onboard-body h1 { margin: 40px 0 0; font-family: var(--serif); font-size: 21px; font-weight: 400; line-height: 1.6; letter-spacing: -.01em; text-wrap: pretty; opacity: 0; animation: scrIn 250ms ease-out 520ms forwards; }
 .onboard-body .sub { margin-top: 14px; white-space: pre-line; font-size: 14px; line-height: 1.8; text-wrap: pretty; opacity: 0; animation: scrIn 250ms ease-out 580ms forwards; }
 .onboard-dots { display: flex; gap: 6px; }

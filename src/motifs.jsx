@@ -138,38 +138,36 @@ function fruitThreads(fruits, count) {
   });
 }
 
-// 온보딩 마지막 장: 선이 한 가닥씩 뿌리부터 자라 나무가 되고, 끝에 열매 하나가 맺힙니다.
-const SEED_COUNT = 14;
-const SEED_GAP = 160;
+// 온보딩 마지막 장: 선이 거의 함께 뿌리부터 자라 나무가 됩니다.
+const SEED_COUNT = 20;
+const SEED_GAP = 50;
 const SEED_IN = 1100;
 
-// 앞 장의 세 갈래 선이 왼쪽에서 들어와 줄기 밑동으로 모인 뒤, 나무의 첫 세 가닥으로 자랍니다.
+// 앞 장의 세 갈래 선이 왼쪽 땅 아래에서 들어와 밑동에서 위로 휘어 오른 뒤, 나무의 첫 세 가닥으로 자랍니다.
+// 밑동에서 선이 이미 위를 향하도록, 높이 들어온 선일수록 안쪽(왼쪽) 가닥이 됩니다.
 function incoming(i) {
   const t = thread(i);
   const parts = t.d.split(' C ');
   const [x1, y1] = parts[1].split(', ')[2].split(' ').map(Number);
-  const y0 = [176, 192, 206][i];
-  return { ...t, d: `M0 ${y0} C 70 ${y0}, ${f(x1 - 40)} ${f(y1 + 6)}, ${f(x1)} ${f(y1)} C ${parts.slice(2).join(' C ')}` };
+  const y0 = [228, 222, 234][i];
+  return { ...t, d: `M0 ${y0} C ${f(x1 - 60)} ${y0}, ${f(x1)} ${f(y1 + (y0 - y1) * 0.6)}, ${f(x1)} ${f(y1)} C ${parts.slice(2).join(' C ')}` };
 }
 
 function SeedTree() {
-  const fruit = ringAt(1);
-  const end = SEED_IN + SEED_GAP * (SEED_COUNT - 3) + 900;
+  const grown = i => i < 3 ? i * 80 + 1800 : SEED_IN + (i - 3) * SEED_GAP + 900;
   return (
     <svg className="seed-tree" viewBox="0 10 344 230" width="100%" aria-hidden="true">
       <path d={GROUND} stroke="#E4EEF6" strokeWidth={1} fill="none" />
       <g fill="none" stroke="#6FA3CF" strokeOpacity={0.42} strokeLinecap="round">
         {Array.from({ length: SEED_COUNT }, (_, i) => {
           const { d, twigs } = i < 3 ? incoming(i) : thread(i);
-          const delay = i < 3 ? i * 80 : SEED_IN + (i - 3) * SEED_GAP;
+          const delay = grown(i) - (i < 3 ? 1800 : 900);
           return <g key={i}>
             <path d={d} pathLength={1} strokeWidth={1.1} style={{ animationDelay: `${delay}ms` }} />
             {twigs.map((t, k) => <path key={k} d={t} pathLength={1} strokeWidth={0.9} className="twig" style={{ animationDelay: `${delay + (i < 3 ? 1500 : 700)}ms` }} />)}
           </g>;
         })}
       </g>
-      <circle {...fruit} className="seed-ripple" stroke="#2F6E9E" strokeWidth={0.5} style={{ animationDelay: `${end + 150}ms` }} />
-      <circle {...fruit} className="seed-fruit" stroke="#8EC3EE" strokeOpacity={0.8} strokeWidth={0.9} style={{ animationDelay: `${end}ms` }} />
     </svg>
   );
 }
