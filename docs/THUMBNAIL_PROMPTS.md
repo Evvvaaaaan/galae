@@ -1,5 +1,107 @@
 # 생각 카드 썸네일 프롬프트
 
+## 마시멜로 실험
+
+- 적용 이미지: `public/thumbnails/marshmallow-experiment.png`
+- 적용 대상: `content/paradoxes.json`의 `p013`
+- 생성 도구: 내장 `image_gen`
+- 생성 설정: `transparent_background: false`
+- 스타일 참조: `public/thumbnails/ship-of-theseus.png`
+- 아이가 접시 위의 마시멜로 하나를 바라보며 기다리는 장면입니다.
+
+```text
+Create an editorial book illustration of the marshmallow experiment for a thoughtful reading card. The attached Ship of Theseus image is the REQUIRED visual style reference only. Match its muted dusty blue ink #527C9C, irregular hand-engraved pen contours, selective parallel hatching and crosshatching, moderate detail and generous white highlights. Show one young child seated on a simple wooden chair at a small plain table, in three-quarter side view. On a small plain plate on the tabletop sits exactly one unmistakable marshmallow, a short soft white cylinder with rounded edges, clearly separated from the child's hands. The child rests folded hands at the near edge of the table and looks thoughtfully at the marshmallow, quietly waiting rather than eating. Natural child proportions and believable hands, simple everyday clothing, gentle neutral expression without exaggerated distress. Keep the marshmallow clearly legible and the table uncluttered. A restrained vignette with just the child, chair, table and plate, no other people or room scenery. Preserve the handcrafted old printed book illustration character, neither a minimal outline icon nor an overly dense engraving. Balanced landscape 3:2 spot illustration on solid pure white, entire vignette visible with ample margins, sparse ground hatching. No extra sweets, thought bubbles, clocks, text, labels, arrows, numbers, border, glow, blur, gradients, color washes or solid colored fills. Match the reference as a companion illustration in the same series.
+```
+
+## 보이지 않는 고릴라
+
+- 적용 이미지: `public/thumbnails/invisible-gorilla.png`
+- 적용 대상: `content/paradoxes.json`의 `p012`
+- 생성 도구: 내장 `image_gen`
+- 생성 설정: `transparent_background: false`
+- 기존 썸네일의 청회색 펜선과 해칭 스타일을 텍스트로 지정했습니다.
+- 공에 집중한 두 사람 사이로 고릴라 옷을 입은 사람이 지나가는 장면입니다.
+
+```text
+undefined
+```
+
+## 생일 문제
+
+- 적용 이미지: `public/thumbnails/birthday-problem.png`
+- 적용 대상: `content/paradoxes.json`의 `p011`
+- 생성 도구: 내장 `image_gen`
+- 생성 설정: `transparent_background: false`
+- 편집 참조: 기존 생일 문제 썸네일
+- 청회색 펜선과 해칭 스타일을 유지하고, 사람 없이 촛불 두 개가 꽂힌 생일케이크만 표현했습니다.
+
+```text
+Edit the supplied birthday illustration for a reading card. Remove both people entirely. Show ONLY the single round birthday cake with its two small lit candles on its simple plain plate, enlarged and centered in the landscape 3:2 composition with ample white margins. Preserve the cake's simple frosting and the original handcrafted antique book illustration style: muted dusty blue #527C9C pen ink, irregular engraved contours, selective parallel hatching and crosshatching, generous white highlights. Pure white background, sparse ground hatching directly beneath the plate only. Render candle flames in the same blue ink. No people, hands, other objects, decorations, text, labels, borders, gradients, color washes, or solid colored fills. The cake and plate are fully visible and are the sole subject.
+```
+
+## 몬티 홀 문제
+
+- 적용 이미지: `public/thumbnails/monty-hall.png`
+- 적용 대상: `content/paradoxes.json`의 `p010`
+- 생성 도구: 내장 `image_gen`
+- 생성 설정: `transparent_background: false`
+- 스타일 참조: `public/thumbnails/ship-of-theseus.png`
+- 두 문은 닫힌 채로 두고, 열린 문에서 염소가 드러난 뒤 선택을 고민하는 장면입니다.
+
+```text
+Create an editorial book illustration of the Monty Hall problem for a philosophy reading card. The attached Ship of Theseus image is the REQUIRED visual style reference only. Match its muted dusty blue ink #527C9C, irregular hand-engraved pen contours, selective parallel hatching and crosshatching, moderate detail and generous white highlights. Show exactly three freestanding matching doorways side by side in a shallow three-quarter perspective. Left door closed, middle door closed, right door open with one living goat clearly standing in its doorway, whole body visible, recognizable small horns and beard. A single adult participant seen from behind in a small three-quarter view stands before the left closed door, one hand resting near its handle, head turned toward the other doors in hesitation. The revealed goat is the only visible prize; the car is still concealed, do not depict a visible car. This captures the decision after the host has revealed a goat. Clear separation of all three doors, same height and width, uncluttered readable silhouette. Door leaf opens outward without obscuring the goat or the other doors. Natural human and animal anatomy, simple contemporary clothing. Preserve the handcrafted old printed book illustration character, neither a minimal outline icon nor an overly dense engraving. Balanced landscape 3:2 spot illustration on solid pure white with ample margins, sparse ground hatching only. No door numbers, words, labels, arrows, question marks, probability symbols, stage scenery, decorative curtains, border, glow, blur, gradients, color washes or solid colored fills. Match the reference as a companion illustration in the same series.
+```
+
+## 무지의 베일
+
+- 적용 이미지: `public/thumbnails/veil-of-ignorance.png`
+- 적용 대상: `content/paradoxes.json`의 `p009`
+- 생성 도구: 내장 `image_gen`
+- 생성 설정: `transparent_background: false`
+- 기존 썸네일의 청회색 펜선과 해칭 스타일을 텍스트로 지정했습니다.
+- 베일 뒤 인물들의 정체와 사회적 지위가 드러나지 않는 구성입니다.
+
+```text
+undefined
+```
+
+## 메리의 방
+
+- 적용 이미지: `public/thumbnails/marys-room.png`
+- 적용 대상: `content/paradoxes.json`의 `p007`
+- 생성 도구: 내장 `image_gen`
+- 생성 설정: `transparent_background: false`
+- 스타일 참조: `public/thumbnails/ship-of-theseus.png`
+- 파란 펜선과 해칭을 유지하되, 색을 처음 경험하는 장면을 표현하기 위해 토마토에만 빨간색을 사용했습니다.
+
+```text
+Create an editorial book illustration of Mary's Room, the philosophical knowledge argument, for a philosophy reading card. The attached Ship of Theseus image is the REQUIRED visual style reference only. Match its muted dusty blue ink #527C9C, irregular hand-engraved pen contours, selective parallel hatching and crosshatching, moderate detail and generous white highlights. Show a thoughtful adult woman scientist standing at an open doorway, in three-quarter side view, quietly looking at a single ripe tomato held naturally in her open hand just beyond the threshold. Behind her, a small suggestion of her study: one simple desk with an open book inside the room, represented only by a few lines. The doorway clearly separates her spare study from the white space beyond. The woman, doorway, book and desk are entirely monochromatic blue ink; the tomato alone has restrained brick-red pen hatching, the only red accent, symbolizing her first experience of color. Do not add other colors. Keep the woman and the tomato as the focal point; doorway and furniture remain secondary. Natural anatomy, convincing hands, understated expression of discovery, simple contemporary clothing. Preserve the handcrafted antique printed book illustration character, neither a minimal outline icon nor an overly dense engraving. Single balanced landscape 3:2 spot illustration on solid pure white, all main subjects fully visible with ample margins. A sparse vignette rather than a fully rendered room. No labels, text, arrows, equations, border, glow, blur, gradients, color washes or large solid colored fills. Match the reference as a companion illustration in the same series.
+```
+
+## 기게스의 반지
+
+- 적용 이미지: `public/thumbnails/ring-of-gyges.png`
+- 적용 대상: `content/paradoxes.json`의 `p008`
+- 생성 도구: 내장 `image_gen`
+- 생성 설정: `transparent_background: false`
+- 기존 썸네일을 확인하고 청회색 펜선과 해칭 스타일을 텍스트로 지정했습니다.
+
+```text
+Create an editorial book illustration of the Ring of Gyges for a philosophy reading card. Match the companion series style: muted dusty blue ink #527C9C on pure white, slightly rough hand-engraved pen contours, selective parallel hatching and crosshatching, moderate detail and generous white highlights, handcrafted antique printed book illustration. Draw a single ancient ring in three-quarter view, resting at a slight angle, with a substantial rounded band and a simple raised oval bezel. Clearly show the open interior of the band and the worn handmade metal edges. Use restrained groups of fine hatch marks along the inner band and beneath the bezel to describe volume; keep the broad metal surfaces mostly white. The ring is the sole subject, centered and large enough to read clearly as a thumbnail, fully visible with generous margins. Single balanced landscape 3:2 spot illustration, minimal ground hatching. A real pen illustration, not a geometric icon, not a modern jewelry product photo, not a cartoon. No hands, people, other objects, scenery, letters, runes, text, labels, border, glow, magical effects, blur, gradients, color washes or solid colored fills. Although the story describes a gold ring, render everything only in the series' dusty blue ink.
+```
+
+## 뷔리당의 당나귀
+
+- 적용 이미지: `public/thumbnails/buridans-donkey.png`
+- 적용 대상: `content/paradoxes.json`의 `p005`
+- 생성 도구: 내장 `image_gen`
+- 생성 설정: `transparent_background: false`
+- 스타일 참조: `public/thumbnails/ship-of-theseus.png`
+
+```text
+Create an editorial book illustration of Buridan's donkey for a philosophy reading card. The attached Ship of Theseus image is the REQUIRED visual style reference only. Match its muted dusty blue ink #527C9C, irregular hand-engraved pen contours, selective parallel hatching and crosshatching, moderate detail and generous white highlights. Draw a single living donkey standing centrally between two identical loose hay heaps, one on each side, exactly equal in size and equally distant from the donkey. Three-quarter frontal view of the donkey, full body and all four legs visible, long upright ears, natural calm hesitant posture, head facing forward, not eating either heap. Symmetrical balanced arrangement with clear white gaps between donkey and each hay heap. Both heaps have the same volume and straw texture. Slightly rough fine pen lines describe the donkey's fur and anatomy, restrained hatching under the belly and around the legs, groups of short straw strokes describe the hay. Preserve the handcrafted old printed book illustration character of the reference, neither a simple outline icon nor an overly dense engraving. Single landscape 3:2 spot illustration on solid pure white, all subjects fully visible, ample margins, minimal ground hatching. No scenery, horizon, fences, people, harness, saddle, arrows, text, labels, border, glow, blur, gradients, color washes or solid colored fills. Match the reference as a companion illustration in the same series.
+```
+
 ## 테세우스의 배
 
 - 적용 이미지: `public/thumbnails/ship-of-theseus.png`

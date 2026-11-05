@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import Login from './screens/Login.jsx';
 import Onboard from './screens/Onboard.jsx';
 import Account from './screens/Account.jsx';
-import Notifications from './screens/Notifications.jsx';
 import Today, { STREAK_KEY } from './screens/Today.jsx';
 import Archive from './screens/Archive.jsx';
 import Feed, { TopicPage } from './screens/Feed.jsx';
@@ -14,18 +13,17 @@ import Done from './screens/Done.jsx';
 import Summary from './screens/Summary.jsx';
 import Share from './screens/Share.jsx';
 import Records, { MyComments, MemberProfile } from './screens/Records.jsx';
-import { Settings, NotifySettings, ProfileForm, Sources, LegalDoc, WithdrawForm, Safety, ReportForm, BlockedUsers } from './screens/Settings.jsx';
+import { Settings, ProfileForm, Sources, LegalDoc, WithdrawForm, Safety, ReportForm, BlockedUsers } from './screens/Settings.jsx';
 import { Groups, GroupForm, GroupDetail, GroupMembers, GroupsAddMenu } from './screens/Groups.jsx';
 import { BottomNav, Header, Icon } from './components/UI.jsx';
 import { dateLabel } from './questionData.js';
 import { useServer } from './useServer.js';
-import { defaultNotify, STEPS, emptyAnswer, updateAnswer, questionStep, questionRoute, questionBack, joinedGroups } from './store.js';
+import { STEPS, emptyAnswer, updateAnswer, questionStep, questionRoute, questionBack, joinedGroups } from './store.js';
 
 const routeFromLocation = () => location.hash.replace(/^#\/?/, '') || 'today';
 // 진행 선 세 칸: 선택 / 결과·다른 생각 / 확장하기
 const PROGRESS = { answer: 0, result: 1, reading: 2 };
 const LEGAL_TITLES = { terms: '이용약관', privacy: '개인정보처리방침', contact: '문의' };
-const NOTIFY_KEY = 'galae.notify.v1';
 
 export default function App() {
   const [route, setRoute] = useState(routeFromLocation);
@@ -35,11 +33,6 @@ export default function App() {
   const TODAY = state.today;
   const TOPICS = state.topics;
   const [welcome, setWelcome] = useState('login');
-  // 알림 설정은 서버에 저장하지 않고 기기에만 둡니다.
-  const [notify, setNotify] = useState(() => {
-    try { const saved = JSON.parse(localStorage.getItem(NOTIFY_KEY)); return { ...defaultNotify(), ...(saved && typeof saved === 'object' ? saved : {}) }; }
-    catch { return defaultNotify(); }
-  });
   // 질문 흐름에 들어오기 직전 화면. 나의 선택에서 뒤로가면 이곳으로 돌아갑니다.
   const [origin, setOrigin] = useState(null);
   // 다시 하기로 새로 답하는 중인 답입니다. 선택하기를 누르기 전까지 저장된 답은 그대로이고, 확장하기를 마치면 끝납니다.
@@ -57,9 +50,6 @@ export default function App() {
   useEffect(() => {
     if (mainRef.current) { mainRef.current.scrollTop = 0; mainRef.current.querySelector('h1')?.focus({ preventScroll: true }); }
   }, [route, state.started]);
-  useEffect(() => {
-    try { localStorage.setItem(NOTIFY_KEY, JSON.stringify(notify)); } catch { /* 저장할 수 없는 환경입니다. */ }
-  }, [notify]);
   // 다시 답하던 질문을 벗어나면 다시 하기를 그만둡니다. 프로필을 보고 돌아오는 동안은 이어 갑니다.
   useEffect(() => {
     const [section, id] = route.split('/');
@@ -115,7 +105,6 @@ export default function App() {
     : welcome === 'signin' ? <Account mode="signin" back={() => setWelcome('login')} onDone={credentials => run(async () => { await server.authenticate('signin', credentials); welcomeGo('today'); })} />
     : <Onboard go={welcomeGo} />;
   else if (section === 'today' && !id) content = <Today state={state} go={go} openQuestion={openQuestion} />;
-  else if (section === 'notifications' && !id) { active = 'today'; content = <><Header back={() => go('today')} title="알림" /><Notifications state={state} go={go} topics={TOPICS} /></>; }
   else if (section === 'archive' && !id) content = <Archive questions={QUESTIONS} answers={state.answers} openQuestion={openQuestion} />;
   else if (section === 'feed' && !requestedStep && (!id || TOPICS.some(t => t.id === id))) content = <Feed topics={TOPICS} key={id} initialTopic={id} comments={state.comments} onOpen={topicId => go(`feed/${topicId}/read`)} />;
   else if (section === 'feed' && (requestedStep === 'read' || requestedStep === 'comments') && !extra && TOPICS.some(t => t.id === id)) content = <TopicPage topic={TOPICS.find(t => t.id === id)} initialComments={requestedStep === 'comments'} back={() => go(`feed/${id}`)} comments={state.comments} likes={state.likes} profile={state.profile} onComment={(topicId, text, parentId) => run(() => mutate(`/feed/topics/${topicId}/comments`, 'POST', { text, parentId: parentId ? Number(parentId) : null }))} onLike={commentId => run(() => mutate(`/comments/${commentId}/like`, state.likes.includes(commentId) ? 'DELETE' : 'PUT'))} onProfile={openProfile} />;
@@ -175,7 +164,6 @@ export default function App() {
       const profileBack = prevRoute.current === 'records' ? 'records' : 'settings';
       content = <><Header back={() => go(profileBack)} title="프로필" /><ProfileForm profile={state.profile} onSave={profile => run(async () => { await mutate('/users/me', 'PATCH', photoFields(profile, state.profile.photo)); go(profileBack); })} /></>;
     }
-    else if (id === 'notify') content = <><Header back={() => go('settings')} title="알림" /><NotifySettings notify={notify} onChange={setNotify} /></>;
     else if (id === 'sources') content = <><Header back={() => go('settings')} title="출처" /><Sources topics={TOPICS} /></>;
     else if (id === 'safety') content = <><Header back={() => go('settings')} title="신고 및 차단" /><Safety go={go} /></>;
     else if (id === 'report') content = <><Header back={() => go('settings/safety')} title="신고하기" /><ReportForm profile={state.profile} go={go} /></>;
@@ -191,7 +179,7 @@ export default function App() {
   }
   const tabRoot = state.started && welcome !== 'onboard' && (!id || (section === 'feed' && !requestedStep && content)) && ['today', 'archive', 'feed', 'groups', 'records'].includes(section);
   const TAB_TITLES = { feed: '생각', archive: '질문', groups: '그룹', records: '내 정보' };
-  const tabHeader = <header className="tab-header">{section === 'today' ? <img src="/logo.png" alt="갈래" /> : <span className="tab-title" aria-hidden="true">{TAB_TITLES[section]}</span>}{section === 'today' && <button className="icon-button" aria-label="알림" onClick={() => go('notifications')}><Icon name="bell" size={22} /></button>}{section === 'records' && <button className="icon-button" aria-label="설정" onClick={() => go('settings')}><Icon name="gear" size={22} /></button>}{section === 'groups' && <GroupsAddMenu go={go} />}</header>;
+  const tabHeader = <header className="tab-header">{section === 'today' ? <img src="/logo.png" alt="갈래" /> : <span className="tab-title" aria-hidden="true">{TAB_TITLES[section]}</span>}{section === 'records' && <button className="icon-button" aria-label="설정" onClick={() => go('settings')}><Icon name="gear" size={22} /></button>}{section === 'groups' && <GroupsAddMenu go={go} />}</header>;
   if (!content) content = <div className="flow"><h1 className="flow-title" tabIndex={-1}>찾을 수 없어요</h1><button className="btn-primary" onClick={() => go('today')}>오늘로</button></div>;
 
   if (server.booting) content = <p className="empty" role="status">불러오는 중…</p>;
