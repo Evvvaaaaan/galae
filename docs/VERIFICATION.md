@@ -173,6 +173,7 @@
 | 하사니는 같은 조건에서 평균 효용(평균적인 행복)을 최대화하는 원칙이 선택된다고 보았다 | SEP: "the parties in the original position would choose the principle of average utility instead of the principles of justice (Harsanyi 1975)". Wikipedia: "John Harsanyi's analysis suggests that rational individuals… would opt for maximizing average or total well-being" | 직접 2곳 |
 
 고친 내용: "미국의 철학자"는 국적을 직접 확인하지 않아 뺐습니다. Wikipedia에 같은 생각이 롤스 이전(비크리, 하사니)에도 있었다고 나오므로 "롤스가 처음 생각했다"는 표현은 쓰지 않고 "불렀습니다"로 썼습니다. "이 결론에는 반론이 많다"는 경향 주장 대신 하사니라는 구체적 반론 하나로 바꾸었습니다. "경제학자" 같은 수식은 확인하지 않아 뺐습니다.
+고친 내용(2026-11-05): 셋째 단락이 어렵다는 의견이 있어 차등 원칙을 풀어 썼다. "사람들이 가장 나쁜 처지를 먼저 떠올려서 이 원칙을 고른다"는 이유는 넣지 않았다. SEP 6.2절 요약에 따르면 롤스의 맥시민 논증은 주로 제1원칙을 뒷받침하고, 차등 원칙에는 다른 논증이 쓰인다(원문 대조 전).
 
 #### p010 몬티 홀 문제 — 통과
 
