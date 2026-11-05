@@ -138,7 +138,9 @@ requirements are prepared for handoff:
 - Maintain the supplied public HTTPS endpoint, persistent MariaDB settings,
   backup/restore ownership and native CORS configuration.
 
-Account deletion is connected to the new backend API. Notifications, reporting and blocking remain unavailable. Terms, privacy/support URLs, final artwork and App Store review
+Account deletion is connected to the new backend API. Reporting calls
+`PUT /users/me/blocks/{handle}` and therefore blocks the target; the backend
+still stores no separate report or moderation record. Notifications remain unavailable. Terms, privacy/support URLs, final artwork and App Store review
 materials remain separate release work. TestFlight preparation does not establish
 App Store approval eligibility.
 

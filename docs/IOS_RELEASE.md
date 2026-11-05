@@ -80,10 +80,13 @@ Web assets and generated Capacitor configuration are refreshed by `ios:sync`.
 
 The native shell now uses real backend APIs. The following full App Store checklist remains separate from local integration and TestFlight build preparation.
 
-- [ ] Confirm the release product: implement real authentication, groups and
-  synchronization, or explicitly redesign the app as an honest offline product.
-  Current login, statistics, members, comments, and sharing include demo data.
-- [ ] Replace the fixed demo date and prepare maintained question content.
+- [x] Confirm the release product: authentication, groups, statistics, comments
+  and sharing come from the backend, and demo records are never imported into
+  an account.
+- [x] Use the server-provided date instead of the fixed demo date.
+- [ ] Remove the unreachable demo fixtures in `src/questionData.js` and
+  `src/store.js` so they stop shipping in the bundle.
+- [ ] Prepare maintained question content for launch.
 - [x] Implement accessible privacy policy, terms and support contact screens.
 - [x] Add required signup consent for age, terms and privacy.
 - [ ] Add public policy and support URLs for App Store Connect.
@@ -100,9 +103,11 @@ The native shell now uses real backend APIs. The following full App Store checkl
 - [x] Apply the final app icon and launch artwork to the iOS asset catalog.
 - [ ] Supply screenshots, description, age rating, review instructions and a
   review account when authentication exists.
-- [ ] Audit app and SDK data access, supply any required privacy manifest
-  declarations, and complete App Store Connect privacy answers based on the
-  final behavior. Adding Preferences later requires a UserDefaults reason.
+- [x] Add `ios/App/App/PrivacyInfo.xcprivacy`: no tracking, and name, user ID,
+  photos and user content collected for app functionality only.
+- [ ] Complete App Store Connect privacy answers to match the manifest, and
+  decide whether the Pretendard and Gowun Batang CDN fonts stay external or
+  move into the bundle. Adding Preferences later requires a UserDefaults reason.
 - [ ] Run on a real iPhone: onboarding, answer submission, relaunch persistence,
   keyboard editing, photo selection/cancellation, share/cancel, code copying,
   external sources, safe areas, accessibility and offline startup.
