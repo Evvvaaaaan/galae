@@ -123,7 +123,7 @@ Wordle은 매일 성패가 갈려 대화거리가 생긴다. 갈래는 정답이
 
 ### 4.4 생각 탭 콘텐츠
 
-현재 25개 주제(`content/paradoxes.json`)가 있다. 철학 역설·사고실험 10개, 과학 5개, 역사 5개, 성경 3개, 불교 2개다. 사실 주장마다 서로 다른 출처 두 곳에서 직접 확인한 주제만 내보낸다. 기준과 기록은 [VERIFICATION.md](VERIFICATION.md), 주제 후보는 [paradox-topics.md](paradox-topics.md). 2026-11-05 기준 p006~p025의 20개가 통과했고, p001~p005의 5개는 보류 상태라 배포 빌드에 보이지 않는다.
+현재 22개 주제(`content/paradoxes.json`)가 있다. 철학 역설·사고실험 7개, 과학 5개, 역사 5개, 성경 3개, 불교 2개다. 사실 주장마다 서로 다른 출처 두 곳에서 직접 확인한 주제만 내보낸다. 기준과 기록은 [VERIFICATION.md](VERIFICATION.md), 주제 후보는 [paradox-topics.md](paradox-topics.md). 2026-11-05 기준 p007~p025의 19개가 통과했고, p001·p004·p005의 3개는 보류 상태라 배포 빌드에 보이지 않는다.
 
 ---
 

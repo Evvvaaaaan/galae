@@ -12,6 +12,8 @@
 - 확인되지 않은 세부(정확한 연도, 원전의 장·절, 누가 변형을 만들었는지)는 카드에서 빼거나 표현을 바꾼다.
 - 모두 통과하면 `paradoxes.json`의 `checked`에 날짜를 넣는다. `checked`가 `null`인 주제는 노출하지 않는다.
 
+p002 트롤리 문제, p003 아킬레우스와 거북, p006 순간이동 장치는 2026-11-05에 생각 탭에서 빼면서 검증 기록도 지웠습니다.
+
 ### 확인 강도
 
 | 강도 | 뜻 |
@@ -58,28 +60,6 @@
 남은 일: 원전(플루타르코스 영역본, [Gutenberg](https://www.gutenberg.org/files/14033/14033-h/14033-h.htm))을 직접 확인하기. 이번에는 요약본으로만 봤다. SEP 'Identity Over Time'에는 플루타르코스와 홉스가 나오지 않아서 다른 2차 출처가 필요하다.
 고친 내용: "수백 년" → "오랫동안", "2천 년 뒤" → "17세기". 『물체론』의 장·절은 확인하지 못해 출처에서 뺐다.
 
-#### p002 트롤리 문제 — 보류
-
-| 주장 | 근거 | 강도 |
-| --- | --- | --- |
-| 필리파 풋이 1967년에 처음 제시했다 | [Wikipedia](https://en.wikipedia.org/wiki/Trolley_problem). [SEP 'Doing vs. Allowing Harm'](https://plato.stanford.edu/entries/doing-allowing/)은 풋(1978)으로 표기하는데, 재수록본 연도로 보이며 확인 필요 | 직접 1곳 (연도 불일치) |
-| 풋의 원래 사례에서는 전차 운전사가 방향을 선택한다 | Wikipedia, SEP 모두 | 직접 2곳 |
-| 톰슨이 1976년 논문에서 '트롤리 문제'라는 이름을 붙였다 | Wikipedia | 직접 1곳 |
-| 다리 위 사람을 미는 변형이 있다 | Wikipedia 'The Fat Man' 항목. 누가 처음 제시했는지는 나오지 않음 | 직접 1곳 |
-| 많은 사람이 두 번째 상황에서 망설인다 | 이번에 확인하지 않음 | 미확인 |
-
-남은 일: "많은 사람이 망설인다"의 근거(설문·연구)를 찾고, 다리 변형을 두 번째 출처에서 확인하기.
-고친 내용: "레버를 당기면" → "방향을 바꾸면". 레버를 당기는 행인은 풋의 원래 사례가 아니다. "톰슨은" → "철학자들은".
-
-#### p003 아킬레우스와 거북 — 보류
-
-| 주장 | 근거 | 강도 |
-| --- | --- | --- |
-| 제논이 아킬레우스와 거북 논증을 제시했다 | [SEP 'Zeno's Paradoxes'](https://plato.stanford.edu/entries/paradox-zeno/). 출처로 심플리키오스의 주석을 듦 | 직접 1곳 |
-| 아리스토텔레스 『자연학』 6권 9장에 기록되어 있다 | SEP에서 찾지 못함 (『자연학』 239b는 다른 역설에만 인용됨) | 미확인 → 카드 출처에서 뺌 |
-
-남은 일: 두 번째 출처 확인하기 (IEP 또는 Wikipedia 'Zeno's paradoxes').
-
 #### p004 더미의 역설 — 보류
 
 | 주장 | 근거 | 강도 |
@@ -122,18 +102,6 @@
 방법: 각 페이지를 직접 열어 해당 구절을 원문으로 확인했습니다. 작업 중 WebFetch 사용량 제한에 걸려, 이후에는 `curl`로 페이지 원문(위키백과는 `action=raw` 원문, SEP·LSE·Gutenberg는 HTML/텍스트)을 받아 해당 구절을 grep·sed로 읽었습니다. 검색 결과 스니펫만 본 내용은 근거로 쓰지 않았습니다.
 주제 선정: `docs/paradox-topics.md`에서 ✅·⏸가 없는 후보 가운데 분야가 겹치지 않게 동일성(순간이동 장치), 마음(메리의 방), 윤리(기게스의 반지), 사회(무지의 베일), 확률(몬티 홀 문제)을 골랐습니다. 경험 기계는 기게스의 반지와 분야(윤리)가 겹쳐 뺐습니다.
 
-#### p006 순간이동 장치 — 통과
-
-| 주장 | 근거 | 강도 |
-| --- | --- | --- |
-| 장치가 사람을 잠재우고 몸을 기록한 뒤 화성으로 보낸다(지구의 몸은 없어진다) | [Wikipedia](https://en.wikipedia.org/wiki/Teletransportation_paradox): "puts a person to sleep, records their molecular/atomic composition and relays the recording to Mars", "simply kills and makes an exact replica". [LSE 강의 노트](https://personal.lse.ac.uk/robert49/teaching/ph103/lecture5.html): "a Scanner will record the data… it will also destroy your body as it scans. It will then send this data to Mars" | 직접 2곳 |
-| 화성에서 원자 하나하나까지 똑같은 사람을 만든다 | Wikipedia: "each atom in exactly the same relative position". LSE: "a Replicator will create an exact copy of you" | 직접 2곳 |
-| 지구의 몸을 없애지 않는 장치로 바뀌면 똑같은 사람이 지구와 화성에 함께 있게 된다 | Wikipedia: "modified to not destroy the person who enters it". LSE 'Branch-Line Replicator': "doesn't destroy your body as it scans… the Replicator makes a second copy of you" | 직접 2곳 |
-| 파핏이 1984년 책 『이유와 인격』에서 이 사고실험을 다루었다 | Wikipedia: "formulated by Derek Parfit in his 1984 book Reasons and Persons". LSE: "Derek Parfit, in his (1984) Reasons and Persons…" 바로 뒤에 화성 여행 사례가 이어짐 | 직접 2곳 |
-| 파핏은 동일성보다 기억·성격 같은 심리적 이어짐이 중요하다고 보았다 | LSE: "identity doesn't really matter… psychological continuity and connectedness does matter. Parfit refers to this as Relation R". [SEP 'Personal Identity'](https://plato.stanford.edu/entries/identity-personal/): "Identity itself has no practical importance… Parfit (1971, 1984: 215, 1995)… argue against [the importance of identity]". Wikipedia: "What matters, to Parfit, is simply psychological connectedness (\"Relation R\"), including memory, personality" | 직접 3곳 |
-
-고친 내용: 초안의 "영국의 철학자"는 국적을 직접 확인한 페이지가 없어 뺐습니다. 파핏 원래 사례에서 지구의 몸은 며칠 안에 죽게 되지만(LSE: 말기 암, 원전 확인 못 함) 카드에서는 그 세부를 넣지 않았습니다.
-
 #### p007 메리의 방 — 통과
 
 | 주장 | 근거 | 강도 |
@@ -173,7 +141,7 @@
 | 하사니는 같은 조건에서 평균 효용(평균적인 행복)을 최대화하는 원칙이 선택된다고 보았다 | SEP: "the parties in the original position would choose the principle of average utility instead of the principles of justice (Harsanyi 1975)". Wikipedia: "John Harsanyi's analysis suggests that rational individuals… would opt for maximizing average or total well-being" | 직접 2곳 |
 
 고친 내용: "미국의 철학자"는 국적을 직접 확인하지 않아 뺐습니다. Wikipedia에 같은 생각이 롤스 이전(비크리, 하사니)에도 있었다고 나오므로 "롤스가 처음 생각했다"는 표현은 쓰지 않고 "불렀습니다"로 썼습니다. "이 결론에는 반론이 많다"는 경향 주장 대신 하사니라는 구체적 반론 하나로 바꾸었습니다. "경제학자" 같은 수식은 확인하지 않아 뺐습니다.
-고친 내용(2026-11-05): 셋째 단락이 어렵다는 의견이 있어 차등 원칙을 풀어 썼다. "사람들이 가장 나쁜 처지를 먼저 떠올려서 이 원칙을 고른다"는 이유는 넣지 않았다. SEP 6.2절 요약에 따르면 롤스의 맥시민 논증은 주로 제1원칙을 뒷받침하고, 차등 원칙에는 다른 논증이 쓰인다(원문 대조 전).
+고친 내용(2026-11-05): 글이 어렵다는 의견이 있어 전체를 다시 썼다. 첫 단락의 케이크 나누기는 이해를 돕는 일상 예시이고 롤스가 든 예가 아니므로 롤스와 묶지 않았다. 차등 원칙 단락은 "가장 불리한 사람에게 이익이 될 때만 불평등 허용"(위 표, 직접 2곳)을 풀어 쓴 것이다. "사람들이 가장 나쁜 처지를 먼저 떠올려서 이 원칙을 고른다"는 이유는 넣지 않았다. SEP 6.2절 요약에 따르면 롤스의 맥시민 논증은 주로 제1원칙을 뒷받침한다(원문 대조 전).
 
 #### p010 몬티 홀 문제 — 통과
 
@@ -187,12 +155,12 @@
 
 고친 내용: "약 1만 명, 박사 약 1천 명"이라는 숫자는 Wikipedia(Tierney 1991 인용)에만 있어 "수천 통", "많았습니다"로 완화했습니다. 문제 이름이 진행자 몬티 홀에서 왔다는 내용은 Wikipedia에서만 확인해 카드에 넣지 않았습니다. 보스 사반트 개인 사이트는 현재 주소 대신 웹 아카이브 보관본을 열어 확인했습니다.
 
-#### 체크리스트 (5개 공통)
+#### 체크리스트 (4개 공통)
 
-- [x] 누가 제기했는지가 정확한가 (파핏 1984, 잭슨 1982, 플라톤 『국가』 2권의 글라우콘, 롤스 1971·하사니, 1990년 『퍼레이드』)
+- [x] 누가 제기했는지가 정확한가 (잭슨 1982, 플라톤 『국가』 2권의 글라우콘, 롤스 1971·하사니, 1990년 『퍼레이드』)
 - [x] 입장을 공정하게 요약했는가 (메리의 방은 잭슨의 이후 입장 변화, 무지의 베일은 하사니의 반론을 함께 적음)
 - [x] 확인되지 않은 인용문이 없는가 (따옴표 인용 없음)
-- [x] 비슷한 역설이나 변형과 섞이지 않았는가 (순간이동은 분열 사고실험과, 기게스는 헤로도토스 판본과 섞지 않음)
+- [x] 비슷한 역설이나 변형과 섞이지 않았는가 (기게스는 헤로도토스 판본과 섞지 않음)
 - [x] 시기, 숫자, "많은 사람이" 같은 표현에 근거가 있는가
 
 ### 2026-11-05 · 생각 탭 과학 주제 검증 기록 (p011~p015)
@@ -210,8 +178,11 @@
 | 직관과 달리 높게 나온다(카드 2의 "그리 높지 않을 것 같습니다") | Wikipedia: "seems wrong at first glance but is, in fact, true". Durrett: "At first glance it is surprising" | 직접 2곳 |
 | 23명 사이의 짝은 253쌍이다 | Wikipedia: 23명에 253쌍. Durrett: 같은 설명을 30명·435쌍((30·29)/2)으로 제시. 23·22/2 = 253은 같은 식으로 계산해 확인 | 직접 1곳 + 직접 1곳(같은 방법, 숫자는 계산) |
 | 그 안에 나와 생일이 같은 사람이 있을 확률은 10%도 되지 않는다 | Wikipedia: 다른 23명이면 약 6.1%. Durrett: 내 생일과 겹치지 않을 확률 (364/365)^n 식 제시 → n = 22이면 약 5.9% | 직접 2곳 |
+| 모두의 생일이 다를 확률을 거꾸로 구한다. 두 번째 사람은 364/365, 세 번째 사람은 363/365 … 23번째까지 곱하면 약 49.27% | Wikipedia: "it is simpler to calculate P(A′), the probability that no two people in the room have the same birthday", 365/365 × 364/365 × 363/365 × … × 343/365, P(A′) ≈ 0.492703. 같은 식을 직접 계산해 0.4927 확인 | 직접 1곳 + 계산 |
+| 50명이면 약 97%, 70명이면 약 99.9% | Wikipedia 표: "50 ‖ 97.0%", "70 ‖ 99.9%". 같은 식으로 직접 계산해 0.9704, 0.9992 확인 | 직접 1곳 + 계산 |
 
 고친 내용: '나와 같은 생일' 50%에 253명이 필요하다는 내용은 짝의 수 253과 헷갈릴 수 있어 카드에서 뺐습니다(Wikipedia와 Durrett 모두에서 확인은 됨). "많은 사람이 낮게 짐작한다" 대신 "그리 높지 않을 것 같습니다"로 완화했습니다.
+고친 내용(2026-11-05): 설명을 더 자세히 해 달라는 의견이 있어, 모두의 생일이 다를 확률을 곱해 나가는 계산 과정(카드 3·4)과 50명·70명일 때의 확률(카드 5)을 더했다. 두 항목은 Wikipedia 원문(action=raw)과 직접 계산으로 확인했다. 253쌍과 같은 방식의 계산 확인이라 이 표에서 가장 약한 축에 든다.
 참고: MathWorld는 Wolfram Research가 운영하는 수학 백과입니다. 이를 빼도 Wikipedia와 Durrett 두 곳으로 모든 주장이 통과합니다. 짝 253쌍은 Durrett에서 숫자 자체가 아니라 계산 방법을 확인한 것이라 가장 약한 항목입니다.
 
 #### p012 보이지 않는 고릴라 — 통과
