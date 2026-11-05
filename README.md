@@ -109,7 +109,8 @@ docs/
   APP_FLOW.md       # 화면, 경로, 규칙, 저장 구조
   ACHIEVEMENTS.md   # 세계수와 업적
   DEPLOY.md         # 공모전 제출용 배포 방안
-  VERIFICATION.md   # 역설 카드 검증 기준과 기록
+  QUESTIONS.md      # 오늘의 질문 목록과 확장하기 성경 초안
+  VERIFICATION.md   # 생각 탭 주제와 오늘의 질문 검증 기준·기록
   paradox-topics.md # 역설 주제 후보
 ```
 
@@ -120,7 +121,8 @@ docs/
 - [화면과 사용자 흐름](docs/APP_FLOW.md)
 - [세계수와 업적](docs/ACHIEVEMENTS.md)
 - [배포 방안](docs/DEPLOY.md)
-- [역설 피드 검증 기록](docs/VERIFICATION.md)
+- [오늘의 질문 목록](docs/QUESTIONS.md)
+- [검증 기록](docs/VERIFICATION.md)
 - [역설 주제 후보](docs/paradox-topics.md)
 
 현재 화면·저장·공유 정책은 `docs/APP_FLOW.md`를 기준으로 합니다.

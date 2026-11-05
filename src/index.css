@@ -226,20 +226,27 @@ label.list-row { cursor: pointer; }
 .motif { display: block; }
 
 /* 생각 피드 */
-.feed { height: 100%; overflow-y: auto; scroll-snap-type: y mandatory; scrollbar-width: none; background: #FFFFFF; }
+.feed { height: calc(100% - 72px - env(safe-area-inset-top)); margin-top: calc(72px + env(safe-area-inset-top)); overflow-y: auto; scroll-snap-type: y mandatory; scrollbar-width: none; background: #FFFFFF; }
 .feed::-webkit-scrollbar, .screen::-webkit-scrollbar { display: none; }
-.feed-page { min-height: 100%; display: flex; flex-direction: column; padding: calc(72px + env(safe-area-inset-top)) 12px 12px; scroll-snap-align: start; scroll-snap-stop: always; }
-.feed-card { flex: 1; display: flex; flex-direction: column; gap: 12px; padding: 24px 22px 14px; border-radius: 22px; background: var(--bar-track) url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='p' x='0' y='0' width='100%' height='100%'><feTurbulence type='fractalNoise' baseFrequency='0.1' numOctaves='4' seed='3' stitchTiles='stitch' result='n'/><feDiffuseLighting in='n' surfaceScale='1.3' lighting-color='%23fff' result='l'><feDistantLight azimuth='225' elevation='58'/></feDiffuseLighting><feColorMatrix in='l' values='0 0 0 0 0.35 0 0 0 0 0.33 0 0 0 0 0.3 -1 0 0 0 0.9'/></filter><rect width='100%' height='100%' filter='url(%23p)' opacity='0.45'/></svg>"); box-shadow: 0 6px 28px #2b4a630d; }
-.feed-card h2 { margin: auto 0 4px; font-family: var(--serif); font-size: 23px; font-weight: 400; line-height: 1.4; letter-spacing: -.02em; }
-.feed-card p { font-family: var(--serif); font-size: 15px; line-height: 1.75; text-wrap: pretty; word-break: keep-all; }
-.feed-card p + p::before { content: ''; display: block; width: 14px; height: 1px; margin-bottom: 12px; background: var(--bar-base); }
-.feed-card p:last-of-type { color: var(--key); }
-.feed-footer { display: flex; align-items: center; gap: 12px; margin-top: auto; padding-top: 12px; }
-.feed-sources { flex: 1; min-width: 0; padding: 0; list-style: none; font-size: 11px; line-height: 1.7; color: var(--ink-hint); }
+/* 다음 주제 카드의 윗부분이 살짝 보이도록 한 장을 화면보다 낮게 둡니다. */
+.feed-page { height: 88%; display: flex; flex-direction: column; padding: 0 12px 12px; scroll-snap-align: start; scroll-snap-stop: always; }
+.feed-card { position: relative; flex: 1; display: flex; flex-direction: column; justify-content: flex-end; width: 100%; padding: 24px 22px; border: 0; border-radius: 22px; overflow: hidden; font: inherit; color: inherit; text-align: left; cursor: pointer; box-shadow: 0 6px 28px #2b4a630d; }
+/* 종이 질감은 내용 페이지에서도 이어집니다. */
+.feed-card, .screen:has(> .topic-page), .screen:has(> .topic-page) ~ .bottom-nav { background: var(--bar-track) url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='p' x='0' y='0' width='100%' height='100%'><feTurbulence type='fractalNoise' baseFrequency='0.1' numOctaves='4' seed='3' stitchTiles='stitch' result='n'/><feDiffuseLighting in='n' surfaceScale='1.3' lighting-color='%23fff' result='l'><feDistantLight azimuth='225' elevation='58'/></feDiffuseLighting><feColorMatrix in='l' values='0 0 0 0 0.35 0 0 0 0 0.33 0 0 0 0 0.3 -1 0 0 0 0.9'/></filter><rect width='100%' height='100%' filter='url(%23p)' opacity='0.45'/></svg>"); }
+.feed-meta { position: absolute; top: 22px; left: 22px; display: flex; gap: 14px; font-size: 14px; color: var(--ink-hint); }
+.feed-meta span { display: flex; align-items: center; gap: 4px; }
+.feed-card img { width: 100%; margin: auto 0; mix-blend-mode: multiply; }
+.feed-card h2 { position: relative; margin: 0 0 4px; font-family: var(--serif); font-size: 23px; font-weight: 400; line-height: 1.4; letter-spacing: -.02em; }
+.feed-card p { position: relative; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; font-family: var(--serif); font-size: 14px; line-height: 1.7; color: var(--ink-sub); word-break: keep-all; }
+.feed-end { height: 100%; justify-content: center; }
+.topic-body { display: flex; flex-direction: column; gap: 12px; padding-bottom: 24px; }
+.topic-body h1 { margin-bottom: 12px; font-family: var(--serif); font-size: 23px; font-weight: 400; line-height: 1.4; letter-spacing: -.02em; outline: none; }
+.topic-body p { font-family: var(--serif); font-size: 16px; line-height: 1.8; text-wrap: pretty; word-break: keep-all; }
+.topic-body p + p::before { content: ''; display: block; width: 14px; height: 1px; margin-bottom: 12px; background: var(--bar-base); }
+.topic-body p:last-of-type { color: var(--key); }
+.topic-body .feed-sources { margin-top: 20px; font-size: 12px; }
+.feed-sources { padding: 0; list-style: none; font-size: 11px; line-height: 1.7; color: var(--ink-hint); }
 .feed-sources a { color: inherit; text-underline-offset: 3px; }
-.feed-end { justify-content: center; }
-.feed-actions { display: flex; flex-shrink: 0; margin-right: -8px; }
-.feed-actions .icon-button { margin: 0; color: var(--ink-sub); }
 .sheet-backdrop { position: absolute; inset: 0; border: 0; background: #33322f26; z-index: 6; animation: fadeIn 200ms ease-out both; }
 .sheet { position: absolute; left: 0; right: 0; bottom: 0; display: flex; flex-direction: column; height: 75%; border-radius: 20px 20px 0 0; background: var(--bg); z-index: 7; outline: none; animation: sheetIn 240ms ease-out both; transition: transform 160ms ease-out, height 200ms ease-out; }
 .share-sheet { height: auto; gap: 24px; padding: 0 28px calc(24px + env(safe-area-inset-bottom)); }
@@ -261,6 +268,7 @@ label.list-row { cursor: pointer; }
 .comment-like { display: flex; flex-direction: column; align-items: center; align-self: center; gap: 1px; min-width: 28px; padding: 4px 0; border: 0; background: none; font-size: 11px; color: var(--ink-faint); }
 .comment-like.on { color: var(--key); }
 .sheet .comment-list { flex: 1; padding: 0 28px 20px; overflow-y: auto; }
+.comment-empty { flex: 1; display: flex; align-items: center; justify-content: center; padding-bottom: 20px; font-size: 14px; color: var(--ink-hint); }
 .sheet .chat-input { position: static; margin: 0; gap: 0; padding-right: 12px; padding-bottom: calc(16px + env(safe-area-inset-bottom)); }
 @keyframes fadeIn { from { opacity: 0; } }
 .dialog { position: absolute; top: 50%; left: 50%; width: min(280px, calc(100% - 56px)); transform: translate(-50%, -50%); padding: 24px 20px 8px; border-radius: 16px; background: var(--bg); text-align: center; font-size: 15px; z-index: 7; animation: fadeIn 200ms ease-out both; }

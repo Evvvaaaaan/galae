@@ -106,7 +106,7 @@ export function MyComments({ comments, go }) {
   if (!comments.length) return <Empty title="아직 남긴 댓글이 없어요" label="생각 보러 가기" onClick={() => go('feed')} />;
   return <div className="list">{[...comments].reverse().map(c => {
     const topic = PARADOXES.find(p => p.id === c.topicId);
-    return <button className="record-row" key={c.id} disabled={!TOPICS.some(t => t.id === c.topicId)} onClick={() => go(`feed/${c.topicId}`)}>
+    return <button className="record-row" key={c.id} disabled={!TOPICS.some(t => t.id === c.topicId)} onClick={() => go(`feed/${c.topicId}/read`)}>
       <strong>{topic.title}</strong>
       <p className="record-note preserve-lines">{c.text}</p>
     </button>;

@@ -5,7 +5,7 @@ import Account from './screens/Account.jsx';
 import Notifications from './screens/Notifications.jsx';
 import Today, { STREAK_KEY } from './screens/Today.jsx';
 import Archive from './screens/Archive.jsx';
-import Feed from './screens/Feed.jsx';
+import Feed, { TopicPage } from './screens/Feed.jsx';
 import { TOPICS } from './topics.js';
 import Question from './screens/Question.jsx';
 import Result from './screens/Result.jsx';
@@ -97,7 +97,8 @@ export default function App() {
   else if (section === 'today' && !id) content = <Today state={state} go={go} openQuestion={openQuestion} />;
   else if (section === 'notifications' && !id) { active = 'today'; content = <><Header back={() => go('today')} title="알림" /><Notifications state={state} go={go} /></>; }
   else if (section === 'archive' && !id) content = <Archive answers={state.answers} openQuestion={openQuestion} />;
-  else if (section === 'feed' && (!id || TOPICS.some(t => t.id === id))) content = <Feed key={id} initialTopic={id} initialComments={requestedStep === 'comments'} comments={state.comments} likes={state.likes} profile={state.profile} onComment={(topicId, text, parentId) => setState(s => addComment(s, topicId, text, parentId))} onLike={id => setState(s => toggleLike(s, id))} onProfile={openProfile} />;
+  else if (section === 'feed' && !requestedStep && (!id || TOPICS.some(t => t.id === id))) content = <Feed key={id} initialTopic={id} comments={state.comments} onOpen={topicId => go(`feed/${topicId}/read`)} />;
+  else if (section === 'feed' && (requestedStep === 'read' || requestedStep === 'comments') && !extra && TOPICS.some(t => t.id === id)) content = <TopicPage topic={TOPICS.find(t => t.id === id)} initialComments={requestedStep === 'comments'} back={() => go(`feed/${id}`)} comments={state.comments} likes={state.likes} profile={state.profile} onComment={(topicId, text, parentId) => setState(s => addComment(s, topicId, text, parentId))} onLike={id => setState(s => toggleLike(s, id))} onProfile={openProfile} />;
   else if (section === 'question' && (!extra || requestedStep === 'result') && (!requestedStep || STEPS.includes(requestedStep))) {
     const question = QUESTIONS.find(q => q.id === id);
     const from = origin?.split('/')[0];
@@ -159,13 +160,13 @@ export default function App() {
     else if (id in LEGAL_TITLES) content = <><Header back={() => go('settings')} title={LEGAL_TITLES[id]} /><LegalDoc doc={id} /></>;
     else if (id === 'onboard') content = <Onboard go={() => go('settings')} />;
   }
-  const tabRoot = state.started && (!id || (section === 'feed' && content)) && ['today', 'archive', 'feed', 'groups', 'records'].includes(section);
+  const tabRoot = state.started && (!id || (section === 'feed' && !requestedStep && content)) && ['today', 'archive', 'feed', 'groups', 'records'].includes(section);
   const TAB_TITLES = { feed: '생각', archive: '질문', groups: '그룹', records: '내 정보' };
   const tabHeader = <header className="tab-header">{section === 'today' ? <img src="/logo.png" alt="갈래" /> : <span className="tab-title" aria-hidden="true">{TAB_TITLES[section]}</span>}{section === 'today' && <button className="icon-button" aria-label="알림" onClick={() => go('notifications')}><Icon name="bell" size={22} /></button>}{section === 'records' && <button className="icon-button" aria-label="설정" onClick={() => go('settings')}><Icon name="gear" size={22} /></button>}{section === 'groups' && <GroupsAddMenu go={go} />}</header>;
   if (!content) content = <div className="flow"><h1 className="flow-title" tabIndex={-1}>찾을 수 없어요</h1><button className="btn-primary" onClick={() => go('today')}>오늘로</button></div>;
 
   return <div className="frame">
-    <main ref={mainRef} className={`screen ${state.started && route !== 'settings/onboard' ? 'app-screen' : ''} ${section === 'feed' && state.started ? 'flush' : ''}`} id="main-content" key={state.started ? route : welcome}>
+    <main ref={mainRef} className={`screen ${state.started && route !== 'settings/onboard' ? 'app-screen' : ''} ${section === 'feed' && !requestedStep && state.started ? 'flush' : ''}`} id="main-content" key={state.started ? route : welcome}>
       {storageError && <p className="form-error" role="alert">브라우저에 저장하지 못했어요</p>}{tabRoot && tabHeader}{content}
     </main>{state.started && route !== 'settings/onboard' && <BottomNav active={active} go={go} />}
   </div>;

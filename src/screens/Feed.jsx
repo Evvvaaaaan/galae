@@ -1,38 +1,50 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Avatar, Empty, Icon, ProfileLink, SourceItem } from '../components/UI.jsx';
+import { Avatar, Empty, Header, Icon, ProfileLink, SourceItem } from '../components/UI.jsx';
 import { myself } from '../store.js';
 import { MEMBERS, SAMPLE_COMMENTS } from '../questionData.js';
 import { TOPICS } from '../topics.js';
 
-export default function Feed({ initialTopic, initialComments, comments, likes, profile, onComment, onLike, onProfile }) {
+// 위아래로 넘기며 주제의 썸네일과 제목을 봅니다. 누르면 내용 페이지로 갑니다.
+// 1분에 500자쯤 읽는다고 보고 계산합니다.
+const readMinutes = topic => Math.max(1, Math.round(topic.cards.reduce((n, c) => n + c.text.length, 0) / 500));
+
+export default function Feed({ initialTopic, comments, onOpen }) {
   const feedRef = useRef(null);
-  const [open, setOpen] = useState(null);
   useEffect(() => {
     if (initialTopic) feedRef.current.querySelector(`[data-topic="${initialTopic}"]`)?.scrollIntoView({ block: 'start' });
-    // 프로필에서 돌아오면 보던 댓글 시트를 다시 엽니다.
-    if (initialTopic && initialComments) setOpen(initialTopic);
-  }, [initialTopic, initialComments]);
+  }, [initialTopic]);
 
-  return <>
-    <div className="feed" ref={feedRef}>
-      <h1 className="visually-hidden" tabIndex={-1}>생각</h1>
-      {TOPICS.map(topic => <section className="feed-page" key={topic.id} data-topic={topic.id} aria-label={topic.title}>
-        <article className="feed-card">
-          <h2>{topic.title}</h2>
-          {topic.cards.map((card, i) => <p key={i}>{card.text}</p>)}
-          <footer className="feed-footer">
-            <ul className="feed-sources">{topic.sources.map(s => <SourceItem key={s.label} source={s} />)}</ul>
-            <div className="feed-actions">
-          <button className="icon-button" aria-label="댓글" onClick={() => setOpen(topic.id)}><Icon name="comment" size={22} /></button>
-            </div>
-          </footer>
-        </article>
-      </section>)}
-      <div className="feed-page feed-end"><Empty title="모든 생각을 다 보셨어요" /></div>
-    </div>
-    {open && <Comments key={open} frame={feedRef.current.closest('.frame')} topic={TOPICS.find(t => t.id === open)} comments={comments.filter(c => c.topicId === open)} likes={likes} profile={profile} onComment={onComment} onLike={onLike} onProfile={memberId => onProfile(memberId, `feed/${open}/comments`)} onClose={() => setOpen(null)} />}
-  </>;
+  return <div className="feed" ref={feedRef}>
+    <h1 className="visually-hidden" tabIndex={-1}>생각</h1>
+    {TOPICS.map(topic => <section className="feed-page" key={topic.id} data-topic={topic.id}>
+      <button className="feed-card" onClick={() => onOpen(topic.id)}>
+        <span className="feed-meta"><span><Icon name="clock" size={16} />{readMinutes(topic)}분</span><span><Icon name="comment" size={16} />{[...SAMPLE_COMMENTS, ...comments].filter(c => c.topicId === topic.id).length}</span></span>
+        {topic.thumbnail && <img src={topic.thumbnail} alt="" />}
+        <h2>{topic.title}</h2>
+        <p>{topic.cards[0].text}</p>
+      </button>
+    </section>)}
+    <div className="feed-page feed-end"><Empty title="모든 생각을 다 보셨어요" /></div>
+  </div>;
+}
+
+// 주제의 내용 페이지입니다. 단락을 이어 읽고, 맨 아래에 출처가 있습니다.
+export function TopicPage({ topic, initialComments, back, comments, likes, profile, onComment, onLike, onProfile }) {
+  const pageRef = useRef(null);
+  // 알림이나 프로필에서 돌아오면 댓글 시트를 연 채로 보여 줍니다.
+  // 시트는 페이지가 그려진 뒤에 열어야 화면 틀을 찾을 수 있습니다.
+  const [open, setOpen] = useState(false);
+  useEffect(() => { if (initialComments) setOpen(true); }, [initialComments]);
+  return <div className="topic-page" ref={pageRef}>
+    <Header back={back} action={<button className="icon-button" aria-label="댓글" onClick={() => setOpen(true)}><Icon name="comment" size={22} /></button>} />
+    <article className="topic-body">
+      <h1 tabIndex={-1}>{topic.title}</h1>
+      {topic.cards.map((card, i) => <p key={i}>{card.text}</p>)}
+      <ul className="feed-sources">{topic.sources.map(s => <SourceItem key={s.label} source={s} />)}</ul>
+    </article>
+    {open && <Comments frame={pageRef.current.closest('.frame')} topic={topic} comments={comments.filter(c => c.topicId === topic.id)} likes={likes} profile={profile} onComment={onComment} onLike={onLike} onProfile={memberId => onProfile(memberId, `feed/${topic.id}/comments`)} onClose={() => setOpen(false)} />}
+  </div>;
 }
 
 function Comments({ frame, topic, comments, likes, profile, onComment, onLike, onProfile, onClose }) {
@@ -89,7 +101,7 @@ function Comments({ frame, topic, comments, likes, profile, onComment, onLike, o
         onPointerMove={e => drag && setDrag({ ...drag, y: e.clientY })}
         onPointerUp={endDrag} onPointerCancel={() => setDrag(null)}
         onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onClose(); } }}><span /></button>
-      <ul className="comment-list">
+      {all.length === 0 ? <p className="comment-empty">아직 댓글이 없어요.</p> : <ul className="comment-list">
         {all.filter(c => !c.parentId).map(c => {
           const replies = all.filter(r => r.parentId === c.id);
           const open = shown.includes(c.id);
@@ -99,7 +111,7 @@ function Comments({ frame, topic, comments, likes, profile, onComment, onLike, o
             {open && replies.map(row)}
           </Fragment>;
         })}
-      </ul>
+      </ul>}
       <form className="chat-input" onSubmit={send}>
         {replyTo && <button type="button" className="icon-button" aria-label="답글 취소" onClick={() => setReplyTo(null)}><Icon name="close" size={18} /></button>}
         <input ref={inputRef} aria-label="댓글" placeholder={replyTo ? `${replyTo.handle}님에게 답글` : '댓글'} maxLength={300} value={text} onChange={e => setText(e.target.value)} />
