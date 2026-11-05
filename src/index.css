@@ -176,6 +176,8 @@ label.list-row { cursor: pointer; }
 .streak b { font-family: var(--serif); font-size: 30px; font-weight: 400; line-height: 1; color: var(--key); }
 .today-streak svg { display: block; overflow: visible; }
 .today-streak text { font-size: 11px; fill: var(--ink-hint); }
+.today-streak .streak-draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: drawLine 500ms ease-out 300ms forwards; }
+.today-streak .streak-fresh { transform-box: fill-box; transform-origin: center; animation: fruitBloom 700ms cubic-bezier(.3, 1.4, .5, 1) 750ms backwards; }
 /* 새 선과 열매는 남색으로 그려진 뒤, 다 그려지면 서서히 다른 선과 같은 파란색으로 돌아갑니다. */
 .world-tree .grow path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: drawLine 2800ms ease-out forwards, settle 1600ms ease-in-out 3400ms backwards; }
 .world-tree .grow path + path { animation: drawLine 1000ms ease-out 2200ms forwards, settle 1600ms ease-in-out 3400ms backwards; }

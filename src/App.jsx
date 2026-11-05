@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import Login from './screens/Login.jsx';
 import Onboard from './screens/Onboard.jsx';
 import Account from './screens/Account.jsx';
-import Today from './screens/Today.jsx';
+import Today, { STREAK_KEY } from './screens/Today.jsx';
 import Archive from './screens/Archive.jsx';
 import Feed from './screens/Feed.jsx';
 import { TOPICS } from './topics.js';
@@ -144,7 +144,7 @@ export default function App() {
     if (member) content = <><Header back={() => go(profileFrom.current || 'today')} title={member.handle} /><MemberProfile member={member} /></>;
   } else if (section === 'settings' && !requestedStep) {
     active = 'records';
-    if (!id) content = <><Header back={() => go('records')} title="설정" /><Settings profile={state.profile} go={go} onLogout={() => { go('today'); setWelcome('login'); setState(s => ({ ...s, started: false })); }} onReset={() => setState(s => ({ ...s, answers: {}, achieved: {} }))} /></>;
+    if (!id) content = <><Header back={() => go('records')} title="설정" /><Settings profile={state.profile} go={go} onLogout={() => { go('today'); setWelcome('login'); setState(s => ({ ...s, started: false })); }} onReset={() => { try { localStorage.removeItem(STREAK_KEY); } catch { /* 저장할 수 없는 환경입니다. */ } setState(s => ({ ...s, answers: {}, achieved: {} })); }} /></>;
     else if (id === 'profile') {
       // 나 탭의 프로필 줄에서 들어왔으면 나 탭으로, 설정에서 들어왔으면 설정으로 돌아갑니다.
       const profileBack = prevRoute.current === 'records' ? 'records' : 'settings';
