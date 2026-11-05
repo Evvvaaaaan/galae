@@ -41,6 +41,21 @@ export function Avatar({ name, color = 'sage', photo }) {
   return <span className={`avatar ${color}`} aria-hidden="true">{photo ? <img src={photo} alt="" /> : name.slice(0, 1)}</span>;
 }
 
+// 저장 공간을 아끼려고 정사각형 256px JPEG로 줄여 둡니다.
+export function resizePhoto(file, done) {
+  if (!file) return;
+  const img = new Image();
+  img.onload = () => {
+    const size = Math.min(img.width, img.height);
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 256;
+    canvas.getContext('2d').drawImage(img, (img.width - size) / 2, (img.height - size) / 2, size, size, 0, 0, 256, 256);
+    done(canvas.toDataURL('image/jpeg', 0.85));
+    URL.revokeObjectURL(img.src);
+  };
+  img.src = URL.createObjectURL(file);
+}
+
 // 누르면 그 사람의 프로필로 갑니다. 누를 곳이 없으면(내 글) 그대로 보여 줍니다.
 // 아바타는 이름과 같은 곳으로 가므로 한 번만 읽히도록 숨깁니다.
 export function ProfileLink({ onClick, avatar, children }) {

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Avatar } from '../components/UI.jsx';
+import { Avatar, resizePhoto } from '../components/UI.jsx';
 import { COLOR_LABELS, PROFILE_COLORS, cleanHandle, myself } from '../store.js';
 import { TOPICS } from './Feed.jsx';
 
@@ -36,23 +36,9 @@ export function ProfileForm({ profile, onSave }) {
   const [bio, setBio] = useState(profile.bio);
   const [photo, setPhoto] = useState(profile.photo);
   const [color, setColor] = useState(profile.color);
-  // 저장 공간을 아끼려고 정사각형 256px JPEG로 줄여 둡니다.
-  function pick(file) {
-    if (!file) return;
-    const img = new Image();
-    img.onload = () => {
-      const size = Math.min(img.width, img.height);
-      const canvas = document.createElement('canvas');
-      canvas.width = canvas.height = 256;
-      canvas.getContext('2d').drawImage(img, (img.width - size) / 2, (img.height - size) / 2, size, size, 0, 0, 256, 256);
-      setPhoto(canvas.toDataURL('image/jpeg', 0.85));
-      URL.revokeObjectURL(img.src);
-    };
-    img.src = URL.createObjectURL(file);
-  }
   return <form className="flow" onSubmit={e => { e.preventDefault(); onSave({ name: name.trim(), handle, bio: bio.trim(), photo, color }); }}>
     <div className="group-preview">
-      <label className="photo-pick"><Avatar name={name.trim() || '나'} color={color} photo={photo} /><input type="file" accept="image/*" aria-label="프로필 사진" className="visually-hidden" onChange={e => { pick(e.target.files[0]); e.target.value = ''; }} /></label>
+      <label className="photo-pick"><Avatar name={name.trim() || '나'} color={color} photo={photo} /><input type="file" accept="image/*" aria-label="프로필 사진" className="visually-hidden" onChange={e => { resizePhoto(e.target.files[0], setPhoto); e.target.value = ''; }} /></label>
       {photo && <button type="button" className="btn-text muted" onClick={() => setPhoto('')}>사진 삭제</button>}
     </div>
     <div className="color-picker">{PROFILE_COLORS.map(c => <button type="button" key={c} className={c} aria-label={COLOR_LABELS[c]} aria-pressed={color === c} onClick={() => setColor(c)} />)}</div>
