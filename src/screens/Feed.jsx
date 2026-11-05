@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Avatar, Empty, Icon, ProfileLink, SourceItem, shareOrCopy } from '../components/UI.jsx';
+import { Avatar, Empty, Icon, ProfileLink, SourceItem } from '../components/UI.jsx';
 import { myself } from '../store.js';
 import { MEMBERS, SAMPLE_COMMENTS } from '../questionData.js';
 import { TOPICS } from '../topics.js';
@@ -8,18 +8,11 @@ import { TOPICS } from '../topics.js';
 export default function Feed({ initialTopic, initialComments, comments, likes, profile, onComment, onLike, onProfile }) {
   const feedRef = useRef(null);
   const [open, setOpen] = useState(null);
-  const [copied, setCopied] = useState(null);
   useEffect(() => {
     if (initialTopic) feedRef.current.querySelector(`[data-topic="${initialTopic}"]`)?.scrollIntoView({ block: 'start' });
     // 프로필에서 돌아오면 보던 댓글 시트를 다시 엽니다.
     if (initialTopic && initialComments) setOpen(initialTopic);
   }, [initialTopic, initialComments]);
-
-  async function share(topic) {
-    const url = `${location.origin}${location.pathname}#/feed/${topic.id}`;
-    if (!await shareOrCopy({ title: topic.title, text: `${topic.title}\n${topic.cards[0].text}`, url }, url)) return;
-    setCopied(topic.id); setTimeout(() => setCopied(c => c === topic.id ? null : c), 1500);
-  }
 
   return <>
     <div className="feed" ref={feedRef}>
@@ -32,7 +25,6 @@ export default function Feed({ initialTopic, initialComments, comments, likes, p
             <ul className="feed-sources">{topic.sources.map(s => <SourceItem key={s.label} source={s} />)}</ul>
             <div className="feed-actions">
           <button className="icon-button" aria-label="댓글" onClick={() => setOpen(topic.id)}><Icon name="comment" size={22} /></button>
-          <button className="icon-button" aria-label={copied === topic.id ? '링크 복사됨' : '공유'} onClick={() => share(topic)}><Icon name={copied === topic.id ? 'check' : 'share'} size={22} /></button>
             </div>
           </footer>
         </article>

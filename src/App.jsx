@@ -122,7 +122,7 @@ export default function App() {
         case 'done': flow = <Done question={question} answer={answer} sent={sent} go={flowGo} onShare={share} />; break;
         case 'summary': flow = <Summary question={question} answer={answer} groups={state.groups} sent={sent} onOpen={openChoice} onShare={share} onHome={() => flowGo('today')} onReading={() => flowGo('reading')} onRetry={() => { setRedo({ id, answer: { sel: null, reason: '', submitted: false, completed: false } }); flowGo('answer'); }} />; break;
       }
-      if ((step === 'done' || step === 'summary') && sharing === route) flow = <>{flow}<Share question={question} answer={answer} groups={joinedGroups(state)} sent={sent} onDraft={shareDraft => patch(id, { shareDraft })} onSave={groupIds => setState(s => shareAnswer(s, id, groupIds))} onClose={() => setSharing(null)} go={go} /></>;
+      if ((step === 'done' || step === 'summary') && sharing === route) flow = <>{flow}<Share answer={answer} groups={joinedGroups(state)} sent={sent} onDraft={shareDraft => patch(id, { shareDraft })} onSave={groupIds => setState(s => shareAnswer(s, id, groupIds))} onClose={() => setSharing(null)} go={go} /></>;
       const back = () => go(questionBack({ id, step, completed: answer.completed, choice: !!choice, home }));
       const position = PROGRESS[step];
       content = <><Header back={back} title={`${id === TODAY.id ? '오늘의 갈래' : '지난 갈래'} · ${dateLabel(question.date)}`} />{position !== undefined && <ol className="progress">{['나의 선택', '다른 생각', '확장하기'].map((label, i) => <li key={label} className={i <= position ? 'on' : ''} aria-current={i === position ? 'step' : undefined}><span />{label}</li>)}</ol>}{flow}</>;
