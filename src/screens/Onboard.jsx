@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { OnboardMotif } from '../motifs.jsx';
 
 const ONBOARD = [
@@ -28,9 +28,19 @@ export default function Onboard({ go }) {
   const [step, setStep] = useState(0);
   const last = step === ONBOARD.length - 1;
   const cur = ONBOARD[step];
+  // 화면을 좌우로 밀면 이전·다음 장으로 넘어갑니다. 마지막 장에서는 시작하기 버튼으로만 넘어갑니다.
+  const swipe = useRef(null);
+  const onPointerUp = e => {
+    if (!swipe.current) return;
+    const dx = e.clientX - swipe.current.x, dy = e.clientY - swipe.current.y;
+    swipe.current = null;
+    if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy)) return;
+    if (dx > 0 && step > 0) setStep(step - 1);
+    if (dx < 0 && !last) setStep(step + 1);
+  };
 
   return (
-    <div className="onboard-content">
+    <div className="onboard-content" onPointerDown={e => { swipe.current = { x: e.clientX, y: e.clientY }; }} onPointerUp={onPointerUp} onPointerCancel={() => { swipe.current = null; }}>
       <div className="onboard-skip-row">
         <button type="button" className={`btn-text hint onboard-skip ${last ? 'is-hidden' : ''}`} onClick={() => go('today')}>
           건너뛰기
