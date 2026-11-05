@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { initialState, updateAnswer, completeAnswer, submitAnswer, shareAnswer, sentGroups, questionRoute, rememberQuestionRoute, leaveGroup, loadState, addMessage, addComment, previousStep, questionBack, STORAGE_KEY, notifications } from '../src/store.js';
+import { initialState, updateAnswer, completeAnswer, submitAnswer, shareAnswer, sentGroups, questionRoute, rememberQuestionRoute, leaveGroup, loadState, addMessage, addComment, previousStep, questionBack, STORAGE_KEY } from '../src/store.js';
 import { recordAchievements } from '../src/achievements.js';
 
 function restore(saved) {
@@ -269,16 +269,4 @@ test('개척자 업적은 데모 그룹이 아니라 직접 만든 그룹이 있
 test('공감은 남아 있는 샘플 댓글과 내 댓글에 대한 것만 복원한다', () => {
   const comments = [{ id: 'c1', topicId: 'p001', text: '내 댓글' }];
   assert.deepEqual(restore({ ...initialState(), comments, likes: ['s1', 'c1', 'gone', 3, 's1'] }).likes, ['s1', 'c1']);
-});
-
-test('알림 설정은 저장된 값을 되살리고 잘못된 값은 기본값으로 둔다', () => {
-  assert.deepEqual(restore({ notify: { question: false, time: '21:30', share: false, chat: 'x', comment: true } }).notify, { question: false, time: '21:30', share: false, chat: true, comment: true });
-  assert.deepEqual(restore({ notify: { time: '25:00' } }).notify.time, '08:00');
-  assert.deepEqual(restore({}).notify, initialState().notify);
-});
-
-test('알림 목록은 맺은 열매를 최근 것부터 먼저 두고 그 아래에 샘플 알림을 둔다', () => {
-  const state = { ...initialState(), achieved: { first: { on: '2026-11-04' }, comment1: { on: '2026-11-05' } } };
-  assert.deepEqual(notifications(state).map(n => n.id), ['fruit-comment1', 'fruit-first', 'n1', 'n2', 'n4']);
-  assert.equal(notifications(state)[3].members.length, 3);
 });

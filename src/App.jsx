@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import Login from './screens/Login.jsx';
 import Onboard from './screens/Onboard.jsx';
 import Account from './screens/Account.jsx';
-import Notifications from './screens/Notifications.jsx';
 import Today, { STREAK_KEY } from './screens/Today.jsx';
 import Archive from './screens/Archive.jsx';
 import Feed, { TopicPage } from './screens/Feed.jsx';
@@ -15,7 +14,7 @@ import Done from './screens/Done.jsx';
 import Summary from './screens/Summary.jsx';
 import Share from './screens/Share.jsx';
 import Records, { MyComments, MemberProfile } from './screens/Records.jsx';
-import { Settings, NotifySettings, ProfileForm, Sources, LegalDoc } from './screens/Settings.jsx';
+import { Settings, ProfileForm, Sources, LegalDoc } from './screens/Settings.jsx';
 import { Groups, GroupForm, GroupDetail, GroupMembers, GroupsAddMenu } from './screens/Groups.jsx';
 import { BottomNav, Header, Icon } from './components/UI.jsx';
 import { QUESTIONS, TODAY, MEMBERS, dateLabel } from './questionData.js';
@@ -95,7 +94,6 @@ export default function App() {
     : welcome === 'signin' ? <Account mode="signin" back={() => setWelcome('login')} onDone={() => welcomeGo('today')} />
     : <Onboard go={welcomeGo} />;
   else if (section === 'today' && !id) content = <Today state={state} go={go} openQuestion={openQuestion} />;
-  else if (section === 'notifications' && !id) { active = 'today'; content = <><Header back={() => go('today')} title="알림" /><Notifications state={state} go={go} /></>; }
   else if (section === 'archive' && !id) content = <Archive answers={state.answers} openQuestion={openQuestion} />;
   else if (section === 'feed' && !requestedStep && (!id || TOPICS.some(t => t.id === id))) content = <Feed key={id} initialTopic={id} comments={state.comments} onOpen={topicId => go(`feed/${topicId}/read`)} />;
   else if (section === 'feed' && (requestedStep === 'read' || requestedStep === 'comments') && !extra && TOPICS.some(t => t.id === id)) content = <TopicPage topic={TOPICS.find(t => t.id === id)} initialComments={requestedStep === 'comments'} back={() => go(`feed/${id}`)} comments={state.comments} likes={state.likes} profile={state.profile} onComment={(topicId, text, parentId) => setState(s => addComment(s, topicId, text, parentId))} onLike={id => setState(s => toggleLike(s, id))} onProfile={openProfile} />;
@@ -155,14 +153,13 @@ export default function App() {
       const profileBack = prevRoute.current === 'records' ? 'records' : 'settings';
       content = <><Header back={() => go(profileBack)} title="프로필" /><ProfileForm profile={state.profile} onSave={profile => { setState(s => ({ ...s, profile })); go(profileBack); }} /></>;
     }
-    else if (id === 'notify') content = <><Header back={() => go('settings')} title="알림" /><NotifySettings notify={state.notify} onChange={notify => setState(s => ({ ...s, notify }))} /></>;
     else if (id === 'sources') content = <><Header back={() => go('settings')} title="출처" /><Sources /></>;
     else if (id in LEGAL_TITLES) content = <><Header back={() => go('settings')} title={LEGAL_TITLES[id]} /><LegalDoc doc={id} /></>;
     else if (id === 'onboard') content = <Onboard go={() => go('settings')} />;
   }
   const tabRoot = state.started && (!id || (section === 'feed' && !requestedStep && content)) && ['today', 'archive', 'feed', 'groups', 'records'].includes(section);
   const TAB_TITLES = { feed: '생각', archive: '질문', groups: '그룹', records: '내 정보' };
-  const tabHeader = <header className="tab-header">{section === 'today' ? <img src="/logo.png" alt="갈래" /> : <span className="tab-title" aria-hidden="true">{TAB_TITLES[section]}</span>}{section === 'today' && <button className="icon-button" aria-label="알림" onClick={() => go('notifications')}><Icon name="bell" size={22} /></button>}{section === 'records' && <button className="icon-button" aria-label="설정" onClick={() => go('settings')}><Icon name="gear" size={22} /></button>}{section === 'groups' && <GroupsAddMenu go={go} />}</header>;
+  const tabHeader = <header className="tab-header">{section === 'today' ? <img src="/logo.png" alt="갈래" /> : <span className="tab-title" aria-hidden="true">{TAB_TITLES[section]}</span>}{section === 'records' && <button className="icon-button" aria-label="설정" onClick={() => go('settings')}><Icon name="gear" size={22} /></button>}{section === 'groups' && <GroupsAddMenu go={go} />}</header>;
   if (!content) content = <div className="flow"><h1 className="flow-title" tabIndex={-1}>찾을 수 없어요</h1><button className="btn-primary" onClick={() => go('today')}>오늘로</button></div>;
 
   return <div className="frame">
