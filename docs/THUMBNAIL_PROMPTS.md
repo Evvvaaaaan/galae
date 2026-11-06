@@ -1,5 +1,31 @@
 # 생각 카드 썸네일 프롬프트
 
+## 돌아온 동생과 큰아들
+
+- 적용 이미지: `public/thumbnails/prodigal-son.png`
+- 적용 대상: `content/paradoxes.json`의 `p022`
+- 생성 도구: 내장 `image_gen`
+- 생성 설정: `transparent_background: false`
+- 기존 썸네일의 청회색 펜선과 해칭 스타일을 텍스트로 지정했습니다.
+- 작은아들을 안아 주는 아버지와 떨어져 바라보는 큰아들을 함께 담은 상징적 장면입니다.
+
+```text
+Create an editorial book illustration for a thoughtful reading card titled The Returning Younger Son and the Elder Son, inspired by the parable of the prodigal son. Match a companion series of antique book illustrations: muted dusty blue ink #527C9C on solid pure white, irregular hand-engraved pen contours, selective parallel hatching and crosshatching, moderate detail and generous white highlights. A symbolic narrative tableau with exactly three people: at left-center an elderly father with a short beard gently embraces his returning young adult son, who bows his head against the father's shoulder in quiet relief and humility. The younger son wears a simple worn knee-length tunic and has bare feet; the father wears a modest long robe and sandals. At right, a visibly adult elder brother in a plain belted tunic and sandals stands a few paces apart, arms folded, watching them with a restrained hurt and conflicted expression, not theatrical rage. Keep a clear white gap between the embracing pair and the elder brother, making their emotional distance legible. Simple ancient Near Eastern clothing, believable anatomy, natural hands, all three full bodies and feet visible. The father's arms naturally wrap around the younger son's shoulders and upper back; no extra hands or limbs. The elder brother is important and must be as legible as the embracing pair, not a tiny background figure. Sparse folds and selective hatching, no ornate costume details. A quiet balanced landscape 3:2 spot illustration with generous white margins and only minimal ground hatching. Handcrafted historical printed book quality, not a cartoon, not a geometric icon, not a photograph. No house, doorway, banquet, landscape, animals, other people, halos, crowns, text, labels, arrows, border, glow, blur, gradients, color washes or large solid colored fills. Render everything exclusively in dusty blue ink.
+```
+
+## 훈민정음 반대 상소
+
+- 적용 이미지: `public/thumbnails/hunminjeongeum.png`
+- 적용 대상: `content/paradoxes.json`의 `p019`
+- 생성 도구: 내장 `image_gen`
+- 생성 설정: `transparent_background: false`
+- 기존 썸네일의 청회색 펜선과 해칭 스타일을 텍스트로 지정했습니다.
+- 전통 제본 책과 붓, 접힌 상소문을 표현한 상징적 삽화입니다.
+
+```text
+Create an editorial book illustration for a Korean history reading card about opposition to Hunminjeongeum. Match a companion series of antique book illustrations: muted dusty blue ink #527C9C on solid pure white, slightly rough hand-engraved pen contours, selective parallel hatching and crosshatching, moderate detail and generous white highlights. Draw one closed traditional Korean thread-bound book in three-quarter view, lying diagonally with its front cover visible and stitched binding along its right edge. On the front cover a narrow vertical title panel contains exactly four legible Chinese characters arranged vertically from top to bottom: 訓 民 正 音. These are the only characters anywhere in the image, forming the title 訓民正音. Beside the book place a modest folded paper petition, blank with a few natural creases, and a single traditional calligraphy brush resting diagonally alongside it. Book is the main focal point; petition and brush are smaller supporting objects, clearly separated with white space. Depict tactile paper edges, sparse thread stitches and soft worn corners using pen hatching only. This is a symbolic editorial illustration, not a facsimile of a particular historical artifact. A real handcrafted pen illustration, not a geometric icon, not a cartoon, not a photograph. Balanced landscape 3:2 spot composition, all objects fully visible, ample white margins and minimal ground hatching. No people, hands, scenery, inkstone, extra books, decorative seals, invented writing, Hangul alphabet charts, captions, labels outside the cover title, borders, glow, blur, gradients, color washes or solid colored fills. Render everything exclusively in dusty blue ink.
+```
+
 ## 마시멜로 실험
 
 - 적용 이미지: `public/thumbnails/marshmallow-experiment.png`
