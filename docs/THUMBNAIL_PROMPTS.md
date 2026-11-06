@@ -1,5 +1,125 @@
 # 생각 카드 썸네일 프롬프트
 
+## 독화살의 비유
+
+- 적용 이미지: `public/thumbnails/poisoned-arrow.png`
+- 적용 대상: `content/paradoxes.json`의 `p025`
+- 생성 도구: 내장 `image_gen`
+- 생성 설정: `transparent_background: false`
+- 기존 썸네일의 청회색 펜선과 해칭 스타일을 텍스트로 지정했습니다.
+
+```text
+Create an editorial antique book spot illustration for a thoughtful reading card. Match the existing series: muted dusty blue ink #527C9C on solid pure white, irregular hand-engraved pen contours, selective fine parallel hatching and crosshatching, moderate detail, generous white highlights. A real handcrafted book illustration, not a geometric icon, cartoon, photograph or dense engraving. Landscape 3:2, all subjects fully visible with ample margins and minimal ground hatching. No text, labels, arrows used as annotations, borders, glow, blur, gradients, color washes or large solid colored fills. Everything in dusty blue ink only. A symbolic still life for the Buddhist parable of the poisoned arrow: one single traditional wooden arrow lying diagonally, with a simple pointed metal arrowhead at the lower left and neatly bound feather fletching at the upper right. Beside its midpoint lies a loosely rolled clean cloth bandage, with a short strip unfurled toward the arrow, suggesting care awaiting action. Fine hatch marks describe the wood, feather barbs and folded cloth. Arrow and bandage fully visible, no bow, no quiver, no poison bottle, no liquid droplets, no skull symbols, no people, no wounds or blood, no extra arrows. Restrained thoughtful composition.
+```
+
+## 키사 고타미와 겨자씨
+
+- 적용 이미지: `public/thumbnails/kisa-gotami-mustard-seeds.png`
+- 적용 대상: `content/paradoxes.json`의 `p024`
+- 생성 도구: 내장 `image_gen`
+- 생성 설정: `transparent_background: false`
+- 기존 썸네일의 청회색 펜선과 해칭 스타일을 텍스트로 지정했습니다.
+
+```text
+Create an editorial antique book spot illustration for a thoughtful reading card. Match the existing series: muted dusty blue ink #527C9C on solid pure white, irregular hand-engraved pen contours, selective fine parallel hatching and crosshatching, moderate detail, generous white highlights. A real handcrafted book illustration, not a geometric icon, cartoon, photograph or dense engraving. Landscape 3:2, all subjects fully visible with ample margins and minimal ground hatching. No text, labels, arrows used as annotations, borders, glow, blur, gradients, color washes or large solid colored fills. Everything in dusty blue ink only. A symbolic still life for Kisa Gotami and the mustard seed: one gently cupped adult woman's open hand extending from a simple draped sleeve, holding a small handful of tiny round mustard seeds. Beside and behind the hand, a modest sprig of mustard plant with small leaves, tiny four-petaled flowers and a few slender seed pods, drawn as an antique botanical specimen. Seeds are minute round grains, not beans or large peas. The hand and seeds are the focal point; the small plant sprig is secondary. This symbolizes her search and shared grief, not a claim she found a household untouched by death. Natural hand with five fingers, no face, no child, no body, no houses, no bowls, no religious symbols. Quiet, delicate, uncluttered.
+```
+
+## 요나와 박넝쿨
+
+- 적용 이미지: `public/thumbnails/jonah-gourd-vine.png`
+- 적용 대상: `content/paradoxes.json`의 `p023`
+- 생성 도구: 내장 `image_gen`
+- 생성 설정: `transparent_background: false`
+- 기존 썸네일의 청회색 펜선과 해칭 스타일을 텍스트로 지정했습니다.
+
+```text
+Create an editorial antique book spot illustration for a thoughtful reading card. Match the existing series: muted dusty blue ink #527C9C on solid pure white, irregular hand-engraved pen contours, selective fine parallel hatching and crosshatching, moderate detail, generous white highlights. A real handcrafted book illustration, not a geometric icon, cartoon, photograph or dense engraving. Landscape 3:2, all subjects fully visible with ample margins and minimal ground hatching. No text, labels, arrows used as annotations, borders, glow, blur, gradients, color washes or large solid colored fills. Everything in dusty blue ink only. Jonah seated on a low rock beside a sparse gourd vine on a simple forked wooden support. One adult bearded man in a modest ancient robe and sandals, elbow on knee, cheek resting on one hand, looking pensively at the vine. Above him a few broad lobed gourd leaves droop and curl, suggesting the loss of shade; one small bottle gourd hangs from the vine. The vine and the seated man form a compact balanced vignette, leaf veins drawn with fine lines and selective hatching. Full figure and plant visible, no whale, no ocean, no city, no dramatic sun, no divine figure, no writing, no extra characters. Understated conflicted expression, not caricature.
+```
+
+## 선한 사마리아인
+
+- 적용 이미지: `public/thumbnails/good-samaritan.png`
+- 적용 대상: `content/paradoxes.json`의 `p021`
+- 생성 도구: 내장 `image_gen`
+- 생성 설정: `transparent_background: false`
+- 기존 썸네일의 청회색 펜선과 해칭 스타일을 텍스트로 지정했습니다.
+
+```text
+Create an editorial antique book spot illustration for a thoughtful reading card. Match the existing series: muted dusty blue ink #527C9C on solid pure white, irregular hand-engraved pen contours, selective fine parallel hatching and crosshatching, moderate detail, generous white highlights. A real handcrafted book illustration, not a geometric icon, cartoon, photograph or dense engraving. Landscape 3:2, all subjects fully visible with ample margins and minimal ground hatching. No text, labels, arrows used as annotations, borders, glow, blur, gradients, color washes or large solid colored fills. Everything in dusty blue ink only. The Good Samaritan tending an injured traveler: exactly two adult men in simple ancient Near Eastern tunics and sandals. The traveler sits on the ground, supported against a low plain rock, tired but conscious; the Samaritan kneels beside him and gently wraps a clean cloth bandage around his forearm. Focus on the careful hands and compassionate posture. A small closed travel pouch beside the kneeling helper is the only extra object. Full figures visible, clear natural anatomy, no graphic injury, no visible blood, no exposed wounds. No halos, no donkey, no other passersby, no buildings, no landscape. Quiet intimate act of care, ample white gaps around figures.
+```
+
+## 장영실과 부서진 가마
+
+- 적용 이미지: `public/thumbnails/broken-palanquin.png`
+- 적용 대상: `content/paradoxes.json`의 `p020`
+- 생성 도구: 내장 `image_gen`
+- 생성 설정: `transparent_background: false`
+- 기존 썸네일의 청회색 펜선과 해칭 스타일을 텍스트로 지정했습니다.
+
+```text
+Create an editorial antique book spot illustration for a thoughtful reading card. Match the existing series: muted dusty blue ink #527C9C on solid pure white, irregular hand-engraved pen contours, selective fine parallel hatching and crosshatching, moderate detail, generous white highlights. A real handcrafted book illustration, not a geometric icon, cartoon, photograph or dense engraving. Landscape 3:2, all subjects fully visible with ample margins and minimal ground hatching. No text, labels, arrows used as annotations, borders, glow, blur, gradients, color washes or large solid colored fills. Everything in dusty blue ink only. A traditional Korean Joseon royal carrying palanquin, a small enclosed wooden cabin with a gently curved roof, understated panel doors and two long parallel horizontal carrying poles. Three-quarter view showing front and one side, completely visible. One front carrying pole has clearly snapped, with the detached short wooden section resting on the ground and a few small splinters beside it. The cabin leans slightly toward the broken support, otherwise structurally recognizable. Sparse woodgrain and restrained roof detail, no excessive ornaments. This is a symbolic editorial depiction rather than an archaeological reconstruction. No wheels, no carriage horse, no people, no flags, no writing, no throne room, no additional props.
+```
+
+## 1914년 크리스마스 휴전
+
+- 적용 이미지: `public/thumbnails/christmas-truce.png`
+- 적용 대상: `content/paradoxes.json`의 `p018`
+- 생성 도구: 내장 `image_gen`
+- 생성 설정: `transparent_background: false`
+- 기존 썸네일의 청회색 펜선과 해칭 스타일을 텍스트로 지정했습니다.
+
+```text
+Create an editorial antique book spot illustration for a thoughtful reading card. Match the existing series: muted dusty blue ink #527C9C on solid pure white, irregular hand-engraved pen contours, selective fine parallel hatching and crosshatching, moderate detail, generous white highlights. A real handcrafted book illustration, not a geometric icon, cartoon, photograph or dense engraving. Landscape 3:2, all subjects fully visible with ample margins and minimal ground hatching. No text, labels, arrows used as annotations, borders, glow, blur, gradients, color washes or large solid colored fills. Everything in dusty blue ink only. Two World War I soldiers meeting and shaking hands, full bodies visible. At left a British soldier in a simple 1914 wool greatcoat and soft peaked service cap; at right a German soldier in a long field coat and cloth-covered pointed Pickelhaube helmet. Both wear boots and modest field clothing, no visible weapons. Their expressions are quiet and humane, their free arms rest naturally at their sides. A small amount of snow indicated by a few ground lines beneath their boots. A symbolic vignette of the 1914 Christmas truce, not a grand battlefield. No steel Brodie helmets, no Stahlhelm, no Nazi symbols, no flags, no football, no Christmas decorations, no trenches or corpses, no background crowd. Clear anatomy and natural handshake.
+```
+
+## 페트로프의 경보
+
+- 적용 이미지: `public/thumbnails/petrov-alarm.png`
+- 적용 대상: `content/paradoxes.json`의 `p017`
+- 생성 도구: 내장 `image_gen`
+- 생성 설정: `transparent_background: false`
+- 기존 썸네일의 청회색 펜선과 해칭 스타일을 텍스트로 지정했습니다.
+
+```text
+Create an editorial antique book spot illustration for a thoughtful reading card. Match the existing series: muted dusty blue ink #527C9C on solid pure white, irregular hand-engraved pen contours, selective fine parallel hatching and crosshatching, moderate detail, generous white highlights. A real handcrafted book illustration, not a geometric icon, cartoon, photograph or dense engraving. Landscape 3:2, all subjects fully visible with ample margins and minimal ground hatching. No text, labels, arrows used as annotations, borders, glow, blur, gradients, color washes or large solid colored fills. Everything in dusty blue ink only. A compact still life representing Petrov's early-warning alarm: a single 1980s desk CRT monitor in three-quarter view next to a simple corded telephone with its receiver resting in its cradle. The monitor has a thick square casing and a few plain physical knobs. On the screen, five small discrete radar blips and a few thin scanning arcs, no words, digits or icons. A small dome alarm indicator on top of the console is described with pen lines only, no glow. No launch button, no mushroom cloud, no weapons, no explosion, no people, no room. Convey a tense machine signal awaiting human judgment. Clearly readable screen with much white space, all hardware shaded with sparse hatching.
+```
+
+## 젬멜바이스와 손 씻기
+
+- 적용 이미지: `public/thumbnails/semmelweis-handwashing.png`
+- 적용 대상: `content/paradoxes.json`의 `p016`
+- 생성 도구: 내장 `image_gen`
+- 생성 설정: `transparent_background: false`
+- 기존 썸네일의 청회색 펜선과 해칭 스타일을 텍스트로 지정했습니다.
+
+```text
+Create an editorial antique book spot illustration for a thoughtful reading card. Match the existing series: muted dusty blue ink #527C9C on solid pure white, irregular hand-engraved pen contours, selective fine parallel hatching and crosshatching, moderate detail, generous white highlights. A real handcrafted book illustration, not a geometric icon, cartoon, photograph or dense engraving. Landscape 3:2, all subjects fully visible with ample margins and minimal ground hatching. No text, labels, arrows used as annotations, borders, glow, blur, gradients, color washes or large solid colored fills. Everything in dusty blue ink only. A close view of a nineteenth-century doctor's two hands washing one another over a wide shallow ceramic basin. Sleeves of a simple linen shirt rolled back, wrists enter from the upper right. The fingers gently rub together above the basin, a few small water drops fall below. A small plain pitcher stands beside the basin, on a minimal table surface. Exactly two anatomically believable hands, no extra fingers. No faucet, no gloves, no modern soap dispenser, no surgical tools, no hospital room, no blood. Focus on the humble act of washing hands, with softly hatched ceramic and cloth textures.
+```
+
+## 별에서 온 몸
+
+- 적용 이미지: `public/thumbnails/stardust-body.png`
+- 적용 대상: `content/paradoxes.json`의 `p015`
+- 생성 도구: 내장 `image_gen`
+- 생성 설정: `transparent_background: false`
+- 기존 썸네일의 청회색 펜선과 해칭 스타일을 텍스트로 지정했습니다.
+
+```text
+Create an editorial antique book spot illustration for a thoughtful reading card. Match the existing series: muted dusty blue ink #527C9C on solid pure white, irregular hand-engraved pen contours, selective fine parallel hatching and crosshatching, moderate detail, generous white highlights. A real handcrafted book illustration, not a geometric icon, cartoon, photograph or dense engraving. Landscape 3:2, all subjects fully visible with ample margins and minimal ground hatching. No text, labels, arrows used as annotations, borders, glow, blur, gradients, color washes or large solid colored fills. Everything in dusty blue ink only. A symbolic illustration of the stellar origins of the material in the human body: one open human hand and wrist, palm upward, diagonally across the lower middle. Above the palm floats a sparse curved trail of tiny stippled particles leading to a small star rendered with delicate radial pen strokes in the upper left. A few tiny stars accompany the trail. The hand is anatomically natural with exactly five fingers, loosely cupped, rendered as an antique anatomical pen study without wounds. Stars and particles form a restrained poetic connection to the hand, not a literal diagram of a physical process. No black sky, no planets, no galaxies, no eye or face, no cosmic glow.
+```
+
+## 떠올릴 때마다 다시 쓰이는 기억
+
+- 적용 이미지: `public/thumbnails/memory-reconsolidation.png`
+- 적용 대상: `content/paradoxes.json`의 `p014`
+- 생성 도구: 내장 `image_gen`
+- 생성 설정: `transparent_background: false`
+- 기억의 변화를 사진과 지우개 달린 연필로 상징했습니다.
+
+```text
+Create a companion editorial antique book spot illustration for a thoughtful reading card. Muted dusty blue ink #527C9C on solid pure white. Irregular hand-engraved pen contours, selective fine parallel hatching and crosshatching, moderate detail, generous open white highlights. Handcrafted book illustration, not an icon, cartoon or photograph. Landscape 3:2, complete subjects with ample margins, minimal ground hatching. No text, labels, arrows, borders, glow, blur, gradients, color washes or large solid fills. Subject: memory reconsolidation, represented symbolically rather than as a scientific diagram. One small old photographic print lies diagonally, showing a simple tree beside a small house drawn in the same blue pen style. A single wooden pencil with an eraser rests across a corner of the print. A small part of the pictured tree is incomplete, with faint broken strokes and a few eraser crumbs nearby, suggesting a remembered scene being revised. Clear uncluttered still life, no people, no extra stationery, no lettering. The photograph and pencil are the only main objects.
+```
+
 ## 돌아온 동생과 큰아들
 
 - 적용 이미지: `public/thumbnails/prodigal-son.png`
