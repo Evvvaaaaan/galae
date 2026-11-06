@@ -1,5 +1,7 @@
 # iOS App Store release
 
+> Frontend release fixes and current checks: [FRONTEND_RELEASE_READINESS.md](FRONTEND_RELEASE_READINESS.md).
+
 > Current scope (2026-11-05): existing-backend integration, local verification and TestFlight build preparation. See [IOS_BACKEND_INTEGRATION.md](IOS_BACKEND_INTEGRATION.md). The initial demo validation below is historical; current results and remaining limits are in [INTEGRATION_VERIFICATION.md](INTEGRATION_VERIFICATION.md).
 
 Work on `release/ios-app-store`. The Android APK branch starts separately from
@@ -54,7 +56,7 @@ Web assets and generated Capacitor configuration are refreshed by `ios:sync`.
   Startup timing, subsequent flows, keyboard, photos, and native share sheets
   still require interaction testing.
 - npm reported two high-severity dependency findings during installation.
-  Dependency remediation is not included in this initial native setup.
+  This is historical: the current full `npm audit` reports zero vulnerabilities.
 
 ## Current identifiers and behavior
 
@@ -72,8 +74,8 @@ Web assets and generated Capacitor configuration are refreshed by `ios:sync`.
 - Current service data comes from the backend. Only account-specific unsubmitted
   drafts are local; native credentials use Keychain and are cleared on logout.
   Demo localStorage data is not imported into server accounts.
-- Existing external font requests remain. Offline font bundling and an audit
-  of external data flows are still required before final privacy declarations.
+- Pretendard and Gowun Batang are bundled with their licenses. The app makes no
+  font-provider requests; see `public/fonts/README.md` for provenance.
 - The final app icon and splash artwork are applied to the iOS asset catalog.
 
 ## Before TestFlight or App Store submission
@@ -84,16 +86,16 @@ The native shell now uses real backend APIs. The following full App Store checkl
   and sharing come from the backend, and demo records are never imported into
   an account.
 - [x] Use the server-provided date instead of the fixed demo date.
-- [ ] Remove the unreachable demo fixtures in `src/questionData.js` and
-  `src/store.js` so they stop shipping in the bundle.
+- [x] Exclude legacy demo fixture text from release JavaScript by importing
+  separate runtime helpers; keep fixtures for regression and design tests.
 - [ ] Prepare maintained question content for launch.
 - [x] Implement accessible privacy policy, terms and support contact screens.
 - [x] Add required signup consent for age, terms and privacy.
 - [ ] Add public policy and support URLs for App Store Connect.
 - [x] Connect password-confirmed account deletion to the backend; locally verified.
-- [x] Add in-app reporting and blocking: 설정 → 신고 및 차단 sends a report to the
-  support inbox, and blocks are stored on the server and filter comments and
-  group messages.
+- [x] Provide email-report preparation and a copy fallback in settings. The
+  user sends the email explicitly; the app does not claim delivery. Blocking is
+  separate, via the block icon in a profile header and the server block list.
 - [ ] Add server-side moderation (a profanity/spam filter and an operator queue)
   for user-generated content.
 - [ ] Confirm the server-side access controls required for private group content.
@@ -106,8 +108,8 @@ The native shell now uses real backend APIs. The following full App Store checkl
 - [x] Add `ios/App/App/PrivacyInfo.xcprivacy`: no tracking, and name, user ID,
   photos and user content collected for app functionality only.
 - [ ] Complete App Store Connect privacy answers to match the manifest, and
-  decide whether the Pretendard and Gowun Batang CDN fonts stay external or
-  move into the bundle. Adding Preferences later requires a UserDefaults reason.
+  verify the bundled fonts and actual data handling. Adding Preferences later
+  requires reviewing any applicable required-reason API declarations.
 - [ ] Run on a real iPhone: onboarding, answer submission, relaunch persistence,
   keyboard editing, photo selection/cancellation, share/cancel, code copying,
   external sources, safe areas, accessibility and offline startup.

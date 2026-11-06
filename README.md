@@ -57,19 +57,28 @@ npm run dev
 
 빌드 결과를 확인하려면 `npm run build` 이후 `npm run preview`를 실행합니다.
 
-## 데모 체험 안내
+## Runtime data and storage
 
-- 처음 방문하면 예시 그룹 **한 걸음 청년부**와 **목요일의 작은 모임**(내가 그룹장)에 가입된 상태로 시작합니다. 목요일의 작은 모임을 나간 뒤에는 그룹이 사라지므로 초대 코드로 다시 들어갈 수 없습니다. 한 걸음 청년부는 나간 뒤 초대 코드 **`GARA01`**로 다시 참여할 수 있습니다.
-- 질문은 모두 6개이며, 데모의 오늘은 **2026년 9월 25일**로 고정되어 있습니다.
-- 생각 피드는 배포 빌드에서 검증을 마친 주제만 보이고, 개발 서버에서는 모든 주제가 보입니다.
-- 참여 수, 선택 비율, 다른 사람의 의견·나눔·댓글, 샘플 멤버는 예시 데이터입니다.
-- 설정의 **기록 초기화**는 시연·개발용입니다. 답변과 업적만 지우며, 서버 연동 시 제거합니다.
+The release app uses the Java backend for accounts, questions, approved thought
+cards, answers, groups, comments, sharing and statistics. Only reviewed thought
+cards are shown, including during local development. Empty feeds show an explicit
+unpublished-content message.
 
-### 저장 방식과 구현 범위
+Native session tokens are stored in iOS Keychain; browser tokens use
+`sessionStorage`. Only unsubmitted drafts and achievement display state use
+`localStorage`, with drafts isolated by API and account. Demo accounts and records
+are never migrated into server accounts.
 
-데이터는 `localStorage`의 `garae.frontend.v1` 키에 저장됩니다. 브라우저나 접속 주소가 달라지면 저장 공간도 달라지며, 사이트 데이터를 삭제하면 기록이 사라집니다.
+Legacy demo stores and fixtures remain for regression tests and design comparisons.
+The production app imports separate state, question and achievement helpers so
+those fixture texts are excluded from the release JavaScript bundle.
 
-실제 인증, 서버 API, 사용자 간 전송, 기기 간 동기화, 실시간 통계, AI 해설 생성은 아직 연결되어 있지 않습니다. 그룹 초대와 공유도 같은 브라우저 안에서만 동작합니다. 결과 잠금과 그룹별 표시 제한은 화면 동작이므로 서비스 운영 시 서버의 권한 검증이 필요합니다. 배포 방안은 [docs/DEPLOY.md](docs/DEPLOY.md)를 봅니다.
+Reports are prepared for the support mailbox. Users must send the email themselves;
+copying or preparing a report does not submit it. Blocking is a separate server
+action, available from the block icon in a user profile's header.
+
+See [frontend release readiness](docs/FRONTEND_RELEASE_READINESS.md) for verified
+changes and the remaining device, signing and App Store Connect work.
 
 ## 기술 구성
 
@@ -82,7 +91,8 @@ npm run dev
 | 상태 저장 | React 상태와 브라우저 `localStorage` |
 | 자동 테스트 | Node.js 기본 테스트 러너 |
 
-글꼴은 외부 CDN에서 불러오며, 연결할 수 없으면 기본 글꼴로 표시됩니다.
+Pretendard and Gowun Batang are bundled locally with their licenses in
+`public/fonts`; opening the app does not request fonts from external CDNs.
 
 ## 프로젝트 구조
 
@@ -91,10 +101,14 @@ src/
   App.jsx           # 화면 이동과 앱 상태 연결
   components/       # 헤더, 하단 탭, 아이콘 등 공통 UI
   screens/          # 오늘, 생각, 질문, 그룹, 나 등 화면
-  questionData.js   # 날짜별 질문, 샘플 멤버·그룹·나눔·댓글
-  topics.js         # 오늘 보여 줄 생각 피드 주제
-  store.js          # 상태 저장·복원, 답변·그룹·댓글 갱신
-  achievements.js   # 업적 15개와 판정
+  serverState.js    # Server response mapping and account-specific drafts
+  useServer.js      # API-backed application state
+  state.js          # Runtime state and route helpers
+  questionHelpers.js # Runtime choice and date helpers
+  achievementHelpers.js # Runtime achievement metadata and date helpers
+  questionData.js   # Legacy demo fixtures for tests
+  store.js          # Legacy demo store for regression tests
+  achievements.js   # Legacy demo achievement calculation
   motifs.jsx        # 갈래 모티프, 세계수
   index.css         # 공통 스타일과 반응형 화면 구성
 content/

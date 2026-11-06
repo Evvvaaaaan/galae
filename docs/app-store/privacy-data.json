@@ -1,0 +1,47 @@
+[
+  {
+    "category": "NAME",
+    "purpose": "APP_FUNCTIONALITY",
+    "dataProtection": "DATA_LINKED_TO_YOU"
+  },
+  {
+    "category": "USER_ID",
+    "purpose": "APP_FUNCTIONALITY",
+    "dataProtection": "DATA_LINKED_TO_YOU"
+  },
+  {
+    "category": "EMAIL_ADDRESS",
+    "purpose": "APP_FUNCTIONALITY",
+    "dataProtection": "DATA_LINKED_TO_YOU"
+  },
+  {
+    "category": "PHOTOS_OR_VIDEOS",
+    "purpose": "APP_FUNCTIONALITY",
+    "dataProtection": "DATA_LINKED_TO_YOU"
+  },
+  {
+    "category": "OTHER_USER_CONTENT",
+    "purpose": "APP_FUNCTIONALITY",
+    "dataProtection": "DATA_LINKED_TO_YOU"
+  },
+  {
+    "category": "EMAILS_OR_TEXT_MESSAGES",
+    "purpose": "APP_FUNCTIONALITY",
+    "dataProtection": "DATA_LINKED_TO_YOU"
+  },
+  {
+    "category": "CUSTOMER_SUPPORT",
+    "purpose": "APP_FUNCTIONALITY",
+    "dataProtection": "DATA_LINKED_TO_YOU"
+  },
+  {
+    "category": "SENSITIVE_INFO",
+    "purpose": "APP_FUNCTIONALITY",
+    "dataProtection": "DATA_LINKED_TO_YOU"
+  },
+  {
+    "category": "PRODUCT_INTERACTION",
+    "purpose": "APP_FUNCTIONALITY",
+    "dataProtection": "DATA_LINKED_TO_YOU"
+  }
+]

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { choiceOf, dateLabel } from '../questionData.js';
+import { choiceOf, dateLabel } from '../questionHelpers.js';
 import { Icon, Empty } from '../components/UI.jsx';
 
 const STATUS = ['전체', '미답변', '답변 완료'];

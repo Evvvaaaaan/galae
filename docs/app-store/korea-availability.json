@@ -1,0 +1,42 @@
+{
+  "data": {
+    "type": "appAvailabilities",
+    "attributes": {
+      "availableInNewTerritories": false
+    },
+    "relationships": {
+      "app": {
+        "data": {
+          "type": "apps",
+          "id": "6831059890"
+        }
+      },
+      "territoryAvailabilities": {
+        "data": [
+          {
+            "type": "territoryAvailabilities",
+            "id": "${kor}"
+          }
+        ]
+      }
+    }
+  },
+  "included": [
+    {
+      "type": "territoryAvailabilities",
+      "id": "${kor}",
+      "attributes": {
+        "available": true,
+        "preOrderEnabled": false
+      },
+      "relationships": {
+        "territory": {
+          "data": {
+            "type": "territories",
+            "id": "KOR"
+          }
+        }
+      }
+    }
+  ]
+}

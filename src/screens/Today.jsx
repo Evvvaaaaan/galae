@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { dateLabel } from '../questionData.js';
-import { joinedGroups } from '../store.js';
+import { dateLabel } from '../questionHelpers.js';
+import { joinedGroups } from '../state.js';
 import { Avatar, Icon } from '../components/UI.jsx';
 import { WorldTree } from '../motifs.jsx';
-import { addDays, answeredDays, earnedList } from '../achievements.js';
+import { addDays, answeredDays, earnedList } from '../achievementHelpers.js';
 
 const SEEN_KEY = 'galae.treeSeen';
 const readSeen = key => { try { return Number(localStorage.getItem(key)) || 0; } catch { return 0; } };

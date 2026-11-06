@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { createApi } from './api.js';
 import { sessionStore } from './session.js';
-import { blankState, loadSnapshot, loadDrafts, mergeDrafts, draftKey, userFromApi, groupFromApi, answerFromApi } from './serverState.js';
-import { STEPS, questionStep } from './store.js';
+import { blankState, loadSnapshot, loadDrafts, mergeDrafts, draftKey, userFromApi, groupFromApi, answerFromApi, topicFromApi } from './serverState.js';
+import { STEPS, questionStep } from './state.js';
 
 const configuredUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV || import.meta.env.MODE === 'development' ? 'http://127.0.0.1:8080/api/v1' : '');
 
@@ -87,7 +87,7 @@ export function useServer(route) {
           let topics = state.topics;
           if (id && !topics.some(t => t.id === id)) {
             const topic = await api.request(`/feed/topics/${id}`);
-            if (topic.checkedOn) topics = [...topics, { ...topic, cards: topic.cards.map(text => ({ text })) }];
+            if (topic.checkedOn) topics = [...topics, topicFromApi(api, topic)];
           }
           const comments = (await Promise.all(topics.map(t => api.request(`/feed/topics/${t.id}/comments`)))).flatMap(list => list.flatMap(c => [c, ...c.replies]));
           if (!alive) return;

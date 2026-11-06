@@ -1,6 +1,6 @@
 import { Fragment, useState } from 'react';
 import { Avatar, PhotoColorPicker, SourceItem, Confirm } from '../components/UI.jsx';
-import { cleanHandle, myself } from '../store.js';
+import { cleanHandle, myself } from '../state.js';
 import { copyText } from '../platform.js';
 import TERMS from '../../docs/legal/TERMS.md?raw';
 import PRIVACY from '../../docs/legal/PRIVACY.md?raw';
@@ -31,7 +31,7 @@ export function Settings({ profile, go, onLogout }) {
   </div>;
 }
 
-// 신고와 차단은 설정에서만 시작합니다. 신고는 문의 메일로, 차단은 서버 목록으로 처리합니다.
+// Reports use the support mailbox; blocking remains a separate server action.
 const SUPPORT_MAIL = 'vmfhrmfoald36@gmail.com';
 const REASONS = ['욕설·혐오 표현', '스팸·광고', '사칭', '개인정보 노출', '기타'];
 
@@ -41,7 +41,7 @@ export function Safety({ go }) {
       <button className="list-row" onClick={() => go('settings/report')}>신고하기</button>
       <button className="list-row" onClick={() => go('settings/blocks')}>차단한 사용자</button>
     </div>
-    <p className="sub">불편한 글이나 사용자를 발견하면 알려 주세요. 확인 후 영업일 기준 3일 안에 답변드립니다. 차단한 사람의 댓글과 메시지는 내 화면에 보이지 않습니다.</p>
+    <p className="sub">신고는 운영팀에 이메일로 보내 주세요. 사용자 차단은 해당 사용자의 프로필에서 할 수 있고, 차단한 사람의 댓글과 메시지는 내 화면에 보이지 않습니다.</p>
   </div>;
 }
 
@@ -49,30 +49,35 @@ export function ReportForm({ profile, go }) {
   const [target, setTarget] = useState('');
   const [reason, setReason] = useState('');
   const [detail, setDetail] = useState('');
-  const [sent, setSent] = useState(false);
+  const [prepared, setPrepared] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [copyError, setCopyError] = useState('');
   const subject = `[갈래 신고] ${reason}`;
-  const body = [`신고 대상: ${target.trim() || '적지 않음'}`, `사유: ${reason}`, `내용: ${detail.trim()}`, `신고한 사람: @${profile.handle}`].join('\n');
+  const body = [`신고 대상: ${target.trim()}`, `사유: ${reason}`, `내용: ${detail.trim()}`, `신고한 사람: @${profile.handle}`].join('\n');
   function submit(event) {
     event.preventDefault();
-    setSent(true);
-    // 기기의 메일 앱을 엽니다. 열리지 않는 환경에서는 아래 화면에서 내용을 복사해 보낼 수 있습니다.
-    location.href = `mailto:${SUPPORT_MAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    if (target.trim() && reason && detail.trim()) setPrepared(true);
   }
-  if (sent) return <div className="flow">
-    <p className="sub">메일 앱이 열리면 보내기를 눌러 주세요. 메일 앱이 열리지 않으면 아래 주소로 같은 내용을 보내 주세요.</p>
+  if (prepared) return <div className="flow">
+    <p className="sub">아래 버튼으로 메일 앱을 연 뒤 보내기를 눌러 주세요. 이 화면에서는 신고가 전송되지 않습니다. 메일 앱이 없으면 신고 내용을 복사해 아래 주소로 보내 주세요.</p>
     <p className="sub"><strong>{SUPPORT_MAIL}</strong></p>
-    <button className="btn-primary" onClick={async () => { try { await copyText(`${subject}\n${body}`); setCopied(true); } catch { setCopied(false); } }}>{copied ? '복사했어요' : '신고 내용 복사'}</button>
+    <a className="btn-primary" href={`mailto:${SUPPORT_MAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`}>메일 앱으로 신고 작성</a>
+    <button className="btn-secondary" onClick={async () => {
+      try { await copyText(`${subject}\n${body}`); setCopied(true); setCopyError(''); }
+      catch { setCopyError('복사하지 못했어요. 신고 내용으로 돌아가 확인해 주세요'); }
+    }}>{copied ? '복사했어요' : '신고 내용 복사'}</button>
+    {copyError && <p className="form-error" role="alert">{copyError}</p>}
+    <button className="btn-text" onClick={() => setPrepared(false)}>신고 내용 수정</button>
     <button className="btn-text" onClick={() => go('settings/safety')}>신고 및 차단으로</button>
   </div>;
   return <form className="flow" onSubmit={submit}>
-    <p className="sub">불편한 내용을 알려 주세요. 확인 후 영업일 기준 3일 안에 답변드립니다.</p>
-    <input className="note-input" aria-label="신고 대상" placeholder="신고할 아이디나 그룹 이름 (선택)" maxLength={40} value={target} onChange={e => setTarget(e.target.value)} />
+    <p className="sub">아이디나 그룹 이름, 신고할 글과 사유를 적어 주세요. 다음 화면에서 운영팀에 보낼 이메일을 작성할 수 있습니다. 신고만으로 사용자가 차단되지는 않습니다.</p>
+    <input className="note-input" aria-label="신고할 아이디" placeholder="신고할 아이디 (예: mina)" maxLength={40} value={target} onChange={e => setTarget(e.target.value)} />
     <div className="choices" role="group" aria-label="신고 사유">
       {REASONS.map(r => <button type="button" key={r} className={`choice${reason === r ? ' on' : ''}`} aria-pressed={reason === r} onClick={() => setReason(r)}><span>{r}</span></button>)}
     </div>
     <textarea className="note-input" aria-label="신고 내용" placeholder="어떤 일이 있었는지 적어 주세요" rows={5} maxLength={500} value={detail} onChange={e => setDetail(e.target.value)} />
-    <button className="btn-primary" disabled={!reason || !detail.trim()}>신고하기</button>
+    <button className="btn-primary" disabled={!target.trim() || !reason || !detail.trim()}>신고 내용 확인</button>
   </form>;
 }
 
@@ -83,7 +88,7 @@ export function BlockedUsers({ blocks, onUnblock }) {
     <div className="list">{blocks.map(block => <div className="list-row" key={block.id}>
       <Avatar {...block} />
       <span>{block.name || block.handle} <small className="hint">@{block.handle}</small></span>
-      <button className="btn-text danger" onClick={() => onUnblock(block.id)}>차단 해제</button>
+      <button className="btn-text danger" onClick={() => onUnblock(block.handle)}>차단 해제</button>
     </div>)}</div>
   </div>;
 }
@@ -108,7 +113,7 @@ export function ProfileForm({ profile, onSave }) {
     <input className="note-input" aria-label="이름" placeholder="이름" maxLength={10} value={name} onChange={e => setName(e.target.value)} />
     <input className="note-input" aria-label="아이디" placeholder="아이디" maxLength={20} autoCapitalize="none" autoCorrect="off" spellCheck={false} value={handle} onChange={e => setHandle(cleanHandle(e.target.value))} />
     <textarea className="note-input" aria-label="소개" placeholder="소개" rows={3} maxLength={80} value={bio} onChange={e => setBio(e.target.value)} />
-    <button className="btn-primary">저장</button>
+    <button className="btn-primary" disabled={!name.trim() || !cleanHandle(handle)}>저장</button>
   </form>;
 }
 
@@ -129,9 +134,9 @@ const inline = text => text.split(/\*\*(.+?)\*\*/).map((part, i) => i % 2 ? <str
 export function LegalDoc({ doc }) {
   const blocks = [];
   for (const line of LEGAL[doc].split('\n')) {
-    const last = blocks.at(-1);
+    const last = blocks[blocks.length - 1];
     // 들여 쓴 "- "는 바로 위 목록 항목의 하위 목록입니다.
-    if (/^\s+- /.test(line) && (last?.kind === 'ul' || last?.kind === 'ol')) { last.items.at(-1).sub.push(line.trim().slice(2)); continue; }
+    if (/^\s+- /.test(line) && (last?.kind === 'ul' || last?.kind === 'ol')) { last.items[last.items.length - 1].sub.push(line.trim().slice(2)); continue; }
     const kind = /^#{2,} /.test(line) ? 'h2' : /^- /.test(line) ? 'ul' : /^\d+\. /.test(line) ? 'ol' : line.startsWith('|') ? 'table' : line.trim() && !/^(# |>)/.test(line) ? 'p' : null;
     if (!kind) { blocks.push(null); continue; }
     const item = { text: line.replace(/^(#+ |- |\d+\. )/, '').trim(), sub: [] };

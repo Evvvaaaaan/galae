@@ -77,5 +77,4 @@ export const SAMPLE_COMMENTS = [
   { id: 's9', likes: 9, topicId: 'p005', memberId: 'm1', text: '저도 고르지 못하고 미룬 적이 많아서 공감됐어요.' },
   { id: 's10', likes: 1, topicId: 'p005', memberId: 'm2', text: '어느 쪽이든 고르는 것 자체가 이유가 될 수도 있겠어요.' },
 ];
-export const choiceOf = (question, sel) => question.choices.find(c => c.id === sel);
-export const dateLabel = date => `${Number(date.slice(0, 4))}년 ${Number(date.slice(5, 7))}월 ${Number(date.slice(8, 10))}일`;
+export { choiceOf, dateLabel } from './questionHelpers.js';

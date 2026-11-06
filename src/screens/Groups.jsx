@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { choiceOf, dateLabel } from '../questionData.js';
+import { choiceOf, dateLabel } from '../questionHelpers.js';
 import { Header, Icon, Avatar, Empty, ProfileLink, PhotoColorPicker, Confirm } from '../components/UI.jsx';
-import { joinedGroups, myself } from '../store.js';
+import { joinedGroups, myself } from '../state.js';
 import { copyText } from '../platform.js';
 
 export function Groups({ state, go }) {

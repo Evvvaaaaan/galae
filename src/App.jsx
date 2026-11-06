@@ -12,13 +12,13 @@ import Reading from './screens/Reading.jsx';
 import Done from './screens/Done.jsx';
 import Summary from './screens/Summary.jsx';
 import Share from './screens/Share.jsx';
-import Records, { MyComments, MemberProfile } from './screens/Records.jsx';
+import Records, { MyComments, MemberProfile, MemberActions } from './screens/Records.jsx';
 import { Settings, ProfileForm, Sources, LegalDoc, WithdrawForm, Safety, ReportForm, BlockedUsers } from './screens/Settings.jsx';
 import { Groups, GroupForm, GroupDetail, GroupMembers, GroupsAddMenu } from './screens/Groups.jsx';
 import { BottomNav, Header, Icon } from './components/UI.jsx';
-import { dateLabel } from './questionData.js';
+import { dateLabel } from './questionHelpers.js';
 import { useServer } from './useServer.js';
-import { STEPS, emptyAnswer, updateAnswer, questionStep, questionRoute, questionBack, joinedGroups } from './store.js';
+import { STEPS, emptyAnswer, updateAnswer, questionStep, questionRoute, questionBack, joinedGroups } from './state.js';
 
 const routeFromLocation = () => location.hash.replace(/^#\/?/, '') || 'today';
 // 진행 선 세 칸: 선택 / 결과·다른 생각 / 확장하기
@@ -100,6 +100,7 @@ export default function App() {
   const [section, id, requestedStep, extra] = route.split('/');
   let active = section;
   let content;
+  let screenClass = '';
   if (!state.started || welcome === 'onboard') content = welcome === 'login' ? <Login go={welcomeGo} />
     : welcome === 'signup' ? <Account mode="signup" back={() => setWelcome('login')} onDone={credentials => run(async () => { await server.authenticate('signup', credentials); setWelcome('onboard'); })} />
     : welcome === 'signin' ? <Account mode="signin" back={() => setWelcome('login')} onDone={credentials => run(async () => { await server.authenticate('signin', credentials); welcomeGo('today'); })} />
@@ -107,8 +108,10 @@ export default function App() {
   else if (section === 'today' && !id) content = <Today state={state} go={go} openQuestion={openQuestion} />;
   else if (section === 'archive' && !id) content = <Archive questions={QUESTIONS} answers={state.answers} openQuestion={openQuestion} />;
   else if (section === 'feed' && !requestedStep && (!id || TOPICS.some(t => t.id === id))) content = <Feed topics={TOPICS} key={id} initialTopic={id} comments={state.comments} onOpen={topicId => go(`feed/${topicId}/read`)} />;
-  else if (section === 'feed' && (requestedStep === 'read' || requestedStep === 'comments') && !extra && TOPICS.some(t => t.id === id)) content = <TopicPage topic={TOPICS.find(t => t.id === id)} initialComments={requestedStep === 'comments'} back={() => go(`feed/${id}`)} comments={state.comments} likes={state.likes} profile={state.profile} onComment={(topicId, text, parentId) => run(() => mutate(`/feed/topics/${topicId}/comments`, 'POST', { text, parentId: parentId ? Number(parentId) : null }))} onLike={commentId => run(() => mutate(`/comments/${commentId}/like`, state.likes.includes(commentId) ? 'DELETE' : 'PUT'))} onProfile={openProfile} />;
-  else if (section === 'question' && (!extra || requestedStep === 'result') && (!requestedStep || STEPS.includes(requestedStep))) {
+  else if (section === 'feed' && (requestedStep === 'read' || requestedStep === 'comments') && !extra && TOPICS.some(t => t.id === id)) {
+    screenClass = 'topic-screen';
+    content = <TopicPage topic={TOPICS.find(t => t.id === id)} initialComments={requestedStep === 'comments'} back={() => go(`feed/${id}`)} comments={state.comments} likes={state.likes} profile={state.profile} onComment={(topicId, text, parentId) => run(() => mutate(`/feed/topics/${topicId}/comments`, 'POST', { text, parentId: parentId ? Number(parentId) : null }))} onLike={commentId => run(() => mutate(`/comments/${commentId}/like`, state.likes.includes(commentId) ? 'DELETE' : 'PUT'))} onProfile={openProfile} />;
+  } else if (section === 'question' && (!extra || requestedStep === 'result') && (!requestedStep || STEPS.includes(requestedStep))) {
     const question = QUESTIONS.find(q => q.id === id);
     const from = origin?.split('/')[0];
     active = ['today', 'archive', 'groups', 'records'].includes(from) ? from : id === TODAY?.id ? 'today' : 'archive';
@@ -122,6 +125,7 @@ export default function App() {
       const answer = redoing ? { ...saved, ...redo.answer } : saved;
       const edit = fields => redoing ? setRedo(r => ({ ...r, answer: { ...r.answer, ...fields } })) : patch(id, fields);
       const step = questionStep(answer, requestedStep);
+      if (step === 'done' || step === 'summary') screenClass = 'completed-screen';
       const sent = state.shares[id] || [];
       const flowGo = next => STEPS.includes(next) ? go(`question/${id}/${next}`) : go(next);
       const next = () => flowGo(STEPS[STEPS.indexOf(step) + 1]);
@@ -146,7 +150,10 @@ export default function App() {
     else {
       const group = state.groups.find(g => g.id === id && state.joined.includes(id));
       if (group && requestedStep === 'settings' && group.owner && !extra) content = <GroupForm key={`${id}/settings`} mode="edit" group={group} go={go} onSave={fields => run(async () => { await mutate(`/groups/${id}`, 'PATCH', photoFields(fields, group.photo)); go(`groups/${id}/members`); })} />;
-      else if (group && (!requestedStep || requestedStep === 'members' || QUESTIONS.some(q => q.id === requestedStep))) content = requestedStep === 'members' ? <GroupMembers key={id} group={group} profile={state.profile} questionId={extra} go={go} onKick={memberId => run(() => mutate(`/groups/${id}/members/${memberId}`, 'DELETE'))} onLeave={groupId => run(async () => { await mutate(`/groups/${groupId}/members/me`, 'DELETE'); go('groups'); })} onProfile={openProfile} /> : <GroupDetail key={`${id}/${requestedStep || ''}`} initialQuestionId={requestedStep} group={group} state={state} go={go} openQuestion={openQuestion} onSend={(questionId, text) => run(() => mutate(`/groups/${id}/questions/${questionId}/messages`, 'POST', { text }))} onProfile={openProfile} />;
+      else if (group && (!requestedStep || requestedStep === 'members' || QUESTIONS.some(q => q.id === requestedStep))) {
+        if (requestedStep !== 'members' && QUESTIONS.length) screenClass = 'chat-screen';
+        content = requestedStep === 'members' ? <GroupMembers key={id} group={group} profile={state.profile} questionId={extra} go={go} onKick={memberId => run(() => mutate(`/groups/${id}/members/${memberId}`, 'DELETE'))} onLeave={groupId => run(async () => { await mutate(`/groups/${groupId}/members/me`, 'DELETE'); go('groups'); })} onProfile={openProfile} /> : <GroupDetail key={`${id}/${requestedStep || ''}`} initialQuestionId={requestedStep} group={group} state={state} go={go} openQuestion={openQuestion} onSend={(questionId, text) => run(() => mutate(`/groups/${id}/questions/${questionId}/messages`, 'POST', { text }))} onProfile={openProfile} />;
+      }
     }
   } else if (section === 'records' && !requestedStep) {
     if (!id) content = <Records questions={QUESTIONS} todayDate={state.todayDate} answers={state.answers} achieved={state.achieved} comments={state.myComments} profile={state.profile} joinedOn={state.joinedOn} go={go} openQuestion={openQuestion} />;
@@ -155,7 +162,10 @@ export default function App() {
     const member = state.members[id];
     const from = profileFrom.current?.split('/')[0];
     active = from === 'question' ? origin?.split('/')[0] : from;
-    if (member) content = <><Header back={() => go(profileFrom.current || 'today')} title={member.handle} /><MemberProfile member={member} blocked={state.blocks.some(block => block.id === id)} onBlock={() => run(() => mutate(`/users/me/blocks/${id}`, 'PUT'))} onUnblock={() => run(() => mutate(`/users/me/blocks/${id}`, 'DELETE'))} /></>;
+    if (member) {
+      screenClass = 'member-screen';
+      content = <><Header back={() => go(profileFrom.current || 'today')} title={member.handle} action={<MemberActions key={id} member={member} blocked={state.blocks.some(block => block.id === id)} onBlock={() => run(() => mutate(`/users/me/blocks/${encodeURIComponent(member.handle)}`, 'PUT'))} onUnblock={() => run(() => mutate(`/users/me/blocks/${encodeURIComponent(member.handle)}`, 'DELETE'))} />} /><MemberProfile member={member} /></>;
+    }
   } else if (section === 'settings' && !requestedStep) {
     active = 'records';
     if (!id) content = <><Header back={() => go('records')} title="설정" /><Settings profile={state.profile} go={go} onLogout={() => run(async () => { await server.logout(); go('today'); setWelcome('login'); })} /></>;
@@ -167,7 +177,7 @@ export default function App() {
     else if (id === 'sources') content = <><Header back={() => go('settings')} title="출처" /><Sources topics={TOPICS} /></>;
     else if (id === 'safety') content = <><Header back={() => go('settings')} title="신고 및 차단" /><Safety go={go} /></>;
     else if (id === 'report') content = <><Header back={() => go('settings/safety')} title="신고하기" /><ReportForm profile={state.profile} go={go} /></>;
-    else if (id === 'blocks') content = <><Header back={() => go('settings/safety')} title="차단한 사용자" /><BlockedUsers blocks={state.blocks} onUnblock={userId => run(() => mutate(`/users/me/blocks/${userId}`, 'DELETE'))} /></>;
+    else if (id === 'blocks') content = <><Header back={() => go('settings/safety')} title="차단한 사용자" /><BlockedUsers blocks={state.blocks} onUnblock={handle => run(() => mutate(`/users/me/blocks/${encodeURIComponent(handle)}`, 'DELETE'))} /></>;
     else if (id in LEGAL_TITLES) content = <><Header back={() => go('settings')} title={LEGAL_TITLES[id]} /><LegalDoc doc={id} /></>;
     else if (id === 'withdraw') content = <><Header back={() => go('settings')} title="탈퇴" /><WithdrawForm onWithdraw={password => run(async () => {
       await server.api.request('/users/me', { method: 'DELETE', body: { password } });
@@ -185,7 +195,7 @@ export default function App() {
   if (server.booting) content = <p className="empty" role="status">불러오는 중…</p>;
   else if (state.started && welcome !== 'onboard' && !server.ready) content = <div className="empty">{!server.error && <p role="status">불러오는 중…</p>}<button className="btn-text" onClick={server.retry}>다시 불러오기</button></div>;
   return <div className="frame" aria-busy={server.busy}>
-    <main ref={mainRef} className={`screen ${state.started && route !== 'settings/onboard' ? 'app-screen' : ''} ${section === 'feed' && !requestedStep && state.started ? 'flush' : ''}`} id="main-content" key={state.started ? route : welcome}>
+    <main ref={mainRef} className={`screen ${screenClass} ${state.started && route !== 'settings/onboard' ? 'app-screen' : ''} ${section === 'feed' && !requestedStep && state.started ? 'flush' : ''}`} id="main-content" key={state.started ? route : welcome}>
       {server.error && <div><p className="form-error" role="alert">{server.error}</p>{server.api?.session && <button className="btn-text" onClick={server.retry}>다시 불러오기</button>}</div>}{tabRoot && tabHeader}<fieldset className="app-content" disabled={server.busy}>{content}</fieldset>
     </main>{state.started && welcome !== 'onboard' && route !== 'settings/onboard' && <BottomNav active={active} go={go} />}
   </div>;

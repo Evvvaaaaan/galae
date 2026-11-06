@@ -1,5 +1,5 @@
 import { Avatar } from '../components/UI.jsx';
-import { myself } from '../store.js';
+import { myself } from '../state.js';
 
 // 결과 화면에서 고른 선택지의 댓글입니다. 위에는 질문 카드, 아래에는 그 선택지를 고른 사람들의 이유가 달립니다.
 export default function Comments({ question, choice, comments, answer, profile, page, onMore }) {

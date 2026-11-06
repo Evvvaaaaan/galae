@@ -1,4 +1,4 @@
-import { choiceOf } from '../questionData.js';
+import { choiceOf } from '../questionHelpers.js';
 
 export default function Done({ question, answer, sent, go, onShare }) {
   return <div className="flow done">

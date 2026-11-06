@@ -19,10 +19,10 @@ export default function Feed({ topics: TOPICS, initialTopic, comments, onOpen })
         <span className="feed-meta"><span><Icon name="clock" size={16} />{readMinutes(topic)}분</span><span><Icon name="comment" size={16} />{comments.filter(c => c.topicId === topic.id).length}</span></span>
         {topic.thumbnail && <img src={topic.thumbnail} alt="" />}
         <h2>{topic.title}</h2>
-        <p>{topic.cards[0].text}</p>
+        <p>{topic.cards[0]?.text}</p>
       </button>
     </section>)}
-    <div className="feed-page feed-end"><Empty title="모든 생각을 다 보셨어요" /></div>
+    <div className="feed-page feed-end"><Empty title={TOPICS.length ? '모든 생각을 다 보셨어요' : '아직 공개된 생각이 없어요'} /></div>
   </div>;
 }
 

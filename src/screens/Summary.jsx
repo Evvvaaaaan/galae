@@ -1,5 +1,5 @@
 import { ResultBars } from './Result.jsx';
-import { choiceOf } from '../questionData.js';
+import { choiceOf } from '../questionHelpers.js';
 
 export default function Summary({ question, answer, groups, sent, onOpen, onShare, onReading, onRetry, onHome }) {
   const shared = groups.filter(g => sent.includes(g.id));

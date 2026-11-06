@@ -32,7 +32,7 @@ test('two real accounts answer, share, unlock, poll, edit and leave without leak
   await expect(page.getByText('한 걸음 청년부')).toHaveCount(0);
   await expect(page.getByRole('button', { name: '최근 갈래 시작하기' })).toBeVisible();
   await page.getByRole('link', { name: '생각', exact: true }).click();
-  await expect(page.getByText('모든 생각을 다 보셨어요')).toBeVisible();
+  await expect(page.getByText('아직 공개된 생각이 없어요')).toBeVisible();
   await page.getByRole('link', { name: '오늘', exact: true }).click();
   await page.getByRole('button', { name: '최근 갈래 시작하기' }).click();
   const questionId = /question\/([^/]+)/.exec(page.url())[1];
@@ -155,7 +155,7 @@ test('failed answer and message requests retain the draft and do not show succes
 test('verified-feed contract renders actual authors, replies and likes without sample comments', async ({ page }) => {
   const author = { id: 100001, handle: 'verified.author', name: '검증 작성자', color: 'blue', photoUrl: null };
   let comments = [{ id: 100001, topicId: 'p001', parentId: null, author, text: '검증된 주제의 서버 댓글', likeCount: 2, liked: false, mine: false, replies: [] }];
-  const topic = { id: 'p001', title: '검증 주제', cards: ['검증한 본문'], sources: [], checkedOn: '2026-11-01' };
+  const topic = { id: 'p001', title: '검증 주제', cards: ['검증한 본문'], sources: [], imageUrl: '/api/v1/feed/topics/p001/image?v=1', checkedOn: '2026-11-01' };
   await page.route('**/api/v1/feed', route => route.fulfill({ json: { date: '2026-11-05', topics: [topic, { ...topic, id: 'unchecked', title: '검수 전 노출 금지', checkedOn: null }] } }));
   await page.route('**/api/v1/feed/topics/p001/comments', async route => {
     if (route.request().method() === 'POST') {
@@ -174,6 +174,7 @@ test('verified-feed contract renders actual authors, replies and likes without s
   await signup(page, `e2e.feed.${Date.now().toString(36)}`, '피드검증');
   await page.getByRole('link', { name: '생각', exact: true }).click();
   await expect(page.getByRole('heading', { name: '검증 주제' })).toBeVisible();
+  await expect(page.locator('.feed-card img')).toHaveAttribute('src', `${apiUrl}/feed/topics/p001/image?v=1`);
   await expect(page.getByText('검수 전 노출 금지')).toHaveCount(0);
   await page.getByRole('button', { name: /검증 주제/ }).click();
   await page.getByRole('button', { name: '댓글', exact: true }).click();
@@ -224,4 +225,68 @@ test('approved reading displays the new open question', async ({ page }) => {
   await page.getByRole('button', { name: '다음', exact: true }).click();
   await expect(page.getByText('오늘 내가 지키고 싶은 가치는 무엇인가요?')).toBeVisible();
   await expect(page.getByRole('heading', { name: '성경', exact: true })).toBeVisible();
+});
+
+test('group messages retain their layout when :has is unsupported on early iOS 15', async ({ page }) => {
+  await page.route('**/src/index.css', async route => {
+    const response = await route.fetch();
+    await route.fulfill({ response, body: (await response.text()).replaceAll(':has(', ':unsupported-has(') });
+  });
+  await signup(page, `e2e.ios.${Date.now().toString(36)}`, '호환성검증');
+  await page.goto('/#/groups/new');
+  await page.getByRole('textbox', { name: '그룹 이름' }).fill('호환성 검증');
+  await page.getByRole('button', { name: '만들기', exact: true }).click();
+  await expect(page.locator('.invite strong')).toBeVisible();
+  const groupId = /groups\/(\d+)/.exec(page.url())[1];
+  await page.goto(`/#/groups/${groupId}`);
+  await expect(page.getByRole('textbox', { name: '메시지', exact: true })).toBeVisible();
+  await expect(page.locator('.screen')).toHaveCSS('display', 'flex');
+  await expect(page.locator('.screen')).toHaveCSS('overflow-y', 'hidden');
+});
+
+test('reports prepare an email without claiming delivery or blocking, and empty profiles cannot be saved', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await signup(page, `e2e.safe.${Date.now().toString(36)}`, '신고검증');
+  await page.goto('/#/settings/profile');
+  await page.getByRole('textbox', { name: '이름', exact: true }).fill('   ');
+  await expect(page.getByRole('button', { name: '저장', exact: true })).toBeDisabled();
+  const blockWrites = [];
+  page.on('request', request => { if (request.method() === 'PUT' && request.url().includes('/users/me/blocks/')) blockWrites.push(request.url()); });
+  await page.goto('/#/settings/report');
+  await page.getByRole('textbox', { name: '신고할 아이디', exact: true }).fill('reported.user');
+  await page.getByRole('button', { name: '스팸·광고', exact: true }).click();
+  await page.getByRole('textbox', { name: '신고 내용', exact: true }).fill('확인이 필요한 게시물');
+  await page.getByRole('button', { name: '신고 내용 확인', exact: true }).click();
+  await expect(page.getByText(/이 화면에서는 신고가 전송되지 않습니다/)).toBeVisible();
+  const mailto = new URL(await page.getByRole('link', { name: '메일 앱으로 신고 작성' }).getAttribute('href'));
+  expect(mailto.protocol).toBe('mailto:');
+  expect(mailto.pathname).toBe('vmfhrmfoald36@gmail.com');
+  expect(mailto.searchParams.get('body')).toContain('확인이 필요한 게시물');
+  expect(mailto.searchParams.get('body')).toContain('reported.user');
+  await page.getByRole('button', { name: '신고 내용 복사', exact: true }).click();
+  await expect(page.getByRole('button', { name: '복사했어요', exact: true })).toBeVisible();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toContain('확인이 필요한 게시물');
+  expect(blockWrites).toEqual([]);
+  await expect(page.getByText('신고가 접수되었어요')).toHaveCount(0);
+});
+
+test('profile blocking and settings unblocking use the handle contract', async ({ page }) => {
+  const user = { id: 500002, handle: 'block.target', name: '차단대상', color: 'blue', bio: '', photoUrl: null, achievements: [], stats: {} };
+  let blocks = [];
+  await page.route('**/api/v1/users/500002', route => route.fulfill({ json: user }));
+  await page.route('**/api/v1/users/me/blocks', route => route.fulfill({ json: blocks }));
+  await page.route('**/api/v1/users/me/blocks/block.target', async route => {
+    expect(route.request().postData()).toBeNull();
+    blocks = route.request().method() === 'PUT' ? [{ user, blockedAt: '2026-11-05T12:00:00Z' }] : [];
+    await route.fulfill({ status: 204 });
+  });
+  await signup(page, `e2e.blk.${Date.now().toString(36)}`, '차단검증');
+  await page.goto('/#/users/500002');
+  await page.getByRole('button', { name: '차단하기', exact: true }).click();
+  await page.getByRole('alertdialog').getByRole('button', { name: '차단', exact: true }).click();
+  await expect(page.getByRole('button', { name: '차단 해제', exact: true })).toBeVisible();
+  await page.goto('/#/settings/blocks');
+  await expect(page.getByText('@block.target', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: '차단 해제', exact: true }).click();
+  await expect(page.getByText('차단한 사용자가 없어요. 다른 사람 프로필에서 차단할 수 있어요.')).toBeVisible();
 });

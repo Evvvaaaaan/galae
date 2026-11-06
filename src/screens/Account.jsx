@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Header } from '../components/UI.jsx';
-import { cleanHandle } from '../store.js';
+import { cleanHandle } from '../state.js';
 import { LegalDoc } from './Settings.jsx';
 
 function LegalSheet({ doc, title, onClose }) {
